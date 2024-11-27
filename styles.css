@@ -6,7 +6,7 @@
 body {
     font-family: 'Ubuntu', sans-serif;
     font-weight: normal; /* Ensure all text is normal weight */
-    margin: 0;
+    margin: 50px 0;
     padding: 0;
     background-color: #1c1c1c; /* Background color */
     color: #ffffff; /* Default text color */
