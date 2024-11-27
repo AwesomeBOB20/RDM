@@ -538,6 +538,7 @@
     border: 2px solid #000;
     border-radius: 0; /* Made rectangular */
     overflow: hidden;
+    margin-bottom: 40px;
 }
 
 .progress {
