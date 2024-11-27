@@ -9,21 +9,30 @@ body {
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    width: 90%;
+    max-width: 1200px; /* Increased max-width */
+    margin: 20px auto; /* Added top and bottom margins */
     text-align: center;
-    /* font-family moved to body */
 }
 
-/* Remove bold from headings and paragraphs */
 .text-container h1,
 .text-container p,
 .control-container label,
 .volume-control label,
 .tempo-control label,
 .volume-control span,
-.tempo-control span {
-    font-weight: normal;
+.tempo-control span,
+.icon-btn,
+.play-btn,
+#stopPlaylistBtn,
+.tempo-input,
+#prevPlaylistItemBtn,
+#nextPlaylistItemBtn,
+#prevExerciseBtn,
+#nextExerciseBtn,
+.time-overlay,
+.playlist-time-overlay {
+    font-weight: normal; /* Ensure normal text weight */
 }
 
 .branding {
@@ -113,7 +122,7 @@ body {
     width: auto;
     text-align: center;
     margin: 10px 5px;
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 #stopPlaylistBtn:hover {
@@ -133,7 +142,7 @@ body {
     width: auto;
     text-align: center;
     margin: 10px 5px;
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 .play-btn:hover,
@@ -220,7 +229,7 @@ body {
 .control-container button,
 .control-container input {
     margin: 5px;
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 .tempo-input {
@@ -230,7 +239,7 @@ body {
     border: 2px solid #000;
     border-radius: 5px;
     margin-left: 10px;
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 .tempo-input::placeholder {
@@ -288,7 +297,7 @@ body {
     font-size: 1.2rem;
     text-align: center;
     flex-shrink: 0;
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 #playlistQueue {
@@ -454,7 +463,7 @@ body {
     width: auto;
     text-align: center;
     margin: 10px 5px;
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 #prevExerciseBtn,
@@ -543,7 +552,7 @@ body {
 .volume-control span,
 .tempo-control span {
     color: #fff; /* Changed text color to white */
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 .tempo-control {
@@ -554,7 +563,7 @@ body {
     width: 75%;
     max-width: 600px;
     margin: 20px auto;
-    display: none; /* Hide progress bar initially */
+    /* Removed display: none; to show progress bar */
 }
 
 .progress-bar {
@@ -582,7 +591,7 @@ body {
     transform: translate(-50%, -50%); /* Adjust for centering */
     font-size: 1rem;
     color: #000; /* Text color in black */
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 .time {
@@ -594,7 +603,9 @@ body {
     width: 75%;
     max-width: 600px;
     margin: 20px auto;
-    display: none; /* Hide playlist progress bar initially */
+    display: flex;
+    align-items: center;
+    /* Removed display: none; to show playlist progress bar */
 }
 
 .playlist-progress-bar {
@@ -621,7 +632,7 @@ body {
     transform: translate(-50%, -50%); /* Adjust for centering */
     font-size: 1rem;
     color: #000; /* Text color in black */
-    font-weight: normal; /* Ensure normal weight */
+    font-weight: normal;
 }
 
 /* Scrollbar Styles */
