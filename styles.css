@@ -16,7 +16,7 @@
 }
 
 .logo-container {
-    flex: 0 0 100px;
+    flex: 0 0 200px; /* Increased from 100px to 200px */
     margin-right: 20px;
 }
 
@@ -32,13 +32,13 @@
 .text-container h1 {
     margin: 0;
     font-size: 2.5rem;
-    color: #fff;
+    color: #fff; /* Changed to white */
 }
 
 .text-container p {
     margin: 0;
     font-size: 1.2rem;
-    color: #fff;
+    color: #fff; /* Changed to white */
 }
 
 .sheet-music {
@@ -48,13 +48,14 @@
 .sheet-music-img {
     max-width: 100%;
     height: auto;
+    border: 2px solid #000; /* Added border */
 }
 
 .selector {
     width: 300px;
     max-width: 100%;
-    padding: 8px;
-    font-size: 1rem;
+    padding: 5px 8px; /* Reduced padding */
+    font-size: 0.9rem; /* Reduced font-size */
     background-color: #d35400;
     border: 2px solid #000;
     border-radius: 5px;
@@ -62,19 +63,23 @@
     color: #fff;
 }
 
-#categorySelector, #exerciseSelector {
+#categorySelector,
+#exerciseSelector {
     background-color: #d35400;
 }
 
-#playlistSelector, #playlistQueue {
+#playlistSelector,
+#playlistQueue {
     background-color: #96318d;
 }
 
-#categorySelector:hover, #exerciseSelector:hover {
+#categorySelector:hover,
+#exerciseSelector:hover {
     background-color: #c25227;
 }
 
-#playlistSelector:hover, #playlistQueue:hover {
+#playlistSelector:hover,
+#playlistQueue:hover {
     background-color: #81227a;
 }
 
@@ -95,7 +100,9 @@
     background-color: #81227a;
 }
 
-.play-btn, #randomExerciseBtn, #randomTempoBtn {
+.play-btn,
+#randomExerciseBtn,
+#randomTempoBtn {
     background-color: #d35400;
     border: 2px solid #000000;
     color: #fff;
@@ -108,7 +115,9 @@
     margin: 10px 5px;
 }
 
-.play-btn:hover, #randomExerciseBtn:hover, #randomTempoBtn:hover {
+.play-btn:hover,
+#randomExerciseBtn:hover,
+#randomTempoBtn:hover {
     background-color: #c25227;
 }
 
@@ -120,7 +129,8 @@
     background-color: #81227a;
 }
 
-.volume-slider, .tempo-slider {
+.volume-slider,
+.tempo-slider {
     -webkit-appearance: none;
     appearance: none;
     width: 75%;
@@ -134,7 +144,8 @@
     background: #ddd;
 }
 
-.volume-slider::-webkit-slider-thumb, .tempo-slider::-webkit-slider-thumb {
+.volume-slider::-webkit-slider-thumb,
+.tempo-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     margin-top: -4px;
     width: 20px;
@@ -145,7 +156,8 @@
     border: 2px solid #000000;
 }
 
-.volume-slider::-moz-range-thumb, .tempo-slider::-moz-range-thumb {
+.volume-slider::-moz-range-thumb,
+.tempo-slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
     background: #ffffff;
@@ -154,7 +166,8 @@
     border: 2px solid #000000;
 }
 
-.volume-slider::-ms-thumb, .tempo-slider::-ms-thumb {
+.volume-slider::-ms-thumb,
+.tempo-slider::-ms-thumb {
     width: 20px;
     height: 20px;
     background: #ffffff;
@@ -163,9 +176,12 @@
     border: 2px solid #000000;
 }
 
-.volume-slider::-webkit-slider-runnable-track, .tempo-slider::-webkit-slider-runnable-track,
-.volume-slider::-moz-range-track, .tempo-slider::-moz-range-track,
-.volume-slider::-ms-track, .tempo-slider::-ms-track {
+.volume-slider::-webkit-slider-runnable-track,
+.tempo-slider::-webkit-slider-runnable-track,
+.volume-slider::-moz-range-track,
+.tempo-slider::-moz-range-track,
+.volume-slider::-ms-track,
+.tempo-slider::-ms-track {
     background: transparent;
     border: none;
 }
@@ -176,7 +192,7 @@
     align-items: center;
     gap: 10px;
     margin: 15px auto;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Ensure items stay on one line */
 }
 
 .control-container select,
@@ -241,8 +257,10 @@
     flex-wrap: nowrap;
 }
 
-#prevPlaylistItemBtn, #nextPlaylistItemBtn,
-#prevExerciseBtn, #nextExerciseBtn {
+#prevPlaylistItemBtn,
+#nextPlaylistItemBtn,
+#prevExerciseBtn,
+#nextExerciseBtn {
     width: 45px;
     font-size: 1.2rem;
     text-align: center;
@@ -305,7 +323,8 @@
         margin: 0;
     }
 
-    #prevPlaylistItemBtn, #nextPlaylistItemBtn {
+    #prevPlaylistItemBtn,
+    #nextPlaylistItemBtn {
         width: 45px;
         font-size: 1.2rem;
         text-align: center;
@@ -323,13 +342,15 @@
         margin: 0 auto 20px;
     }
 
-    #categorySelector, #exerciseSelector {
+    #categorySelector,
+    #exerciseSelector {
         width: 90%;
         text-align: left;
         margin: 0;
     }
 
-    #prevExerciseBtn, #nextExerciseBtn {
+    #prevExerciseBtn,
+    #nextExerciseBtn {
         width: 45px;
         font-size: 1.2rem;
         text-align: center;
@@ -356,36 +377,44 @@
         margin: 15px auto 5px;
     }
 
-    #playPauseBtn, #randomTempoBtn {
+    #playPauseBtn,
+    #randomTempoBtn {
         width: 90%;
         text-align: center;
         margin: 5px auto;
     }
+
     #playPauseBtn {
         grid-column: 1 / 2;
     }
+
     #randomTempoBtn {
         grid-column: 2 / -1;
     }
 
-    #minTempo, #maxTempo {
+    #minTempo,
+    #maxTempo {
         width: 90%;
         text-align: center;
         padding: 5px;
         margin: 5px auto;
     }
+
     #minTempo {
         grid-column: 1 / 2;
     }
+
     #maxTempo {
         grid-column: 2 / -1;
     }
 
-    #exerciseSelector, #playlistQueue {
+    #exerciseSelector,
+    #playlistQueue {
         width: 100%;
     }
 
-    .exercise-group, .playlist-group {
+    .exercise-group,
+    .playlist-group {
         grid-template-columns: auto 1fr auto;
         width: 90%;
     }
@@ -403,34 +432,40 @@
     margin: 10px 5px;
 }
 
-#prevExerciseBtn, #nextExerciseBtn {
+#prevExerciseBtn,
+#nextExerciseBtn {
     background-color: #d35400;
     width: 45px;
     font-size: 1.2rem;
     text-align: center;
 }
 
-#prevExerciseBtn:hover, #nextExerciseBtn:hover {
+#prevExerciseBtn:hover,
+#nextExerciseBtn:hover {
     background-color: #c25227;
 }
 
-#prevExerciseBtn:disabled, #nextExerciseBtn:disabled {
+#prevExerciseBtn:disabled,
+#nextExerciseBtn:disabled {
     background-color: #a84300;
     cursor: not-allowed;
 }
 
-#prevPlaylistItemBtn, #nextPlaylistItemBtn {
+#prevPlaylistItemBtn,
+#nextPlaylistItemBtn {
     background-color: #96318d;
     width: 45px;
     font-size: 1.2rem;
     text-align: center;
 }
 
-#prevPlaylistItemBtn:hover, #nextPlaylistItemBtn:hover {
+#prevPlaylistItemBtn:hover,
+#nextPlaylistItemBtn:hover {
     background-color: #81227a;
 }
 
-#prevPlaylistItemBtn:disabled, #nextPlaylistItemBtn:disabled {
+#prevPlaylistItemBtn:disabled,
+#nextPlaylistItemBtn:disabled {
     background-color: #752070;
     cursor: not-allowed;
 }
@@ -473,8 +508,16 @@
     cursor: not-allowed;
 }
 
-.volume-control, .tempo-control {
+.volume-control,
+.tempo-control {
     margin: 25px 0;
+}
+
+.volume-control label,
+.tempo-control label,
+.volume-control span,
+.tempo-control span {
+    color: #fff; /* Changed text color to white */
 }
 
 .tempo-control {
@@ -490,28 +533,27 @@
 .progress-bar {
     position: relative;
     width: 100%;
-    height: 12px;
+    height: 20px; /* Increased height */
     background-color: #ddd;
     border: 2px solid #000;
-    border-radius: 5px;
+    border-radius: 0; /* Made rectangular */
     overflow: hidden;
 }
 
 .progress {
     width: 0%;
     height: 100%;
-    background-color: #96318d;
-    transition: width 0.1s linear;
+    background-color: #d35400; /* Changed to orange */
+    transition: width 0.2s linear; /* Smooth progress bar */
 }
 
 .time-overlay {
     position: absolute;
-    top: -25px;
-    left: 0;
-    right: 0;
-    text-align: center;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for centering */
     font-size: 1rem;
-    color: #000;
+    color: #000; /* Text color in black */
 }
 
 .time {
@@ -530,26 +572,45 @@
 .playlist-progress-bar {
     position: relative;
     width: 100%;
-    height: 12px;
+    height: 20px; /* Increased height */
     background-color: #ddd;
     border: 2px solid #000;
-    border-radius: 5px;
+    border-radius: 0; /* Made rectangular */
     overflow: hidden;
 }
 
 .playlist-progress {
     width: 0%;
     height: 100%;
-    background-color: #96318d;
-    transition: width 0.1s linear;
+    background-color: #d35400; /* Changed to orange */
+    transition: width 0.2s linear; /* Smooth progress bar */
 }
 
 .playlist-time-overlay {
     position: absolute;
-    top: -25px;
-    left: 0;
-    right: 0;
-    text-align: center;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for centering */
     font-size: 1rem;
-    color: #000;
+    color: #000; /* Text color in black */
+}
+
+/* Scrollbar Styles */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2c2c2c;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #96318d;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #e67e22;
 }
