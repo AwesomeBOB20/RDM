@@ -638,7 +638,7 @@ body {
 .playlist-progress {
     width: 0%;
     height: 100%;
-    background-color: #d35400; /* Changed to orange */
+    background-color: #96318d; /* Changed to orange */
     transition: width 0.2s linear; /* Smooth progress bar */
 }
 
