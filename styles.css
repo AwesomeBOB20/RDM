@@ -73,7 +73,7 @@ body {
     margin: 0;
     font-size: 1.2rem;
     color: #fff; /* Ensure text is white */
-    text-align: left; /* Align text to the left */
+    text-align: center;
 }
 
 /* Sheet Music Styles */
