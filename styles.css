@@ -6,7 +6,7 @@
 body {
     font-family: 'Ubuntu', sans-serif;
     font-weight: normal; /* Ensure all text is normal weight */
-    margin: 50px 0;
+    margin: 0;
     padding: 0;
     background-color: #1c1c1c; /* Background color */
     color: #ffffff; /* Default text color */
@@ -43,7 +43,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center; /* Center the content */
-    margin-bottom: 30px;
+    margin-top: 30px;
     flex-wrap: nowrap; /* Keep items on the same line */
 }
 
@@ -95,7 +95,7 @@ body {
     font-size: 0.9rem; /* Reduced font-size */
     background-color: #d35400;
     border: 2px solid #000;
-    border-radius: 5px;
+    -radius: 5px;
     text-align: left;
     color: #fff;
 }
@@ -123,7 +123,7 @@ body {
 /* Buttons */
 #stopPlaylistBtn {
     background-color: #96318d;
-    border: 2px solid #000;
+    : 2px solid #000;
     color: #fff;
     font-size: 1.2rem;
     padding: 6px 12px;
