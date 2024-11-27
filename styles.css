@@ -1,10 +1,29 @@
+/* Import Ubuntu Font */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
 /* CSS Styles */
+
+body {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: normal; /* Ensure all text is normal weight */
+}
 
 .container {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
-    font-family: 'Arial', sans-serif;
+    /* font-family moved to body */
+}
+
+/* Remove bold from headings and paragraphs */
+.text-container h1,
+.text-container p,
+.control-container label,
+.volume-control label,
+.tempo-control label,
+.volume-control span,
+.tempo-control span {
+    font-weight: normal;
 }
 
 .branding {
@@ -94,6 +113,7 @@
     width: auto;
     text-align: center;
     margin: 10px 5px;
+    font-weight: normal; /* Ensure normal weight */
 }
 
 #stopPlaylistBtn:hover {
@@ -113,6 +133,7 @@
     width: auto;
     text-align: center;
     margin: 10px 5px;
+    font-weight: normal; /* Ensure normal weight */
 }
 
 .play-btn:hover,
@@ -199,6 +220,7 @@
 .control-container button,
 .control-container input {
     margin: 5px;
+    font-weight: normal; /* Ensure normal weight */
 }
 
 .tempo-input {
@@ -208,6 +230,7 @@
     border: 2px solid #000;
     border-radius: 5px;
     margin-left: 10px;
+    font-weight: normal; /* Ensure normal weight */
 }
 
 .tempo-input::placeholder {
@@ -265,6 +288,7 @@
     font-size: 1.2rem;
     text-align: center;
     flex-shrink: 0;
+    font-weight: normal; /* Ensure normal weight */
 }
 
 #playlistQueue {
@@ -430,6 +454,7 @@
     width: auto;
     text-align: center;
     margin: 10px 5px;
+    font-weight: normal; /* Ensure normal weight */
 }
 
 #prevExerciseBtn,
@@ -518,6 +543,7 @@
 .volume-control span,
 .tempo-control span {
     color: #fff; /* Changed text color to white */
+    font-weight: normal; /* Ensure normal weight */
 }
 
 .tempo-control {
@@ -528,6 +554,7 @@
     width: 75%;
     max-width: 600px;
     margin: 20px auto;
+    display: none; /* Hide progress bar initially */
 }
 
 .progress-bar {
@@ -555,6 +582,7 @@
     transform: translate(-50%, -50%); /* Adjust for centering */
     font-size: 1rem;
     color: #000; /* Text color in black */
+    font-weight: normal; /* Ensure normal weight */
 }
 
 .time {
@@ -566,8 +594,7 @@
     width: 75%;
     max-width: 600px;
     margin: 20px auto;
-    display: flex;
-    align-items: center;
+    display: none; /* Hide playlist progress bar initially */
 }
 
 .playlist-progress-bar {
@@ -594,6 +621,7 @@
     transform: translate(-50%, -50%); /* Adjust for centering */
     font-size: 1rem;
     color: #000; /* Text color in black */
+    font-weight: normal; /* Ensure normal weight */
 }
 
 /* Scrollbar Styles */
