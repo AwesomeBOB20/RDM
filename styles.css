@@ -593,7 +593,7 @@ body {
     position: relative;
     width: 100%;
     height: 40px; /* Increased height */
-    background-color: #ddd;
+    background-color: #fff;
     border: 2px solid #000;
     border-radius: 0; /* Made rectangular */
     overflow: hidden;
@@ -629,7 +629,7 @@ body {
     position: relative;
     width: 100%;
     height: 40px; /* Increased height */
-    background-color: #ddd;
+    background-color: #fff;
     border: 2px solid #000;
     border-radius: 0; /* Made rectangular */
     overflow: hidden;
