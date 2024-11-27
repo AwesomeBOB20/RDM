@@ -95,7 +95,7 @@ body {
     font-size: 0.9rem; /* Reduced font-size */
     background-color: #d35400;
     border: 2px solid #000;
-    -radius: 5px;
+    border-radius: 5px;
     text-align: left;
     color: #fff;
 }
