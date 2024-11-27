@@ -733,50 +733,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Playlist Functions
     function startPlaylist(playlistId) {
-        currentPlaylist = playlists[playlistId];
-        currentPlaylistItemIndex = 0;
-        currentTempoIndex = 0;
-        currentRepetition = 0;
-        isPlayingPlaylist = true;
+    currentPlaylist = playlists[playlistId];
+    currentPlaylistItemIndex = 0;
+    currentTempoIndex = 0;
+    currentRepetition = 0;
+    isPlayingPlaylist = true;
 
-        // Disable controls during playlist playback
-        categorySelector.disabled = true;
-        minTempoInput.disabled = true;
-        maxTempoInput.disabled = true;
-        randomExerciseBtn.disabled = true;
-        randomTempoBtn.disabled = true;
-        tempoSlider.disabled = true;  // Disable tempo slider during playlist
-        prevPlaylistItemBtn.disabled = false;
-        nextPlaylistItemBtn.disabled = false;
+    // Disable controls during playlist playback
+    categorySelector.disabled = true;
+    minTempoInput.disabled = true;
+    maxTempoInput.disabled = true;
+    randomExerciseBtn.disabled = true;
+    randomTempoBtn.disabled = true;
+    tempoSlider.disabled = true;  // Disable tempo slider during playlist
+    prevPlaylistItemBtn.disabled = false;
+    nextPlaylistItemBtn.disabled = false;
 
-        stopPlaylistBtn.disabled = false;        // Enable stop playlist button
-        playlistQueueSelect.disabled = false;    // Enable playlist queue
+    stopPlaylistBtn.disabled = false;        // Enable stop playlist button
+    playlistQueueSelect.disabled = false;    // Enable playlist queue
 
-        // Reset category selector to 'all' and disable it
-        categorySelector.value = 'all';
-        categorySelector.disabled = true;
+    // Reset category selector to 'all' and disable it
+    categorySelector.value = 'all';
+    categorySelector.disabled = true;
 
-        // Show playlist progress bar
-        playlistProgressContainer.style.display = 'flex';
+    // Show playlist progress bar
+    playlistProgressContainer.style.display = 'flex';
 
-        // Update the playlist selector to reflect the selected playlist
-        playlistSelector.value = playlistId;
+    // Update the playlist selector to reflect the selected playlist
+    playlistSelector.value = playlistId;
 
-        // Update the exercise selector to show only exercises in the playlist
-        updateExerciseListForPlaylist(currentPlaylist);
+    // Update the exercise selector to show only exercises in the playlist
+    updateExerciseListForPlaylist(currentPlaylist);
 
-        // Change play button color to indicate playlist mode (purple)
-        playPauseBtn.classList.add('playlist-mode');
+    // Change play button color to indicate playlist mode (purple)
+    playPauseBtn.classList.add('playlist-mode');
 
-        // Add purple styles to exercise selector and buttons
-        exerciseSelector.classList.add('purple-btn');
-        prevExerciseBtn.classList.add('purple-btn');
-        nextExerciseBtn.classList.add('purple-btn');
+    // Add purple styles to exercise selector and buttons
+    exerciseSelector.classList.add('purple-btn');
+    prevExerciseBtn.classList.add('purple-btn');
+    nextExerciseBtn.classList.add('purple-btn');
 
-        playCurrentPlaylistItem();
-        updatePlaylistQueueDisplay();
-        updatePlaylistProgressBar();
-    }
+    playCurrentPlaylistItem();
+    updatePlaylistQueueDisplay();
+    updatePlaylistProgressBar();
+}
 
     function updateExerciseListForPlaylist(playlist) {
         exerciseSelector.innerHTML = '';
@@ -898,44 +898,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function stopPlaylist() {
-        audio.pause();
-        isPlayingPlaylist = false;
-        currentPlaylist = null;
-        playPauseBtn.textContent = 'Play';
-        resetPlaylistControls();
-        resetProgressBar();
+    audio.pause();
+    isPlayingPlaylist = false;
+    currentPlaylist = null;
+    playPauseBtn.textContent = 'Play';
+    resetPlaylistControls();
+    resetProgressBar();
 
-        // Reset the exercise selector to show exercises based on the selected category
-        updateExerciseList(categorySelector.value);
+    // Reset the exercise selector to show exercises based on the selected category
+    updateExerciseList(categorySelector.value);
 
-        // Reset play button color back to default (remove playlist mode color)
-        playPauseBtn.classList.remove('playlist-mode');
-    }
+    // Reset play button color back to default (remove playlist mode color)
+    playPauseBtn.classList.remove('playlist-mode');
+}
+
 
     function resetPlaylistControls() {
-        stopPlaylistBtn.disabled = true;
-        playlistQueueSelect.disabled = true;
+    stopPlaylistBtn.disabled = true;
+    playlistQueueSelect.disabled = true;
 
-        exerciseSelector.disabled = false;
-        categorySelector.disabled = false;
-        minTempoInput.disabled = false;
-        maxTempoInput.disabled = false;
-        randomExerciseBtn.disabled = false;
-        randomTempoBtn.disabled = false;
-        tempoSlider.disabled = false;  // Re-enable tempo slider
-        prevPlaylistItemBtn.disabled = true;
-        nextPlaylistItemBtn.disabled = true;
-        playPauseBtn.textContent = 'Play';
-        playlistSelector.value = '';
-        playlistProgressContainer.style.display = 'none'; // Hide playlist progress bar
-        updatePlaylistQueueDisplay(); // Clear the playlist queue display
-        updatePlaylistProgressBar(); // Reset the playlist progress bar
+    exerciseSelector.disabled = false;
+    categorySelector.disabled = false;
+    minTempoInput.disabled = false;
+    maxTempoInput.disabled = false;
+    randomExerciseBtn.disabled = false;
+    randomTempoBtn.disabled = false;
+    tempoSlider.disabled = false;  // Re-enable tempo slider
+    prevPlaylistItemBtn.disabled = true;
+    nextPlaylistItemBtn.disabled = true;
+    playPauseBtn.textContent = 'Play';
+    playlistSelector.value = '';
+    playlistProgressContainer.style.display = 'none'; // Hide playlist progress bar
+    updatePlaylistQueueDisplay(); // Clear the playlist queue display
+    updatePlaylistProgressBar(); // Reset the playlist progress bar
 
-        // Remove purple styles from exercise selector and buttons
-        exerciseSelector.classList.remove('purple-btn');
-        prevExerciseBtn.classList.remove('purple-btn');
-        nextExerciseBtn.classList.remove('purple-btn');
-    }
+    // Remove purple styles from exercise selector and buttons
+    exerciseSelector.classList.remove('purple-btn');
+    prevExerciseBtn.classList.remove('purple-btn');
+    nextExerciseBtn.classList.remove('purple-btn');
+}
 
     function updatePlaylistQueueDisplay() {
         playlistQueueSelect.innerHTML = ''; // Clear existing options
