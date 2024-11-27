@@ -6,6 +6,10 @@
 body {
     font-family: 'Ubuntu', sans-serif;
     font-weight: normal; /* Ensure all text is normal weight */
+    margin: 0;
+    padding: 0;
+    background-color: #1c1c1c; /* Background color */
+    color: #ffffff; /* Default text color */
 }
 
 .container {
@@ -37,15 +41,15 @@ body {
 
 .branding {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* Center the content */
     margin-bottom: 30px;
+    flex-wrap: nowrap; /* Keep items on the same line */
 }
 
 .logo-container {
-    flex: 0 0 200px; /* Increased from 100px to 200px */
-    margin-right: 20px;
+    margin-right: 20px; /* Space between logo and text */
+    flex: none; /* Allow natural sizing */
 }
 
 .logo {
@@ -54,21 +58,25 @@ body {
 }
 
 .text-container {
-    flex: 1;
+    flex: none; /* Prevent stretching */
+    text-align: left; /* Align text with logo */
 }
 
 .text-container h1 {
     margin: 0;
     font-size: 2.5rem;
-    color: #fff; /* Changed to white */
+    color: #fff; /* Ensure text is white */
+    text-align: left; /* Align text to the left */
 }
 
 .text-container p {
     margin: 0;
     font-size: 1.2rem;
-    color: #fff; /* Changed to white */
+    color: #fff; /* Ensure text is white */
+    text-align: left; /* Align text to the left */
 }
 
+/* Sheet Music Styles */
 .sheet-music {
     margin: 20px 0;
 }
@@ -79,6 +87,7 @@ body {
     border: 2px solid #000; /* Added border */
 }
 
+/* Selector Styles */
 .selector {
     width: 300px;
     max-width: 100%;
@@ -111,6 +120,7 @@ body {
     background-color: #81227a;
 }
 
+/* Buttons */
 #stopPlaylistBtn {
     background-color: #96318d;
     border: 2px solid #000;
@@ -159,6 +169,7 @@ body {
     background-color: #81227a;
 }
 
+/* Sliders */
 .volume-slider,
 .tempo-slider {
     -webkit-appearance: none;
@@ -172,6 +183,7 @@ body {
     margin: 20px auto;
     box-shadow: inset 0 0 0 2px #000;
     background: #ddd;
+    cursor: pointer;
 }
 
 .volume-slider::-webkit-slider-thumb,
@@ -216,6 +228,7 @@ body {
     border: none;
 }
 
+/* Control Container */
 .control-container {
     display: flex;
     justify-content: center;
@@ -223,6 +236,7 @@ body {
     gap: 10px;
     margin: 15px auto;
     flex-wrap: nowrap; /* Ensure items stay on one line */
+    width: 100%;
 }
 
 .control-container select,
@@ -246,6 +260,7 @@ body {
     color: #666;
 }
 
+/* Disabled Styles */
 .play-btn:disabled,
 #randomExerciseBtn:disabled,
 #randomTempoBtn:disabled,
@@ -263,6 +278,7 @@ body {
     cursor: not-allowed;
 }
 
+/* Active Option Styles */
 .selector option.active-option {
     background-color: #ffffff;
     color: inherit;
@@ -280,6 +296,7 @@ body {
     color: #96318d;
 }
 
+/* Playlist Group */
 .playlist-group {
     display: flex;
     align-items: center;
@@ -312,6 +329,7 @@ body {
     text-align: left;
 }
 
+/* Responsive Design */
 @media (max-width: 600px) and (orientation: portrait) {
     * {
         margin: 0;
@@ -453,6 +471,7 @@ body {
     }
 }
 
+/* Icon Buttons */
 .icon-btn {
     border: 2px solid #000;
     color: #fff;
@@ -504,6 +523,7 @@ body {
     cursor: not-allowed;
 }
 
+/* Exercise Group */
 .exercise-group {
     display: flex;
     align-items: center;
@@ -542,6 +562,7 @@ body {
     cursor: not-allowed;
 }
 
+/* Volume and Tempo Controls */
 .volume-control,
 .tempo-control {
     margin: 25px 0;
@@ -559,11 +580,13 @@ body {
     margin: 25px 0 50px 0;
 }
 
+/* Progress Bars */
+
+/* Main Progress Bar - Always Visible */
 .progress-container {
     width: 75%;
     max-width: 600px;
     margin: 20px auto;
-    /* Removed display: none; to show progress bar */
 }
 
 .progress-bar {
@@ -594,18 +617,12 @@ body {
     font-weight: normal;
 }
 
-.time {
-    display: inline-block;
-    min-width: 40px;
-}
-
+/* Playlist Progress Bar - Hidden by Default */
 .playlist-progress-container {
     width: 75%;
     max-width: 600px;
     margin: 20px auto;
-    display: flex;
-    align-items: center;
-    /* Removed display: none; to show playlist progress bar */
+    display: none; /* Hide initially */
 }
 
 .playlist-progress-bar {
@@ -636,7 +653,6 @@ body {
 }
 
 /* Scrollbar Styles */
-
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
