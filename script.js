@@ -502,6 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initializeExercise(selectedExercise, isPlaylistMode = false) {
         audio.src = selectedExercise.audioSrc;
+	audio.load(); // Add this line to load the new audio source    
         sheetMusicImg.src = selectedExercise.sheetMusicSrc;
         tempoSlider.min = selectedExercise.originalTempo / 2;
         tempoSlider.max = selectedExercise.originalTempo * 2;
@@ -657,15 +658,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     playPauseBtn.addEventListener('click', function() {
-        if (audio.paused) {
-            audio.play();
-            this.textContent = 'Pause';
-            updateProgressBar();
-        } else {
-            audio.pause();
-            this.textContent = 'Play';
-        }
-    });
+    if (audio.paused) {
+        audio.play();
+        this.textContent = 'Pause';
+        updateProgressBarSmoothly(); // Use the smooth update function
+    } else {
+        audio.pause();
+        this.textContent = 'Play';
+    }
+});
+
 
     audio.addEventListener('timeupdate', function() {
         updateProgressBar();
@@ -676,6 +678,15 @@ document.addEventListener('DOMContentLoaded', function() {
         progress.style.width = progressPercent + '%';
         updateCurrentTime();
     }
+	function updateProgressBarSmoothly() {
+    if (!audio.paused) {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        progress.style.width = progressPercent + '%';
+        updateCurrentTime();
+        requestAnimationFrame(updateProgressBarSmoothly);
+    }
+}
+
 
     volumeSlider.addEventListener('input', function() {
         audio.volume = this.value;
