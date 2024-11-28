@@ -484,25 +484,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateExerciseList(category) {
-        exerciseSelector.innerHTML = '';
-        const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
-        filteredExercises.forEach((exercise, index) => {
-            const option = document.createElement('option');
-            option.value = exercise.id;
-            option.textContent = exercise.name;
-            if (index === 0) {
-                option.classList.add('active-option');
-            }
-            exerciseSelector.appendChild(option);
-        });
-        if (filteredExercises.length > 0) {
-            initializeExercise(filteredExercises[0]);
+    exerciseSelector.innerHTML = '';
+    const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
+    filteredExercises.forEach((exercise, index) => {
+        const option = document.createElement('option');
+        option.value = exercise.id;
+        option.textContent = exercise.name;
+        if (index === 0) {
+            option.classList.add('active-option');
         }
+        exerciseSelector.appendChild(option);
+    });
+    if (filteredExercises.length > 0) {
+        initializeExercise(filteredExercises[0]); // Ensure the first exercise is loaded
     }
+}
+
 
     function initializeExercise(selectedExercise, isPlaylistMode = false) {
-        audio.src = selectedExercise.audioSrc;
-	audio.load(); // Add this line to load the new audio source    
+    audio.src = selectedExercise.audioSrc;
+    audio.preload = 'auto'; // Ensure the audio is set to preload
+    audio.load(); // Load the new audio source   
         sheetMusicImg.src = selectedExercise.sheetMusicSrc;
         tempoSlider.min = selectedExercise.originalTempo / 2;
         tempoSlider.max = selectedExercise.originalTempo * 2;
@@ -659,9 +661,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     playPauseBtn.addEventListener('click', function() {
     if (audio.paused) {
-        audio.play();
-        this.textContent = 'Pause';
-        updateProgressBarSmoothly(); // Use the smooth update function
+        if (audio.readyState < 3) { // Check if audio is ready
+            audio.load(); // Load the audio if not ready
+        }
+        audio.play().then(() => {
+            this.textContent = 'Pause';
+            updateProgressBarSmoothly(); // Use the smooth update function
+        }).catch((error) => {
+            console.error('Error playing audio:', error);
+            alert('Audio is not ready to play yet. Please try again in a moment.');
+        });
     } else {
         audio.pause();
         this.textContent = 'Play';
@@ -669,23 +678,29 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
+
     audio.addEventListener('timeupdate', function() {
         updateProgressBar();
     });
 
     function updateProgressBar() {
-        const progressPercent = (audio.currentTime / audio.duration) * 100;
-        progress.style.width = progressPercent + '%';
-        updateCurrentTime();
-    }
+    progress.style.transition = ''; // Reset to default (no transition)
+    const progressPercent = (audio.currentTime / audio.duration) * 100;
+    progress.style.width = progressPercent + '%';
+    updateCurrentTime();
+}
+
 	function updateProgressBarSmoothly() {
     if (!audio.paused) {
         const progressPercent = (audio.currentTime / audio.duration) * 100;
+        progress.style.transition = 'width 0.2s linear'; // Add this line
         progress.style.width = progressPercent + '%';
         updateCurrentTime();
         requestAnimationFrame(updateProgressBarSmoothly);
     }
 }
+
 
 
     volumeSlider.addEventListener('input', function() {
@@ -724,19 +739,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateProgress(e) {
-        const rect = progressContainer.getBoundingClientRect();
-        let x;
-        if (e.type === 'touchmove' || e.type === 'touchstart') {
-            x = e.touches[0].clientX - rect.left;
-        } else {
-            x = e.clientX - rect.left;
-        }
-        const width = progressContainer.clientWidth;
-        let clickedValue = (x / width);
-        clickedValue = Math.min(1, Math.max(0, clickedValue));
-        audio.currentTime = clickedValue * audio.duration;
-        updateProgressBar();
+    const rect = progressContainer.getBoundingClientRect();
+    let x;
+    if (e.type === 'touchmove' || e.type === 'touchstart') {
+        x = e.touches[0].clientX - rect.left;
+    } else {
+        x = e.clientX - rect.left;
     }
+    const width = progressContainer.clientWidth;
+    let clickedValue = (x / width);
+    clickedValue = Math.min(1, Math.max(0, clickedValue));
+    audio.currentTime = clickedValue * audio.duration;
+    progress.style.transition = 'none'; // Remove transition during seeking
+    updateProgressBar();
+}
+
 
     // Set the category to 'all' on page load
     categorySelector.value = 'all';
