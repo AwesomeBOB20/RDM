@@ -484,27 +484,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateExerciseList(category) {
-    exerciseSelector.innerHTML = '';
-    const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
-    filteredExercises.forEach((exercise, index) => {
-        const option = document.createElement('option');
-        option.value = exercise.id;
-        option.textContent = exercise.name;
-        if (index === 0) {
-            option.classList.add('active-option');
+        exerciseSelector.innerHTML = '';
+        const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
+        filteredExercises.forEach((exercise, index) => {
+            const option = document.createElement('option');
+            option.value = exercise.id;
+            option.textContent = exercise.name;
+            if (index === 0) {
+                option.classList.add('active-option');
+            }
+            exerciseSelector.appendChild(option);
+        });
+        if (filteredExercises.length > 0) {
+            initializeExercise(filteredExercises[0]); // Ensure the first exercise is loaded
         }
-        exerciseSelector.appendChild(option);
-    });
-    if (filteredExercises.length > 0) {
-        initializeExercise(filteredExercises[0]); // Ensure the first exercise is loaded
     }
-}
-
 
     function initializeExercise(selectedExercise, isPlaylistMode = false) {
-    audio.src = selectedExercise.audioSrc;
-    audio.preload = 'auto'; // Ensure the audio is set to preload
-    audio.load(); // Load the new audio source   
+        audio.src = selectedExercise.audioSrc;
+        audio.preload = 'auto'; // Ensure the audio is set to preload
+        audio.load(); // Load the new audio source   
         sheetMusicImg.src = selectedExercise.sheetMusicSrc;
         tempoSlider.min = selectedExercise.originalTempo / 2;
         tempoSlider.max = selectedExercise.originalTempo * 2;
@@ -552,15 +551,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function resetProgressBar() {
-    // Remove transition for instant reset
-    progress.classList.remove('smooth-transition');
-    progress.classList.add('no-transition');
-    
-    progress.style.width = '0%';
-    currentTimeDisplay.textContent = '0:00';
-    audio.currentTime = 0;
-}
-
+        progress.style.width = '0%';
+        currentTimeDisplay.textContent = '0:00';
+        audio.currentTime = 0;
+    }
 
     function updateSliderBackground(slider, color1, color2) {
         const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
@@ -665,60 +659,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     playPauseBtn.addEventListener('click', function() {
-    if (audio.paused) {
-        if (audio.readyState < 3) { // Check if audio is ready
-            audio.load(); // Load the audio if not ready
+        if (audio.paused) {
+            if (audio.readyState < 3) { // Check if audio is ready
+                audio.load(); // Load the audio if not ready
+            }
+            audio.play().then(() => {
+                this.textContent = 'Pause';
+                updateProgressBarSmoothly(); // Start smooth updates
+            }).catch((error) => {
+                console.error('Error playing audio:', error);
+                alert('Audio is not ready to play yet. Please try again in a moment.');
+            });
+        } else {
+            audio.pause();
+            this.textContent = 'Play';
         }
-        audio.play().then(() => {
-            this.textContent = 'Pause';
-            updateProgressBarSmoothly(); // Use the smooth update function
-        }).catch((error) => {
-            console.error('Error playing audio:', error);
-            alert('Audio is not ready to play yet. Please try again in a moment.');
-        });
-    } else {
-        audio.pause();
-        this.textContent = 'Play';
-    }
-});
-
-
-
-
-    audio.addEventListener('timeupdate', function() {
-        updateProgressBar();
     });
-    audio.addEventListener('ended', function() {
-    resetProgressBar();
-    playPauseBtn.textContent = 'Play';
-});
 
-
-    function updateProgressBar() {
-    progress.classList.add('smooth-transition');
-    progress.classList.remove('no-transition');
-    
-    const progressPercent = (audio.currentTime / audio.duration) * 100;
-    progress.style.width = progressPercent + '%';
-    updateCurrentTime();
-}
-
-
-	function updateProgressBarSmoothly() {
-    if (!audio.paused) {
-        // Ensure smooth transition during playback
-        progress.classList.add('smooth-transition');
-        progress.classList.remove('no-transition');
-        
-        const progressPercent = (audio.currentTime / audio.duration) * 100;
-        progress.style.width = progressPercent + '%';
-        updateCurrentTime();
-        requestAnimationFrame(updateProgressBarSmoothly);
+    // Update the progress bar smoothly using requestAnimationFrame
+    function updateProgressBarSmoothly() {
+        if (!audio.paused) {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = progressPercent + '%';
+            updateCurrentTime();
+            requestAnimationFrame(updateProgressBarSmoothly);
+        }
     }
-}
 
+    // Simplify the resetProgressBar function
+    function resetProgressBar() {
+        progress.style.width = '0%';
+        currentTimeDisplay.textContent = '0:00';
+        audio.currentTime = 0;
+    }
 
-
+    // Ensure the progress bar resets instantly when audio ends
+    audio.addEventListener('ended', function() {
+        resetProgressBar();
+        playPauseBtn.textContent = 'Play';
+    });
 
     volumeSlider.addEventListener('input', function() {
         audio.volume = this.value;
@@ -756,24 +735,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateProgress(e) {
-    progress.classList.remove('smooth-transition');
-    progress.classList.add('no-transition');
-    
-    const rect = progressContainer.getBoundingClientRect();
-    let x;
-    if (e.type.startsWith('touch')) {
-        x = e.touches[0].clientX - rect.left;
-    } else {
-        x = e.clientX - rect.left;
+        const rect = progressContainer.getBoundingClientRect();
+        let x;
+        if (e.type.startsWith('touch')) {
+            x = e.touches[0].clientX - rect.left;
+        } else {
+            x = e.clientX - rect.left;
+        }
+        const width = progressContainer.clientWidth;
+        let clickedValue = (x / width);
+        clickedValue = Math.min(1, Math.max(0, clickedValue));
+        audio.currentTime = clickedValue * audio.duration;
+        updateProgressBar();
     }
-    const width = progressContainer.clientWidth;
-    let clickedValue = (x / width);
-    clickedValue = Math.min(1, Math.max(0, clickedValue));
-    audio.currentTime = clickedValue * audio.duration;
-    updateProgressBar();
-}
 
-
+    function updateProgressBar() {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        progress.style.width = progressPercent + '%';
+        updateCurrentTime();
+    }
 
     // Set the category to 'all' on page load
     categorySelector.value = 'all';
@@ -781,50 +761,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Playlist Functions
     function startPlaylist(playlistId) {
-    currentPlaylist = playlists[playlistId];
-    currentPlaylistItemIndex = 0;
-    currentTempoIndex = 0;
-    currentRepetition = 0;
-    isPlayingPlaylist = true;
+        currentPlaylist = playlists[playlistId];
+        currentPlaylistItemIndex = 0;
+        currentTempoIndex = 0;
+        currentRepetition = 0;
+        isPlayingPlaylist = true;
 
-    // Disable controls during playlist playback
-    categorySelector.disabled = true;
-    minTempoInput.disabled = true;
-    maxTempoInput.disabled = true;
-    randomExerciseBtn.disabled = true;
-    randomTempoBtn.disabled = true;
-    tempoSlider.disabled = true;  // Disable tempo slider during playlist
-    prevPlaylistItemBtn.disabled = false;
-    nextPlaylistItemBtn.disabled = false;
+        // Disable controls during playlist playback
+        categorySelector.disabled = true;
+        minTempoInput.disabled = true;
+        maxTempoInput.disabled = true;
+        randomExerciseBtn.disabled = true;
+        randomTempoBtn.disabled = true;
+        tempoSlider.disabled = true;  // Disable tempo slider during playlist
+        prevPlaylistItemBtn.disabled = false;
+        nextPlaylistItemBtn.disabled = false;
 
-    stopPlaylistBtn.disabled = false;        // Enable stop playlist button
-    playlistQueueSelect.disabled = false;    // Enable playlist queue
+        stopPlaylistBtn.disabled = false;        // Enable stop playlist button
+        playlistQueueSelect.disabled = false;    // Enable playlist queue
 
-    // Reset category selector to 'all' and disable it
-    categorySelector.value = 'all';
-    categorySelector.disabled = true;
+        // Reset category selector to 'all' and disable it
+        categorySelector.value = 'all';
+        categorySelector.disabled = true;
 
-    // Show playlist progress bar
-    playlistProgressContainer.style.display = 'flex';
+        // Show playlist progress bar
+        playlistProgressContainer.style.display = 'flex';
 
-    // Update the playlist selector to reflect the selected playlist
-    playlistSelector.value = playlistId;
+        // Update the playlist selector to reflect the selected playlist
+        playlistSelector.value = playlistId;
 
-    // Update the exercise selector to show only exercises in the playlist
-    updateExerciseListForPlaylist(currentPlaylist);
+        // Update the exercise selector to show only exercises in the playlist
+        updateExerciseListForPlaylist(currentPlaylist);
 
-    // Change play button color to indicate playlist mode (purple)
-    playPauseBtn.classList.add('playlist-mode');
+        // Change play button color to indicate playlist mode (purple)
+        playPauseBtn.classList.add('playlist-mode');
 
-    // Add purple styles to exercise selector and buttons
-    exerciseSelector.classList.add('purple-btn');
-    prevExerciseBtn.classList.add('purple-btn');
-    nextExerciseBtn.classList.add('purple-btn');
+        // Add purple styles to exercise selector and buttons
+        exerciseSelector.classList.add('purple-btn');
+        prevExerciseBtn.classList.add('purple-btn');
+        nextExerciseBtn.classList.add('purple-btn');
 
-    playCurrentPlaylistItem();
-    updatePlaylistQueueDisplay();
-    updatePlaylistProgressBar();
-}
+        playCurrentPlaylistItem();
+        updatePlaylistQueueDisplay();
+        updatePlaylistProgressBar();
+    }
 
     function updateExerciseListForPlaylist(playlist) {
         exerciseSelector.innerHTML = '';
@@ -946,45 +926,44 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function stopPlaylist() {
-    audio.pause();
-    isPlayingPlaylist = false;
-    currentPlaylist = null;
-    playPauseBtn.textContent = 'Play';
-    resetPlaylistControls();
-    resetProgressBar();
+        audio.pause();
+        isPlayingPlaylist = false;
+        currentPlaylist = null;
+        playPauseBtn.textContent = 'Play';
+        resetPlaylistControls();
+        resetProgressBar();
 
-    // Reset the exercise selector to show exercises based on the selected category
-    updateExerciseList(categorySelector.value);
+        // Reset the exercise selector to show exercises based on the selected category
+        updateExerciseList(categorySelector.value);
 
-    // Reset play button color back to default (remove playlist mode color)
-    playPauseBtn.classList.remove('playlist-mode');
-}
-
+        // Reset play button color back to default (remove playlist mode color)
+        playPauseBtn.classList.remove('playlist-mode');
+    }
 
     function resetPlaylistControls() {
-    stopPlaylistBtn.disabled = true;
-    playlistQueueSelect.disabled = true;
+        stopPlaylistBtn.disabled = true;
+        playlistQueueSelect.disabled = true;
 
-    exerciseSelector.disabled = false;
-    categorySelector.disabled = false;
-    minTempoInput.disabled = false;
-    maxTempoInput.disabled = false;
-    randomExerciseBtn.disabled = false;
-    randomTempoBtn.disabled = false;
-    tempoSlider.disabled = false;  // Re-enable tempo slider
-    prevPlaylistItemBtn.disabled = true;
-    nextPlaylistItemBtn.disabled = true;
-    playPauseBtn.textContent = 'Play';
-    playlistSelector.value = '';
-    playlistProgressContainer.style.display = 'none'; // Hide playlist progress bar
-    updatePlaylistQueueDisplay(); // Clear the playlist queue display
-    updatePlaylistProgressBar(); // Reset the playlist progress bar
+        exerciseSelector.disabled = false;
+        categorySelector.disabled = false;
+        minTempoInput.disabled = false;
+        maxTempoInput.disabled = false;
+        randomExerciseBtn.disabled = false;
+        randomTempoBtn.disabled = false;
+        tempoSlider.disabled = false;  // Re-enable tempo slider
+        prevPlaylistItemBtn.disabled = true;
+        nextPlaylistItemBtn.disabled = true;
+        playPauseBtn.textContent = 'Play';
+        playlistSelector.value = '';
+        playlistProgressContainer.style.display = 'none'; // Hide playlist progress bar
+        updatePlaylistQueueDisplay(); // Clear the playlist queue display
+        updatePlaylistProgressBar(); // Reset the playlist progress bar
 
-    // Remove purple styles from exercise selector and buttons
-    exerciseSelector.classList.remove('purple-btn');
-    prevExerciseBtn.classList.remove('purple-btn');
-    nextExerciseBtn.classList.remove('purple-btn');
-}
+        // Remove purple styles from exercise selector and buttons
+        exerciseSelector.classList.remove('purple-btn');
+        prevExerciseBtn.classList.remove('purple-btn');
+        nextExerciseBtn.classList.remove('purple-btn');
+    }
 
     function updatePlaylistQueueDisplay() {
         playlistQueueSelect.innerHTML = ''; // Clear existing options
