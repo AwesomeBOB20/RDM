@@ -552,10 +552,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function resetProgressBar() {
-        progress.style.width = '0%';
-        currentTimeDisplay.textContent = '0:00';
-        audio.currentTime = 0;
-    }
+    // Remove transition for instant reset
+    progress.classList.remove('smooth-transition');
+    progress.classList.add('no-transition');
+    
+    progress.style.width = '0%';
+    currentTimeDisplay.textContent = '0:00';
+    audio.currentTime = 0;
+}
+
 
     function updateSliderBackground(slider, color1, color2) {
         const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
@@ -683,23 +688,35 @@ document.addEventListener('DOMContentLoaded', function() {
     audio.addEventListener('timeupdate', function() {
         updateProgressBar();
     });
+    audio.addEventListener('ended', function() {
+    resetProgressBar();
+    playPauseBtn.textContent = 'Play';
+});
+
 
     function updateProgressBar() {
-    progress.style.transition = ''; // Reset to default (no transition)
+    progress.classList.add('smooth-transition');
+    progress.classList.remove('no-transition');
+    
     const progressPercent = (audio.currentTime / audio.duration) * 100;
     progress.style.width = progressPercent + '%';
     updateCurrentTime();
 }
 
+
 	function updateProgressBarSmoothly() {
     if (!audio.paused) {
+        // Ensure smooth transition during playback
+        progress.classList.add('smooth-transition');
+        progress.classList.remove('no-transition');
+        
         const progressPercent = (audio.currentTime / audio.duration) * 100;
-        progress.style.transition = 'width 0.2s linear'; // Add this line
         progress.style.width = progressPercent + '%';
         updateCurrentTime();
         requestAnimationFrame(updateProgressBarSmoothly);
     }
 }
+
 
 
 
@@ -739,9 +756,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateProgress(e) {
+    progress.classList.remove('smooth-transition');
+    progress.classList.add('no-transition');
+    
     const rect = progressContainer.getBoundingClientRect();
     let x;
-    if (e.type === 'touchmove' || e.type === 'touchstart') {
+    if (e.type.startsWith('touch')) {
         x = e.touches[0].clientX - rect.left;
     } else {
         x = e.clientX - rect.left;
@@ -750,9 +770,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let clickedValue = (x / width);
     clickedValue = Math.min(1, Math.max(0, clickedValue));
     audio.currentTime = clickedValue * audio.duration;
-    progress.style.transition = 'none'; // Remove transition during seeking
     updateProgressBar();
 }
+
 
 
     // Set the category to 'all' on page load
