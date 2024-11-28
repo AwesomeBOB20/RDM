@@ -603,7 +603,16 @@ body {
 .progress {
     width: 0%;
     height: 100%;
-    background-color: #d35400; /* Changed to orange */
+    background-color: #fe6429; /* Changed to orange */
+}
+/* Class to add smooth transition */
+.smooth-transition {
+    transition: width 0.1s linear;
+}
+
+/* Class to remove transition */
+.no-transition {
+    transition: none;
 }
 
 .time-overlay {
