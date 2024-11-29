@@ -501,44 +501,47 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initializeExercise(selectedExercise, isPlaylistMode = false) {
-        audio.src = selectedExercise.audioSrc;
-        audio.preload = 'auto'; // Ensure the audio is set to preload
-        audio.load(); // Load the new audio source   
-        sheetMusicImg.src = selectedExercise.sheetMusicSrc;
-        tempoSlider.min = selectedExercise.originalTempo / 2;
-        tempoSlider.max = selectedExercise.originalTempo * 2;
-        tempoSlider.value = selectedExercise.originalTempo;
-        tempoLabel.textContent = 'BPM: ' + selectedExercise.originalTempo;
-        updatePlaybackRate();
-        updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
-        updateSliderBackground(volumeSlider, '#96318d', '#ffffff');
-        audio.onloadedmetadata = function() {
-            updateTotalTime();
-        };
-        // Clear min and max tempo input values
-        minTempoInput.value = '';
-        maxTempoInput.value = '';
+    audio.src = selectedExercise.audioSrc;
+    audio.preload = 'auto'; // Ensure the audio is set to preload
+    audio.load(); // Load the new audio source   
+    sheetMusicImg.src = selectedExercise.sheetMusicSrc;
+    tempoSlider.min = selectedExercise.originalTempo / 2;
+    tempoSlider.max = selectedExercise.originalTempo * 2;
+    tempoSlider.value = selectedExercise.originalTempo;
+    tempoLabel.textContent = 'BPM: ' + selectedExercise.originalTempo;
+    updatePlaybackRate();
+    updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+    updateSliderBackground(volumeSlider, '#96318d', '#ffffff');
+    audio.onloadedmetadata = function() {
+        updateTotalTime();
+    };
+    // Clear min and max tempo input values
+    minTempoInput.value = '';
+    maxTempoInput.value = '';
 
-        if (!isPlaylistMode) {
-            // Actions specific to normal mode
-            playPauseBtn.textContent = 'Play';
-            audio.pause();
-            resetProgressBar();
-            // Enable looping in normal mode
-            audio.loop = true;
-        } else {
-            // Disable looping in playlist mode
-            audio.loop = false;
-        }
+    // Reset the progress bar for both normal and playlist modes
+    resetProgressBar();
 
-        // Update the active option in exercise selector
-        Array.from(exerciseSelector.options).forEach(option => {
-            option.classList.remove('active-option');
-            if (parseInt(option.value) === selectedExercise.id) {
-                option.classList.add('active-option');
-            }
-        });
+    if (!isPlaylistMode) {
+        // Actions specific to normal mode
+        playPauseBtn.textContent = 'Play';
+        audio.pause();
+        // Enable looping in normal mode
+        audio.loop = true;
+    } else {
+        // Disable looping in playlist mode
+        audio.loop = false;
     }
+
+    // Update the active option in exercise selector
+    Array.from(exerciseSelector.options).forEach(option => {
+        option.classList.remove('active-option');
+        if (parseInt(option.value) === selectedExercise.id) {
+            option.classList.add('active-option');
+        }
+    });
+}
+
 
     function updatePlaybackRate() {
         const currentTempo = parseInt(tempoSlider.value);
@@ -854,50 +857,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function playExerciseRepetitions(repetitions) {
-        function playNextRepetition() {
-            if (currentRepetition < repetitions) {
-                // Play the exercise
-                audio.currentTime = 0;
+    function playNextRepetition() {
+        if (currentRepetition < repetitions) {
+            // Play the exercise
+            audio.currentTime = 0;
 
-                // Clear previous event handler
-                audio.onended = null;
+            // Clear previous event handler
+            audio.onended = null;
 
-                audio.play();
-                playPauseBtn.textContent = 'Pause';
+            audio.play();
+            playPauseBtn.textContent = 'Pause';
 
-                // Set up the next repetition after the current one ends
-                audio.onended = function() {
-                    currentRepetition++;
-                    updatePlaylistQueueDisplay();
-                    updatePlaylistProgressBar();
-                    playNextRepetition();
-                };
+            // Start updating the progress bar
+            updateProgressBarSmoothly();
 
-                // Update the playlist queue display to reflect the current playing item
+            // Set up the next repetition after the current one ends
+            audio.onended = function() {
+                currentRepetition++;
                 updatePlaylistQueueDisplay();
                 updatePlaylistProgressBar();
-            } else {
-                // Move to next tempo
-                currentTempoIndex++;
-                currentRepetition = 0;
-                if (currentTempoIndex >= currentPlaylist.items[currentPlaylistItemIndex].tempos.length) {
-                    // Move to next exercise
-                    currentPlaylistItemIndex++;
-                    currentTempoIndex = 0;
-                    if (currentPlaylistItemIndex >= currentPlaylist.items.length) {
-                        // Playlist finished
-                        isPlayingPlaylist = false;
-                        currentPlaylist = null;
-                        resetPlaylistControls();
-                        return;
-                    }
-                }
-                playCurrentPlaylistItem();
-            }
-        }
+                playNextRepetition();
+            };
 
-        playNextRepetition();
+            // Update the playlist queue display to reflect the current playing item
+            updatePlaylistQueueDisplay();
+            updatePlaylistProgressBar();
+        } else {
+            // Move to next tempo
+            currentTempoIndex++;
+            currentRepetition = 0;
+            if (currentTempoIndex >= currentPlaylist.items[currentPlaylistItemIndex].tempos.length) {
+                // Move to next exercise
+                currentPlaylistItemIndex++;
+                currentTempoIndex = 0;
+                if (currentPlaylistItemIndex >= currentPlaylist.items.length) {
+                    // Playlist finished
+                    isPlayingPlaylist = false;
+                    currentPlaylist = null;
+                    resetPlaylistControls();
+                    return;
+                }
+            }
+            playCurrentPlaylistItem();
+        }
     }
+
+    playNextRepetition();
+}
+
 
     // Event Listener for Playlist Selector
     playlistSelector.addEventListener('change', function() {
