@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Placeholder for your exercises data array
-    const exercises = [
+    const exercises = [ 
     { "id": 58, "name": "16th - Triplet", "category": ["timing"], "audioSrc": "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66eb89e0c6a839deee50a5dc.mpeg", "sheetMusicSrc": "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66eb89ec0fbb9131763bcd92.png", "originalTempo": 120 },  
     { "id": 61, "name": "16th - Triplet Roll", "category": ["timing", "rolls"], "audioSrc": "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66eb89e0c6a839068850a5da.mpeg", "sheetMusicSrc": "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66eb89ecc6a839407f50a5e2.png", "originalTempo": 100 },    
     { id: 12, name: "16th 1 Accent Grid", category: ["accent-tap"], audioSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/660de00d25bbbb56bc4d2d5f.mpeg", sheetMusicSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/662d5a89277a3844187db7fa.png", originalTempo: 120 },
