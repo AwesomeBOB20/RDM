@@ -297,6 +297,10 @@ body {
     font-size: 1rem;
 }
 
+.tempo-control {
+    margin: 25px 0 50px 0;
+}
+
 /* Progress Bars */
 
 /* Main Progress Bar */
