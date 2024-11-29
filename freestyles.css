@@ -277,7 +277,6 @@ body {
     color: #fff;
     font-weight: normal;
     font-family: 'Ubuntu', sans-serif; /* Ensure font */
-    display: block; /* Make labels block elements */
     margin-bottom: 10px; /* Add spacing below labels */
 }
 
