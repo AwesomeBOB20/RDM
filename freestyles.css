@@ -16,11 +16,13 @@ body {
 
 /* Sheet Music Styles */
 .sheet-music {
-    margin: 20px 0;
+    margin: 20px auto;
+    text-align: center; /* Center the image */
 }
 
 .sheet-music-img {
-    max-width: 100%;
+    width: 100%;
+    max-width: 1000px; /* Set maximum width to 1000px */
     height: auto;
     border: 2px solid #000;
 }
@@ -78,7 +80,7 @@ body {
     border-radius: 5px;
     outline: none;
     display: block;
-    margin: 20px auto;
+    margin: 10px auto 20px auto; /* Adjusted margins */
     box-shadow: inset 0 0 0 2px #000;
     background: #ddd;
     cursor: pointer;
@@ -267,17 +269,32 @@ body {
 .volume-control,
 .tempo-control {
     margin: 25px 0;
-    text-align: center; /* Center the content */
+    text-align: center;
 }
 
 .volume-control label,
-.tempo-control label,
-.volume-control span,
-.tempo-control span {
+.tempo-control label {
     color: #fff;
     font-weight: normal;
-    font-family: 'Ubuntu', sans-serif; /* Ensure font */
-    margin-bottom: 10px; /* Add spacing below labels */
+    font-family: 'Ubuntu', sans-serif;
+    display: inline-block;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.volume-control label {
+    margin-right: 10px;
+}
+
+.tempo-control label {
+    margin-right: 10px;
+}
+
+.volume-control span,
+.tempo-control span {
+    font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1rem;
 }
 
 /* Progress Bars */
@@ -314,7 +331,7 @@ body {
     font-size: 1rem;
     color: #000;
     font-weight: normal;
-    font-family: 'Ubuntu', sans-serif; /* Ensure font */
+    font-family: 'Ubuntu', sans-serif;
 }
 
 /* Scrollbar Styles */
