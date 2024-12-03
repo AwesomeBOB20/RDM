@@ -378,14 +378,14 @@ body {
         grid-column: 1 / -1;
     }
 
-    /* Playlist group with gap adjustment */
+    /* Playlist group with gap adjustment and flex layout */
     .playlist-group {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
+        display: flex;  /* Changed from grid to flex */
+        align-items: center;
+        justify-content: center;
         gap: 10px;  /* Changed gap from 3px to 10px */
-        width: 90%;
-        grid-column: 1 / -1;
-        justify-items: center;
+        width: 90%;  /* Ensured same width as exercise-group */
+        flex-wrap: nowrap;  /* Prevent wrapping */
         margin: 0;
     }
 
@@ -421,14 +421,14 @@ body {
         text-align: center;
     }
 
-    /* Exercise group with gap adjustment */
+    /* Exercise group with gap adjustment and flex layout */
     .exercise-group {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: auto 1fr auto;
+        display: flex;  /* Changed from grid to flex */
+        align-items: center;
+        justify-content: center;
         gap: 10px;  /* Changed gap from 3px to 10px */
-        width: 90%;
-        justify-items: center;
+        width: 90%;  /* Ensured same width as playlist-group */
+        flex-wrap: nowrap;  /* Prevent wrapping */
         margin: 0;
     }
 
