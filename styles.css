@@ -350,7 +350,7 @@ body {
     #exerciseSelector,
     #playlistSelector,
     #playlistQueue {
-        width: 100%;
+        width: 90%;
         text-align: left;
         margin: 0 8px;
         padding: 5px 8px;
