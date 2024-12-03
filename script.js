@@ -421,6 +421,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevExerciseBtn = document.getElementById('prevExerciseBtn');
     const nextExerciseBtn = document.getElementById('nextExerciseBtn');
 
+    // New elements for auto randomization
+    const autoRandomizeToggle = document.getElementById('autoRandomizeToggle');
+    const repsPerTempoInput = document.getElementById('repsPerTempo');
+
     let isDragging = false;
     playlistQueueSelect.disabled = true;
     stopPlaylistBtn.disabled = true;
@@ -441,6 +445,26 @@ document.addEventListener('DOMContentLoaded', function() {
     prevPlaylistItemBtn.disabled = true;
     nextPlaylistItemBtn.disabled = true;
 
+    // Variables for auto-randomization
+    let isRandomizeEnabled = false;
+    let repsBeforeChange = 1;
+    let currentRepCount = 0;
+
+    // Event listeners for new features
+    autoRandomizeToggle.addEventListener('change', function() {
+        isRandomizeEnabled = this.checked;
+        currentRepCount = 0; // reset count when toggled
+    });
+
+    repsPerTempoInput.addEventListener('input', function() {
+        const val = parseInt(this.value);
+        if (!isNaN(val) && val > 0) {
+            repsBeforeChange = val;
+        } else {
+            repsBeforeChange = 1;
+        }
+    });
+
     populatePlaylistSelector();
 
     function populatePlaylistSelector() {
@@ -450,7 +474,6 @@ document.addEventListener('DOMContentLoaded', function() {
         defaultOption.textContent = 'Select a Playlist';
         playlistSelector.appendChild(defaultOption);
 
-        // Ensure playlists is defined above with arrays
         if (typeof playlists !== 'undefined' && Array.isArray(playlists)) {
             playlists.forEach((playlist, index) => {
                 const option = document.createElement('option');
@@ -613,6 +636,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isPlayingPlaylist) {
             stopPlaylist();
         }
+        pickRandomTempo();
+        audio.pause();
+        resetProgressBar();
+        playPauseBtn.textContent = 'Play';
+    });
+
+    function pickRandomTempo() {
         if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
             const selectedExercise = exercises.find(e => e.id === parseInt(exerciseSelector.value));
             let minTempo = parseInt(minTempoInput.value);
@@ -641,11 +671,8 @@ document.addEventListener('DOMContentLoaded', function() {
             tempoSlider.value = randomTempo;
             updatePlaybackRate();
             updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
-            audio.pause();
-            resetProgressBar();
-            playPauseBtn.textContent = 'Play';
         }
-    });
+    }
 
     playPauseBtn.addEventListener('click', function() {
         if (audio.paused) {
@@ -677,6 +704,22 @@ document.addEventListener('DOMContentLoaded', function() {
     audio.addEventListener('ended', function() {
         resetProgressBar();
         playPauseBtn.textContent = 'Play';
+
+        // Auto-Randomization Logic
+        // If in normal mode (not playlist) and auto-randomize is enabled,
+        // increment count, and if reps are reached, pick new tempo.
+        if (!isPlayingPlaylist && isRandomizeEnabled) {
+            currentRepCount++;
+            if (currentRepCount >= repsBeforeChange) {
+                pickRandomTempo();
+                currentRepCount = 0;
+            }
+            // Automatically replay after randomization if desired
+            // If you want it to start playing again automatically:
+            audio.play();
+            playPauseBtn.textContent = 'Pause';
+            updateProgressBarSmoothly();
+        }
     });
 
     volumeSlider.addEventListener('input', function() {
