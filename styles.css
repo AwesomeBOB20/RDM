@@ -1,10 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
 
+/* Global reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Ubuntu', sans-serif;
     font-weight: normal;
-    margin: 0;
-    padding: 0;
     background-color: #1c1c1c;
     color: #ffffff;
 }
@@ -63,7 +68,6 @@ body {
     margin: 0;
     font-size: 2.5rem;
     color: #fff;
-    text-align: left;
 }
 
 .text-container p {
@@ -84,7 +88,6 @@ body {
 }
 
 .selector {
-    /* Removed fixed width to allow responsive sizing */
     max-width: 100%;
     padding: 5px 8px;
     font-size: 0.9rem;
@@ -306,7 +309,6 @@ body {
     font-weight: normal;
 }
 
-/* Removed fixed width to allow responsive sizing */
 #playlistQueue {
     text-align: left;
     overflow: hidden;
@@ -317,165 +319,6 @@ body {
 #playlistQueue option {
     text-align: left;
 }
-
-/* Responsive Design */
-@media (max-width: 600px) and (orientation: portrait) {
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    .control-container {
-        display: grid;
-        gap: 5px;
-        grid-template-columns: 1fr 1fr;
-        width: 100%;
-        justify-items: center;
-    }
-
-    .control-container > * {
-        padding: 5px 0;
-        margin: 5px 0;
-        text-align: center;
-        width: 100%;
-    }
-
-    .sheet-music-img {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-
-    #categorySelector,
-    #exerciseSelector,
-    #playlistSelector,
-    #playlistQueue {
-        width: 90%;
-        text-align: left;
-        margin: 0 8px;
-        padding: 5px 8px;
-    }
-
-    #categorySelector {
-        grid-column: 1 / -1;
-    }
-
-    #playlistSelector {
-        grid-column: 1 / -1;
-    }
-
-    /* Adjust the width of the playlist and exercise groups */
-    .playlist-group,
-    .exercise-group {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        width: 90%;
-        flex-wrap: nowrap;
-        margin: 0;
-    }
-
-    /* Playlist group adjustments */
-    #prevPlaylistItemBtn,
-    #nextPlaylistItemBtn {
-        flex: 0 0 auto;
-        width: 45px;
-        font-size: 1.2rem;
-        text-align: center;
-    }
-
-    #playlistQueue {
-        flex: 1 1 auto;
-        min-width: 0; /* Add this line */
-        width: 100%; /* Ensure it fills the parent container */
-    }
-
-    #stopPlaylistBtn {
-        grid-column: 1 / -1;
-        width: 90%;
-        text-align: center;
-        margin: 0px 12px 6px 12px; /* Set top margin to 0px */
-    }
-
-    /* Exercise group adjustments */
-    #prevExerciseBtn,
-    #nextExerciseBtn {
-        flex: 0 0 auto;
-        width: 45px;
-        font-size: 1.2rem;
-        text-align: center;
-    }
-
-    #exerciseSelector {
-        flex: 1 1 auto;
-        min-width: 0; /* Add this line */
-        width: 100%; /* Ensure it fills the parent container */
-    }
-
-    #randomExerciseBtn {
-        grid-column: 1 / -1;
-        width: 90%;
-        text-align: center;
-        margin: 0 12px 6px 12px;
-    }
-
-    #playPauseBtn,
-    #randomTempoBtn {
-        width: 90%;
-        text-align: center;
-        margin: 6px 12px;
-    }
-
-    #playPauseBtn {
-        grid-column: 1 / 2;
-    }
-
-    #randomTempoBtn {
-        grid-column: 2 / -1;
-    }
-
-    #minTempo,
-    #maxTempo {
-        width: 90%;
-        text-align: center;
-        padding: 5px;
-        margin: 5px auto;
-    }
-
-    #minTempo {
-        grid-column: 1 / 2;
-    }
-
-    #maxTempo {
-        grid-column: 2 / -1;
-    }
-
-    /* Ensure selectors and queues fill the width of their containers */
-    #exerciseSelector,
-    #playlistQueue {
-        width: 100%;
-    }
-
-    /* Adjust the grid templates if necessary */
-    .exercise-group,
-    .playlist-group {
-        display: grid; /* Change from flex to grid */
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-        gap: 10px;
-        width: 90%;
-        margin: 0;
-    }
-
-    /* Remove flex properties from select elements */
-    #playlistQueue,
-    #exerciseSelector {
-        width: 100%;
-        min-width: 0; /* Still good practice to include this */
-    }
-}
-
 
 .icon-btn {
     border: 2px solid #000;
@@ -493,9 +336,6 @@ body {
 #prevExerciseBtn,
 #nextExerciseBtn {
     background-color: #d35400;
-    width: 45px;
-    font-size: 1.2rem;
-    text-align: center;
 }
 
 #prevExerciseBtn:hover,
@@ -512,9 +352,6 @@ body {
 #prevPlaylistItemBtn,
 #nextPlaylistItemBtn {
     background-color: #96318d;
-    width: 45px;
-    font-size: 1.2rem;
-    text-align: center;
 }
 
 #prevPlaylistItemBtn:hover,
@@ -667,3 +504,128 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #e67e22;
 }
+
+/* Responsive Design */
+@media (max-width: 600px) and (orientation: portrait) {
+
+    .control-container {
+        display: grid;
+        gap: 5px;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        justify-items: center;
+    }
+
+    .control-container > * {
+        padding: 5px 0;
+        margin: 5px 0;
+        text-align: center;
+        width: 100%;
+    }
+
+    .sheet-music-img {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    #categorySelector,
+    #playlistSelector {
+        width: 90%;
+        text-align: left;
+        margin: 0 8px;
+        padding: 5px 8px;
+    }
+
+    /* Adjust the width of the playlist and exercise groups */
+    .playlist-group,
+    .exercise-group {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 10px;
+        width: 90%;
+        margin: 0;
+    }
+
+    /* Playlist group adjustments */
+    #prevPlaylistItemBtn,
+    #nextPlaylistItemBtn {
+        width: 45px;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    #playlistQueue {
+        min-width: 0;
+        padding: 5px 8px;
+        margin: 0;
+        overflow: hidden;
+        max-width: 100%;
+    }
+
+    /* Exercise group adjustments */
+    #prevExerciseBtn,
+    #nextExerciseBtn {
+        width: 45px;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    #exerciseSelector {
+        min-width: 0;
+        padding: 5px 8px;
+        margin: 0;
+        overflow: hidden;
+        max-width: 100%;
+    }
+
+    /* Ensure selectors fill the available space */
+    #playlistQueue,
+    #exerciseSelector {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #randomExerciseBtn,
+    #randomTempoBtn {
+        width: 90%;
+        text-align: center;
+        margin: 6px 12px;
+    }
+
+    #stopPlaylistBtn {
+        width: 90%;
+        text-align: center;
+        margin: 0 12px 6px 12px;
+    }
+
+    #playPauseBtn {
+        width: 90%;
+        text-align: center;
+        margin: 6px 12px;
+        grid-column: 1 / -1;
+    }
+
+    #minTempo,
+    #maxTempo {
+        width: 90%;
+        text-align: center;
+        padding: 5px;
+        margin: 5px auto;
+    }
+
+    #minTempo {
+        grid-column: 1 / 2;
+    }
+
+    #maxTempo {
+        grid-column: 2 / -1;
+    }
+
+    /* Adjust progress bars */
+    .progress-container,
+    .playlist-progress-container {
+        width: 90%;
+    }
+}
+
