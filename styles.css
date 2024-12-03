@@ -364,13 +364,14 @@ body {
         grid-column: 1 / -1;
     }
 
+    /* Adjust the width of the playlist and exercise groups */
     .playlist-group,
     .exercise-group {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 10px;
-        width: 100%;
+        width: 90%; /* Changed from 100% to 90% */
         flex-wrap: nowrap;
         margin: 0;
     }
@@ -386,14 +387,14 @@ body {
 
     #playlistQueue {
         flex: 1 1 auto;
-        width: auto;
+        width: 100%; /* Ensure it fills the parent container */
     }
 
     #stopPlaylistBtn {
         grid-column: 1 / -1;
         width: 90%;
         text-align: center;
-        margin: 6px 12px;
+        margin: 0px 12px 6px 12px; /* Set top margin to 0px */
     }
 
     /* Exercise group adjustments */
@@ -407,7 +408,7 @@ body {
 
     #exerciseSelector {
         flex: 1 1 auto;
-        width: auto;
+        width: 100%; /* Ensure it fills the parent container */
     }
 
     #randomExerciseBtn {
@@ -448,7 +449,7 @@ body {
         grid-column: 2 / -1;
     }
 
-    /* Ensure selectors and queues are full width */
+    /* Ensure selectors and queues fill the width of their containers */
     #exerciseSelector,
     #playlistQueue {
         width: 100%;
@@ -458,9 +459,9 @@ body {
     .exercise-group,
     .playlist-group {
         grid-template-columns: auto 1fr auto;
-        width: 100%;
     }
 }
+
 
 .icon-btn {
     border: 2px solid #000;
