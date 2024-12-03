@@ -371,7 +371,7 @@ body {
         align-items: center;
         justify-content: center;
         gap: 10px;
-        width: 90%; /* Changed from 100% to 90% */
+        width: 90%;
         flex-wrap: nowrap;
         margin: 0;
     }
@@ -387,6 +387,7 @@ body {
 
     #playlistQueue {
         flex: 1 1 auto;
+        min-width: 0; /* Add this line */
         width: 100%; /* Ensure it fills the parent container */
     }
 
@@ -408,6 +409,7 @@ body {
 
     #exerciseSelector {
         flex: 1 1 auto;
+        min-width: 0; /* Add this line */
         width: 100%; /* Ensure it fills the parent container */
     }
 
