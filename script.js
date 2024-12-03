@@ -422,11 +422,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextExerciseBtn = document.getElementById('nextExerciseBtn');
 
     let isDragging = false;
-    // Disable playlist queue and stop playlist button on page load
     playlistQueueSelect.disabled = true;
     stopPlaylistBtn.disabled = true;
 
-    // Playlist Control Variables
     let currentPlaylist = null;
     let currentPlaylistItemIndex = 0;
     let currentTempoIndex = 0;
@@ -434,21 +432,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let isPlayingPlaylist = false;
     let playlistQueueMap = [];
 
-    // Set audio.loop to true by default in normal mode
     audio.loop = true;
 
-    // Reset the playlist selector to the default option on page load
     playlistSelector.value = '';
-
-    // Clear min and max tempo inputs on page load
     minTempoInput.value = '';
     maxTempoInput.value = '';
 
-    // Disable prev/next buttons initially
     prevPlaylistItemBtn.disabled = true;
     nextPlaylistItemBtn.disabled = true;
 
-    // Populate the playlist selector
     populatePlaylistSelector();
 
     function populatePlaylistSelector() {
@@ -457,12 +449,16 @@ document.addEventListener('DOMContentLoaded', function() {
         defaultOption.value = '';
         defaultOption.textContent = 'Select a Playlist';
         playlistSelector.appendChild(defaultOption);
-        playlists.forEach((playlist, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            option.textContent = playlist.name;
-            playlistSelector.appendChild(option);
-        });
+
+        // Ensure playlists is defined above with arrays
+        if (typeof playlists !== 'undefined' && Array.isArray(playlists)) {
+            playlists.forEach((playlist, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = playlist.name;
+                playlistSelector.appendChild(option);
+            });
+        }
     }
 
     function formatTime(timeInSeconds) {
@@ -485,63 +481,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateExerciseList(category) {
         exerciseSelector.innerHTML = '';
-        const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
-        filteredExercises.forEach((exercise, index) => {
-            const option = document.createElement('option');
-            option.value = exercise.id;
-            option.textContent = exercise.name;
-            if (index === 0) {
-                option.classList.add('active-option');
+        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
+            const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
+            filteredExercises.forEach((exercise, index) => {
+                const option = document.createElement('option');
+                option.value = exercise.id;
+                option.textContent = exercise.name;
+                if (index === 0) {
+                    option.classList.add('active-option');
+                }
+                exerciseSelector.appendChild(option);
+            });
+            if (filteredExercises.length > 0) {
+                initializeExercise(filteredExercises[0]);
             }
-            exerciseSelector.appendChild(option);
-        });
-        if (filteredExercises.length > 0) {
-            initializeExercise(filteredExercises[0]); // Ensure the first exercise is loaded
         }
     }
 
     function initializeExercise(selectedExercise, isPlaylistMode = false) {
-    audio.src = selectedExercise.audioSrc;
-    audio.preload = 'auto'; // Ensure the audio is set to preload
-    audio.load(); // Load the new audio source   
-    sheetMusicImg.src = selectedExercise.sheetMusicSrc;
-    tempoSlider.min = selectedExercise.originalTempo / 2;
-    tempoSlider.max = selectedExercise.originalTempo * 2;
-    tempoSlider.value = selectedExercise.originalTempo;
-    tempoLabel.textContent = 'BPM: ' + selectedExercise.originalTempo;
-    updatePlaybackRate();
-    updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
-    updateSliderBackground(volumeSlider, '#96318d', '#ffffff');
-    audio.onloadedmetadata = function() {
-        updateTotalTime();
-    };
-    // Clear min and max tempo input values
-    minTempoInput.value = '';
-    maxTempoInput.value = '';
+        audio.src = selectedExercise.audioSrc;
+        audio.preload = 'auto';
+        audio.load();
+        sheetMusicImg.src = selectedExercise.sheetMusicSrc;
+        tempoSlider.min = selectedExercise.originalTempo / 2;
+        tempoSlider.max = selectedExercise.originalTempo * 2;
+        tempoSlider.value = selectedExercise.originalTempo;
+        tempoLabel.textContent = 'BPM: ' + selectedExercise.originalTempo;
+        updatePlaybackRate();
+        updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+        updateSliderBackground(volumeSlider, '#96318d', '#ffffff');
+        audio.onloadedmetadata = function() {
+            updateTotalTime();
+        };
+        minTempoInput.value = '';
+        maxTempoInput.value = '';
+        resetProgressBar();
 
-    // Reset the progress bar for both normal and playlist modes
-    resetProgressBar();
-
-    if (!isPlaylistMode) {
-        // Actions specific to normal mode
-        playPauseBtn.textContent = 'Play';
-        audio.pause();
-        // Enable looping in normal mode
-        audio.loop = true;
-    } else {
-        // Disable looping in playlist mode
-        audio.loop = false;
-    }
-
-    // Update the active option in exercise selector
-    Array.from(exerciseSelector.options).forEach(option => {
-        option.classList.remove('active-option');
-        if (parseInt(option.value) === selectedExercise.id) {
-            option.classList.add('active-option');
+        if (!isPlaylistMode) {
+            playPauseBtn.textContent = 'Play';
+            audio.pause();
+            audio.loop = true;
+        } else {
+            audio.loop = false;
         }
-    });
-}
 
+        Array.from(exerciseSelector.options).forEach(option => {
+            option.classList.remove('active-option');
+            if (parseInt(option.value) === selectedExercise.id) {
+                option.classList.add('active-option');
+            }
+        });
+    }
 
     function updatePlaybackRate() {
         const currentTempo = parseInt(tempoSlider.value);
@@ -577,29 +567,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     exerciseSelector.addEventListener('change', function() {
         const selectedExerciseId = parseInt(this.value);
-        const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
+        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
+            const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
 
-        if (isPlayingPlaylist) {
-            // In playlist mode
-            const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
-
-            if (indexInPlaylist !== -1) {
-                currentPlaylistItemIndex = indexInPlaylist;
-                currentTempoIndex = 0;
-                currentRepetition = 0;
-
-                playCurrentPlaylistItem();
-                updatePlaylistQueueDisplay();
-                updatePlaylistProgressBar();
+            if (isPlayingPlaylist && currentPlaylist) {
+                const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
+                if (indexInPlaylist !== -1) {
+                    currentPlaylistItemIndex = indexInPlaylist;
+                    currentTempoIndex = 0;
+                    currentRepetition = 0;
+                    playCurrentPlaylistItem();
+                    updatePlaylistQueueDisplay();
+                    updatePlaylistProgressBar();
+                } else {
+                    console.error('Selected exercise is not in the current playlist');
+                }
             } else {
-                console.error('Selected exercise is not in the current playlist');
+                initializeExercise(selectedExercise);
+                audio.pause();
+                resetProgressBar();
+                playPauseBtn.textContent = 'Play';
             }
-        } else {
-            // In normal mode
-            initializeExercise(selectedExercise);
-            audio.pause();
-            resetProgressBar();
-            playPauseBtn.textContent = 'Play';
         }
     });
 
@@ -608,67 +596,65 @@ document.addEventListener('DOMContentLoaded', function() {
             stopPlaylist();
         }
         const category = categorySelector.value;
-        const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
-        const randomIndex = Math.floor(Math.random() * filteredExercises.length);
-        initializeExercise(filteredExercises[randomIndex]);
-        exerciseSelector.value = filteredExercises[randomIndex].id;
-        audio.pause();
-        resetProgressBar();
-        playPauseBtn.textContent = 'Play';
-        // Clear min and max tempo input values
-        minTempoInput.value = '';
-        maxTempoInput.value = '';
+        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
+            const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
+            const randomIndex = Math.floor(Math.random() * filteredExercises.length);
+            initializeExercise(filteredExercises[randomIndex]);
+            exerciseSelector.value = filteredExercises[randomIndex].id;
+            audio.pause();
+            resetProgressBar();
+            playPauseBtn.textContent = 'Play';
+            minTempoInput.value = '';
+            maxTempoInput.value = '';
+        }
     });
 
     randomTempoBtn.addEventListener('click', function() {
         if (isPlayingPlaylist) {
             stopPlaylist();
         }
-        const selectedExercise = exercises.find(e => e.id === parseInt(exerciseSelector.value));
-        let minTempo = parseInt(minTempoInput.value);
-        let maxTempo = parseInt(maxTempoInput.value);
+        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
+            const selectedExercise = exercises.find(e => e.id === parseInt(exerciseSelector.value));
+            let minTempo = parseInt(minTempoInput.value);
+            let maxTempo = parseInt(maxTempoInput.value);
 
-        // Default values if inputs are invalid or empty
-        const defaultMin = Math.floor(selectedExercise.originalTempo / 2);
-        const defaultMax = selectedExercise.originalTempo * 2;
+            const defaultMin = Math.floor(selectedExercise.originalTempo / 2);
+            const defaultMax = selectedExercise.originalTempo * 2;
 
-        // Validate minTempo and maxTempo
-        if (isNaN(minTempo) || minTempo < 1 || minTempo > 999) {
-            minTempo = defaultMin;
+            if (isNaN(minTempo) || minTempo < 1 || minTempo > 999) {
+                minTempo = defaultMin;
+            }
+            if (isNaN(maxTempo) || maxTempo < 1 || maxTempo > 999) {
+                maxTempo = defaultMax;
+            }
+
+            if (minTempo > maxTempo) {
+                [minTempo, maxTempo] = [maxTempo, minTempo];
+            }
+
+            const sliderMin = parseInt(tempoSlider.min);
+            const sliderMax = parseInt(tempoSlider.max);
+            minTempo = Math.max(minTempo, sliderMin);
+            maxTempo = Math.min(maxTempo, sliderMax);
+
+            const randomTempo = Math.floor(Math.random() * (maxTempo - minTempo + 1)) + minTempo;
+            tempoSlider.value = randomTempo;
+            updatePlaybackRate();
+            updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+            audio.pause();
+            resetProgressBar();
+            playPauseBtn.textContent = 'Play';
         }
-        if (isNaN(maxTempo) || maxTempo < 1 || maxTempo > 999) {
-            maxTempo = defaultMax;
-        }
-
-        // Ensure minTempo is less than or equal to maxTempo
-        if (minTempo > maxTempo) {
-            [minTempo, maxTempo] = [maxTempo, minTempo]; // Swap values
-        }
-
-        // Clamp the random tempo within the tempo slider's min and max
-        const sliderMin = parseInt(tempoSlider.min);
-        const sliderMax = parseInt(tempoSlider.max);
-        minTempo = Math.max(minTempo, sliderMin);
-        maxTempo = Math.min(maxTempo, sliderMax);
-
-        // Generate a random tempo within the specified range
-        const randomTempo = Math.floor(Math.random() * (maxTempo - minTempo + 1)) + minTempo;
-        tempoSlider.value = randomTempo;
-        updatePlaybackRate();
-        updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
-        audio.pause();
-        resetProgressBar();
-        playPauseBtn.textContent = 'Play';
     });
 
     playPauseBtn.addEventListener('click', function() {
         if (audio.paused) {
-            if (audio.readyState < 3) { // Check if audio is ready
-                audio.load(); // Load the audio if not ready
+            if (audio.readyState < 3) {
+                audio.load();
             }
             audio.play().then(() => {
                 this.textContent = 'Pause';
-                updateProgressBarSmoothly(); // Start smooth updates
+                updateProgressBarSmoothly();
             }).catch((error) => {
                 console.error('Error playing audio:', error);
                 alert('Audio is not ready to play yet. Please try again in a moment.');
@@ -679,7 +665,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Update the progress bar smoothly using requestAnimationFrame
     function updateProgressBarSmoothly() {
         if (!audio.paused) {
             const progressPercent = (audio.currentTime / audio.duration) * 100;
@@ -689,14 +674,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Simplify the resetProgressBar function
-    function resetProgressBar() {
-        progress.style.width = '0%';
-        currentTimeDisplay.textContent = '0:00';
-        audio.currentTime = 0;
-    }
-
-    // Ensure the progress bar resets instantly when audio ends
     audio.addEventListener('ended', function() {
         resetProgressBar();
         playPauseBtn.textContent = 'Play';
@@ -715,10 +692,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     progressContainer.addEventListener('mousedown', startDragging);
     progressContainer.addEventListener('touchstart', startDragging);
-
     document.addEventListener('mousemove', dragProgress);
     document.addEventListener('touchmove', dragProgress);
-
     document.addEventListener('mouseup', stopDragging);
     document.addEventListener('touchend', stopDragging);
 
@@ -758,11 +733,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCurrentTime();
     }
 
-    // Set the category to 'all' on page load
     categorySelector.value = 'all';
     updateExerciseList('all');
 
-    // Playlist Functions
     function startPlaylist(playlistId) {
         currentPlaylist = playlists[playlistId];
         currentPlaylistItemIndex = 0;
@@ -770,36 +743,28 @@ document.addEventListener('DOMContentLoaded', function() {
         currentRepetition = 0;
         isPlayingPlaylist = true;
 
-        // Disable controls during playlist playback
         categorySelector.disabled = true;
         minTempoInput.disabled = true;
         maxTempoInput.disabled = true;
         randomExerciseBtn.disabled = true;
         randomTempoBtn.disabled = true;
-        tempoSlider.disabled = true;  // Disable tempo slider during playlist
+        tempoSlider.disabled = true;
         prevPlaylistItemBtn.disabled = false;
         nextPlaylistItemBtn.disabled = false;
 
-        stopPlaylistBtn.disabled = false;        // Enable stop playlist button
-        playlistQueueSelect.disabled = false;    // Enable playlist queue
+        stopPlaylistBtn.disabled = false;
+        playlistQueueSelect.disabled = false;
 
-        // Reset category selector to 'all' and disable it
         categorySelector.value = 'all';
         categorySelector.disabled = true;
 
-        // Show playlist progress bar
         playlistProgressContainer.style.display = 'flex';
 
-        // Update the playlist selector to reflect the selected playlist
         playlistSelector.value = playlistId;
 
-        // Update the exercise selector to show only exercises in the playlist
         updateExerciseListForPlaylist(currentPlaylist);
 
-        // Change play button color to indicate playlist mode (purple)
         playPauseBtn.classList.add('playlist-mode');
-
-        // Add purple styles to exercise selector and buttons
         exerciseSelector.classList.add('purple-btn');
         prevExerciseBtn.classList.add('purple-btn');
         nextExerciseBtn.classList.add('purple-btn');
@@ -812,7 +777,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateExerciseListForPlaylist(playlist) {
         exerciseSelector.innerHTML = '';
         const exerciseIds = [...new Set(playlist.items.map(item => item.exerciseId))];
-        exerciseIds.forEach((exerciseId, index) => {
+        exerciseIds.forEach((exerciseId) => {
             const exercise = exercises.find(ex => ex.id === exerciseId);
             if (exercise) {
                 const option = document.createElement('option');
@@ -838,80 +803,60 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Initialize the exercise in playlist mode
         initializeExercise(exercise, true);
 
-        // Update the exercise selector
         exerciseSelector.value = exercise.id;
 
-        // Set the current tempo
         const tempo = item.tempos[currentTempoIndex];
         tempoSlider.value = tempo;
         updatePlaybackRate();
         updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
 
-        // Start playing repetitions
         playExerciseRepetitions(item.repetitionsPerTempo);
         updatePlaylistQueueDisplay();
         updatePlaylistProgressBar();
     }
 
     function playExerciseRepetitions(repetitions) {
-    function playNextRepetition() {
-        if (currentRepetition < repetitions) {
-            // Play the exercise
-            audio.currentTime = 0;
+        function playNextRepetition() {
+            if (currentRepetition < repetitions) {
+                audio.currentTime = 0;
+                audio.onended = null;
+                audio.play();
+                playPauseBtn.textContent = 'Pause';
+                updateProgressBarSmoothly();
 
-            // Clear previous event handler
-            audio.onended = null;
+                audio.onended = function() {
+                    currentRepetition++;
+                    updatePlaylistQueueDisplay();
+                    updatePlaylistProgressBar();
+                    playNextRepetition();
+                };
 
-            audio.play();
-            playPauseBtn.textContent = 'Pause';
-
-            // Start updating the progress bar
-            updateProgressBarSmoothly();
-
-            // Set up the next repetition after the current one ends
-            audio.onended = function() {
-                currentRepetition++;
                 updatePlaylistQueueDisplay();
                 updatePlaylistProgressBar();
-                playNextRepetition();
-            };
-
-            // Update the playlist queue display to reflect the current playing item
-            updatePlaylistQueueDisplay();
-            updatePlaylistProgressBar();
-        } else {
-            // Move to next tempo
-            currentTempoIndex++;
-            currentRepetition = 0;
-            if (currentTempoIndex >= currentPlaylist.items[currentPlaylistItemIndex].tempos.length) {
-                // Move to next exercise
-                currentPlaylistItemIndex++;
-                currentTempoIndex = 0;
-                if (currentPlaylistItemIndex >= currentPlaylist.items.length) {
-                    // Playlist finished
-                    isPlayingPlaylist = false;
-                    currentPlaylist = null;
-                    resetPlaylistControls();
-                    return;
+            } else {
+                currentTempoIndex++;
+                currentRepetition = 0;
+                if (currentTempoIndex >= currentPlaylist.items[currentPlaylistItemIndex].tempos.length) {
+                    currentPlaylistItemIndex++;
+                    currentTempoIndex = 0;
+                    if (currentPlaylistItemIndex >= currentPlaylist.items.length) {
+                        isPlayingPlaylist = false;
+                        currentPlaylist = null;
+                        resetPlaylistControls();
+                        return;
+                    }
                 }
+                playCurrentPlaylistItem();
             }
-            playCurrentPlaylistItem();
         }
+        playNextRepetition();
     }
 
-    playNextRepetition();
-}
-
-
-    // Event Listener for Playlist Selector
     playlistSelector.addEventListener('change', function() {
         const selectedValue = this.value;
-
         if (selectedValue === '') {
-            // If 'Select a Playlist' is selected and a playlist is playing, stop the playlist
             if (isPlayingPlaylist) {
                 stopPlaylist();
             }
@@ -939,45 +884,38 @@ document.addEventListener('DOMContentLoaded', function() {
         playPauseBtn.textContent = 'Play';
         resetPlaylistControls();
         resetProgressBar();
-
-        // Reset the exercise selector to show exercises based on the selected category
         updateExerciseList(categorySelector.value);
-
-        // Reset play button color back to default (remove playlist mode color)
         playPauseBtn.classList.remove('playlist-mode');
     }
 
     function resetPlaylistControls() {
         stopPlaylistBtn.disabled = true;
         playlistQueueSelect.disabled = true;
-
         exerciseSelector.disabled = false;
         categorySelector.disabled = false;
         minTempoInput.disabled = false;
         maxTempoInput.disabled = false;
         randomExerciseBtn.disabled = false;
         randomTempoBtn.disabled = false;
-        tempoSlider.disabled = false;  // Re-enable tempo slider
+        tempoSlider.disabled = false;
         prevPlaylistItemBtn.disabled = true;
         nextPlaylistItemBtn.disabled = true;
         playPauseBtn.textContent = 'Play';
         playlistSelector.value = '';
-        playlistProgressContainer.style.display = 'none'; // Hide playlist progress bar
-        updatePlaylistQueueDisplay(); // Clear the playlist queue display
-        updatePlaylistProgressBar(); // Reset the playlist progress bar
+        playlistProgressContainer.style.display = 'none';
+        updatePlaylistQueueDisplay();
+        updatePlaylistProgressBar();
 
-        // Remove purple styles from exercise selector and buttons
         exerciseSelector.classList.remove('purple-btn');
         prevExerciseBtn.classList.remove('purple-btn');
         nextExerciseBtn.classList.remove('purple-btn');
     }
 
     function updatePlaylistQueueDisplay() {
-        playlistQueueSelect.innerHTML = ''; // Clear existing options
+        playlistQueueSelect.innerHTML = '';
         playlistQueueMap = [];
 
         if (!isPlayingPlaylist || !currentPlaylist) {
-            // When the playlist is inactive
             const defaultOption = document.createElement('option');
             defaultOption.value = '';
             defaultOption.textContent = 'Playlist Queue';
@@ -988,7 +926,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         let optionIndex = 0;
-
         for (let i = 0; i < currentPlaylist.items.length; i++) {
             const item = currentPlaylist.items[i];
             const exercise = exercises.find(ex => ex.id === item.exerciseId);
@@ -996,27 +933,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const tempos = item.tempos;
             const reps = item.repetitionsPerTempo;
-
             for (let t = 0; t < tempos.length; t++) {
                 const tempoValue = tempos[t];
-                const totalReps = reps;
-
-                for (let r = 0; r < totalReps; r++) {
+                for (let r = 0; r < reps; r++) {
                     const option = document.createElement('option');
                     option.value = optionIndex;
                     option.textContent = `${exercise.name} at ${tempoValue} BPM`;
-
-                    // Map the option index to playlist position
                     playlistQueueMap.push({
                         playlistItemIndex: i,
                         tempoIndex: t,
                         repetition: r
                     });
 
-                    // Check if this is the current playing item
                     if (i === currentPlaylistItemIndex && t === currentTempoIndex && r === currentRepetition) {
                         option.classList.add('active-option');
-                        // Set this option as selected
                         option.selected = true;
                     }
 
@@ -1027,7 +957,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to get current index in playlistQueueMap
     function getCurrentPlaylistQueueIndex() {
         for (let i = 0; i < playlistQueueMap.length; i++) {
             const position = playlistQueueMap[i];
@@ -1037,29 +966,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 return i;
             }
         }
-        return -1; // Not found
+        return -1;
     }
 
-    // Event Listener for Playlist Queue Selection
     playlistQueueSelect.addEventListener('change', function() {
         const selectedIndex = parseInt(this.value);
         if (!isNaN(selectedIndex) && playlistQueueMap[selectedIndex]) {
             const position = playlistQueueMap[selectedIndex];
-            // Update the current positions
             currentPlaylistItemIndex = position.playlistItemIndex;
             currentTempoIndex = position.tempoIndex;
             currentRepetition = position.repetition;
-
-            // Play the selected position
             playCurrentPlaylistItem();
-
-            // Update the playlist queue display
             updatePlaylistQueueDisplay();
             updatePlaylistProgressBar();
         }
     });
 
-    // Event Listeners for Previous and Next Buttons
     prevPlaylistItemBtn.addEventListener('click', function() {
         if (isPlayingPlaylist) {
             let currentOptionIndex = getCurrentPlaylistQueueIndex();
@@ -1092,10 +1014,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Update Playlist Progress Bar
     function updatePlaylistProgressBar() {
         if (!isPlayingPlaylist || !currentPlaylist) {
-            // Reset the playlist progress bar
             playlistProgress.style.width = '0%';
             playlistProgressPercentage.textContent = '0%';
             return;
@@ -1103,7 +1023,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const totalItems = playlistQueueMap.length;
         const currentIndex = getCurrentPlaylistQueueIndex();
-
         if (totalItems > 0) {
             const progressPercent = ((currentIndex + 1) / totalItems) * 100;
             playlistProgress.style.width = progressPercent + '%';
@@ -1111,7 +1030,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Exercise Navigation Buttons
     prevExerciseBtn.addEventListener('click', function() {
         navigateExercise(-1);
     });
@@ -1121,44 +1039,40 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function navigateExercise(direction) {
-        // direction: -1 for previous, 1 for next
         const currentIndex = exerciseSelector.selectedIndex;
         const totalOptions = exerciseSelector.options.length;
 
         let newIndex = currentIndex + direction;
-
         if (newIndex < 0) {
-            newIndex = totalOptions - 1; // Wrap to last
+            newIndex = totalOptions - 1;
         } else if (newIndex >= totalOptions) {
-            newIndex = 0; // Wrap to first
+            newIndex = 0;
         }
 
         exerciseSelector.selectedIndex = newIndex;
 
-        const selectedExerciseId = parseInt(exerciseSelector.value);
-        const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
+        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
+            const selectedExerciseId = parseInt(exerciseSelector.value);
+            const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
 
-        if (isPlayingPlaylist) {
-            // In playlist mode
-            // Find the index of the selected exercise in the current playlist
-            const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
-
-            if (indexInPlaylist !== -1) {
-                currentPlaylistItemIndex = indexInPlaylist;
-                currentTempoIndex = 0;
-                currentRepetition = 0;
-
-                playCurrentPlaylistItem();
-                updatePlaylistQueueDisplay();
-                updatePlaylistProgressBar();
+            if (isPlayingPlaylist && currentPlaylist) {
+                const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
+                if (indexInPlaylist !== -1) {
+                    currentPlaylistItemIndex = indexInPlaylist;
+                    currentTempoIndex = 0;
+                    currentRepetition = 0;
+                    playCurrentPlaylistItem();
+                    updatePlaylistQueueDisplay();
+                    updatePlaylistProgressBar();
+                } else {
+                    console.error('Selected exercise is not in the current playlist');
+                }
             } else {
-                console.error('Selected exercise is not in the current playlist');
+                initializeExercise(selectedExercise);
+                audio.pause();
+                resetProgressBar();
+                playPauseBtn.textContent = 'Play';
             }
-        } else {
-            initializeExercise(selectedExercise);
-            audio.pause();
-            resetProgressBar();
-            playPauseBtn.textContent = 'Play';
         }
     }
 });
