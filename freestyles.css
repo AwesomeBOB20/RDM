@@ -224,6 +224,8 @@ body {
     .play-btn {
         grid-column: 1 / -1;
         justify-self: center;
+        width: auto;
+        padding: 6px;
     }
 }
 
