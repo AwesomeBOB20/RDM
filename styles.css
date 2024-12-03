@@ -318,6 +318,7 @@ body {
     text-align: left;
 }
 
+/* Responsive Design */
 @media (max-width: 600px) and (orientation: portrait) {
     * {
         margin: 0;
@@ -340,37 +341,41 @@ body {
         width: 100%;
     }
 
+    /* Adjusted sheet music margins */
     .sheet-music-img {
-        margin-top: 10px;
-        margin-bottom: 10px;
+        margin-top: 10px;  /* Changed from 20px to 10px */
+        margin-bottom: 10px;  /* Changed from 20px to 10px */
     }
 
+    /* Dropdown buttons with padding and margins */
     #categorySelector,
     #exerciseSelector,
     #playlistSelector,
     #playlistQueue {
         width: 90%;
-        text-align: left;
-        margin: 0 8px;
-        padding: 5px 8px;
+        text-align: left;  /* Aligned text to the left */
+        margin: 0 8px;  /* Side margins of 8px */
+        padding: 5px 8px;  /* Top and bottom padding of 5px, side padding of 8px */
     }
 
     #categorySelector {
         grid-column: 1 / -1;
     }
 
+    /* Playlist selector adjustments */
     #playlistSelector {
         grid-column: 1 / -1;
     }
 
+    /* Playlist group adjustments */
     .playlist-group {
-        display: flex;
+        display: flex;  /* Changed to flex container */
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        width: 90%;
+        gap: 10px;  /* Gap of 10px */
+        width: 90%;  /* Same width as exercise group */
         flex-wrap: nowrap;
-        margin: 0;
+        margin: 0 auto;
     }
 
     #prevPlaylistItemBtn,
@@ -380,19 +385,24 @@ body {
         text-align: center;
     }
 
+    /* Playlist queue alignment */
     #playlistQueue {
-        width: 100%;
+        width: auto;
+        flex: 1;  /* Allow it to grow and fill available space */
     }
 
+    /* Stop playlist button margins */
     #stopPlaylistBtn {
         grid-column: 1 / -1;
         width: 90%;
         text-align: center;
-        margin: 6px 12px;
+        margin: 6px 12px;  /* Top and bottom margin of 6px, side margins of 12px */
     }
 
+    /* Exercise selector adjustments */
     #exerciseSelector {
-        width: 90%;
+        width: auto;
+        flex: 1;  /* Allow it to grow and fill available space */
     }
 
     #prevExerciseBtn,
@@ -402,28 +412,31 @@ body {
         text-align: center;
     }
 
+    /* Exercise group adjustments */
     .exercise-group {
-        display: flex;
+        display: flex;  /* Changed to flex container */
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        width: 90%;
+        gap: 10px;  /* Gap of 10px */
+        width: 90%;  /* Same width as playlist group */
         flex-wrap: nowrap;
-        margin: 0;
+        margin: 0 auto;
     }
 
+    /* Removed top margin on random exercise button and adjusted margins */
     #randomExerciseBtn {
         grid-column: 1 / -1;
         width: 90%;
         text-align: center;
-        margin: 0 12px 6px 12px;
+        margin: 0 12px 6px 12px;  /* Removed top margin, side margins of 12px, bottom margin of 6px */
     }
 
+    /* Bigger buttons with adjusted margins */
     #playPauseBtn,
     #randomTempoBtn {
         width: 90%;
         text-align: center;
-        margin: 6px 12px;
+        margin: 6px 12px;  /* Top and bottom margin of 6px, side margins of 12px */
     }
 
     #playPauseBtn {
@@ -434,6 +447,7 @@ body {
         grid-column: 2 / -1;
     }
 
+    /* Tempo input fields */
     #minTempo,
     #maxTempo {
         width: 90%;
@@ -450,17 +464,21 @@ body {
         grid-column: 2 / -1;
     }
 
+    /* Ensure full width for selectors and queues */
     #exerciseSelector,
     #playlistQueue {
-        width: 100%;
+        width: auto;
+        flex: 1;
     }
 
+    /* Adjusting the width for uniformity */
     .exercise-group,
     .playlist-group {
-        grid-template-columns: auto 1fr auto;
         width: 90%;
+        margin: 0 auto;
     }
 }
+
 
 .icon-btn {
     border: 2px solid #000;
