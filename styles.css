@@ -460,7 +460,19 @@ body {
     /* Adjust the grid templates if necessary */
     .exercise-group,
     .playlist-group {
+        display: grid; /* Change from flex to grid */
         grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 10px;
+        width: 90%;
+        margin: 0;
+    }
+
+    /* Remove flex properties from select elements */
+    #playlistQueue,
+    #exerciseSelector {
+        width: 100%;
+        min-width: 0; /* Still good practice to include this */
     }
 }
 
