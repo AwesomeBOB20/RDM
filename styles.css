@@ -17,8 +17,6 @@ body {
     text-align: center;
 }
 
-/* Branding Area - Omitted as no branding code given in final snippet */
-
 /* Sheet Music Styles */
 .sheet-music {
     margin: 20px 0;
@@ -562,4 +560,17 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #e67e22;
+}
+
+/* Auto Randomize Toggle and Reps Input */
+.auto-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #fff;
+}
+
+.auto-label input[type="checkbox"] {
+    margin-right: 5px;
+    accent-color: #96318d; /* supported in modern browsers */
 }
