@@ -45,6 +45,7 @@ body {
 #exerciseSelector {
     background-color: #d35400;
 }
+
 #categorySelector:hover,
 #exerciseSelector:hover {
     background-color: #c25227;
@@ -54,6 +55,7 @@ body {
 #playlistQueue {
     background-color: #96318d;
 }
+
 #playlistSelector:hover,
 #playlistQueue:hover {
     background-color: #81227a;
@@ -85,6 +87,7 @@ body {
 .play-btn.playlist-mode {
     background-color: #96318d;
 }
+
 .play-btn.playlist-mode:hover {
     background-color: #81227a;
 }
@@ -229,6 +232,7 @@ button#randomTempoBtn:hover {
     margin-left: 10px;
     font-weight: normal;
 }
+
 .tempo-input::placeholder {
     color: #666;
 }
@@ -453,7 +457,6 @@ button#randomTempoBtn:hover {
         width: 90%;
     }
 }
-
 
 /* Icon Buttons */
 .icon-btn {
