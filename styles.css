@@ -6,8 +6,8 @@ body {
     font-weight: normal;
     margin: 0;
     padding: 0;
-    background-color: #1c1c1c;
-    color: #ffffff;
+    background-color: #1c1c1c; /* Background color */
+    color: #ffffff; /* Default text color */
 }
 
 .container {
@@ -62,8 +62,7 @@ body {
 /* Buttons */
 #stopPlaylistBtn,
 .play-btn,
-#randomExerciseBtn,
-#randomTempoBtn {
+#randomExerciseBtn {
     background-color: #d35400;
     border: 2px solid #000000;
     color: #fff;
@@ -79,8 +78,7 @@ body {
 
 #stopPlaylistBtn:hover,
 .play-btn:hover,
-#randomExerciseBtn:hover,
-#randomTempoBtn:hover {
+#randomExerciseBtn:hover {
     background-color: #c25227;
 }
 
@@ -89,6 +87,51 @@ body {
 }
 .play-btn.playlist-mode:hover {
     background-color: #81227a;
+}
+
+/* Randomize Tempo and Auto Toggle Container */
+.random-container {
+    display: flex;
+    align-items: center;
+    background-color: #d35400;
+    border: 2px solid #000;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 10px 5px; /* Consistent spacing with other controls */
+}
+
+.random-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: normal;
+    margin: 0;
+}
+
+.random-btn:hover {
+    background-color: #c25227;
+}
+
+.vertical-divider {
+    width: 2px;
+    background-color: #000;
+    height: 80%;
+    margin: 0 10px;
+}
+
+.auto-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #fff;
+}
+
+.auto-label input[type="checkbox"] {
+    margin-right: 5px;
+    accent-color: #96318d;
 }
 
 /* Sliders */
@@ -107,6 +150,7 @@ body {
     background: #ddd;
     cursor: pointer;
 }
+
 .volume-slider::-webkit-slider-thumb,
 .tempo-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -118,6 +162,7 @@ body {
     border-radius: 50%;
     border: 2px solid #000000;
 }
+
 .volume-slider::-moz-range-thumb,
 .tempo-slider::-moz-range-thumb {
     width: 20px;
@@ -127,6 +172,7 @@ body {
     border-radius: 50%;
     border: 2px solid #000000;
 }
+
 .volume-slider::-ms-thumb,
 .tempo-slider::-ms-thumb {
     width: 20px;
@@ -136,6 +182,7 @@ body {
     border-radius: 50%;
     border: 2px solid #000000;
 }
+
 .volume-slider::-webkit-slider-runnable-track,
 .tempo-slider::-webkit-slider-runnable-track,
 .volume-slider::-moz-range-track,
@@ -153,7 +200,7 @@ body {
     align-items: center;
     gap: 10px;
     margin: 15px auto;
-    flex-wrap: nowrap;
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
     width: 100%;
 }
 
@@ -173,6 +220,7 @@ body {
     margin-left: 10px;
     font-weight: normal;
 }
+
 .tempo-input::placeholder {
     color: #666;
 }
@@ -180,7 +228,6 @@ body {
 /* Disabled Styles */
 .play-btn:disabled,
 #randomExerciseBtn:disabled,
-#randomTempoBtn:disabled,
 #exerciseSelector:disabled,
 #categorySelector:disabled,
 #tempoSlider:disabled {
@@ -200,12 +247,15 @@ body {
     background-color: #ffffff;
     color: inherit;
 }
+
 #exerciseSelector option.active-option {
     color: #d35400;
 }
+
 #exerciseSelector.purple-btn option.active-option {
     color: #96318d;
 }
+
 #playlistQueue option.active-option {
     color: #96318d;
 }
@@ -241,115 +291,16 @@ body {
 
 /* Responsive Design */
 @media (max-width: 600px) and (orientation: portrait) {
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
     .control-container {
         display: grid;
-        gap: 5px;
-        grid-template-columns: 2fr;
-        width: 100%;
+        grid-template-columns: 1fr;
         justify-items: center;
     }
 
-    .control-container > * {
-        padding: 5px 0;
-        margin: 5px 0;
-        text-align: center;
-        width: 100%;
-    }
-
-    .sheet-music-img {
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-
-    #categorySelector,
-    #exerciseSelector,
-    #playlistSelector,
-    #playlistQueue {
+    .random-container {
         width: 90%;
-        text-align: left;
-        margin: 0 8px;
-        padding: 5px 8px;
-    }
-
-    #categorySelector {
-        grid-column: 1 / -1;
-    }
-
-    .playlist-group {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        gap: 10px;
-        width: 90%;
-        grid-column: 1 / -1;
-        justify-items: center;
-        margin: 0;
-    }
-
-    #prevPlaylistItemBtn,
-    #nextPlaylistItemBtn {
-        width: 45px;
-        font-size: 1.2rem;
-        text-align: center;
-    }
-
-    #playlistQueue {
-        width: 100%;
-    }
-
-    #stopPlaylistBtn {
-        grid-column: 1 / -1;
-        width: 90%;
-        text-align: center;
-        margin: 6px 12px;
-    }
-
-    #exerciseSelector {
-        width: 90%;
-    }
-
-    #prevExerciseBtn,
-    #nextExerciseBtn {
-        width: 45px;
-        font-size: 1.2rem;
-        text-align: center;
-    }
-
-    .exercise-group {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        gap: 10px;
-        width: 90%;
-        justify-items: center;
-        margin: 0;
-    }
-
-    #randomExerciseBtn {
-        grid-column: 1 / -1;
-        width: 90%;
-        text-align: center;
-        margin: 0 12px 6px 12px;
-    }
-
-    #playPauseBtn,
-    #randomTempoBtn {
-        width: 90%;
-        text-align: center;
-        margin: 6px 12px;
-    }
-
-    #playPauseBtn {
-        grid-column: 1 / 2;
-    }
-
-    #randomTempoBtn {
-        grid-column: 2 / -1;
+        margin: 0 auto;
+        justify-content: space-between;
     }
 
     #minTempo,
@@ -360,23 +311,10 @@ body {
         margin: 5px auto;
     }
 
-    #minTempo {
-        grid-column: 1 / 2;
-    }
-
-    #maxTempo {
-        grid-column: 2 / -1;
-    }
-
-    #exerciseSelector,
-    #playlistQueue {
-        width: 100%;
-    }
-
-    .exercise-group,
-    .playlist-group {
-        grid-template-columns: auto 1fr auto;
+    /* Adjust if needed */
+    #repsPerTempo {
         width: 90%;
+        margin: 5px auto;
     }
 }
 
@@ -443,9 +381,11 @@ body {
 #exerciseSelector.purple-btn {
     background-color: #96318d;
 }
+
 #exerciseSelector.purple-btn:hover {
     background-color: #81227a;
 }
+
 #exerciseSelector.purple-btn option.active-option {
     color: #96318d;
 }
@@ -455,10 +395,12 @@ body {
     background-color: #96318d;
     color: #fff;
 }
+
 #prevExerciseBtn.purple-btn:hover,
 #nextExerciseBtn.purple-btn:hover {
     background-color: #81227a;
 }
+
 #prevExerciseBtn.purple-btn:disabled,
 #nextExerciseBtn.purple-btn:disabled {
     background-color: #752070;
@@ -489,6 +431,7 @@ body {
     max-width: 600px;
     margin: 20px auto;
 }
+
 .progress-bar {
     position: relative;
     width: 100%;
@@ -499,11 +442,13 @@ body {
     overflow: hidden;
     margin-bottom: 40px;
 }
+
 .progress {
     width: 0%;
     height: 100%;
     background-color: #fe6429;
 }
+
 .time-overlay {
     position: absolute;
     top: 50%;
@@ -521,6 +466,7 @@ body {
     margin: 20px auto;
     display: none;
 }
+
 .playlist-progress-bar {
     position: relative;
     width: 100%;
@@ -530,12 +476,14 @@ body {
     border-radius: 0;
     overflow: hidden;
 }
+
 .playlist-progress {
     width: 0%;
     height: 100%;
     background-color: #96318d;
     transition: width 0.2s linear;
 }
+
 .playlist-time-overlay {
     position: absolute;
     top: 50%;
@@ -551,26 +499,16 @@ body {
     width: 8px;
     height: 8px;
 }
+
 ::-webkit-scrollbar-track {
     background: #2c2c2c;
 }
+
 ::-webkit-scrollbar-thumb {
     background: #96318d;
     border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: #e67e22;
-}
-
-/* Auto Randomize Toggle and Reps Input */
-.auto-label {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: #fff;
-}
-
-.auto-label input[type="checkbox"] {
-    margin-right: 5px;
-    accent-color: #96318d; /* supported in modern browsers */
 }
