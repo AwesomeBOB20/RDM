@@ -290,8 +290,7 @@ body {
     white-space: nowrap;
 }
 
-/* This is the older @media query block you originally had */
- /* Responsive Design */
+/* Responsive Design */
 @media (max-width: 600px) and (orientation: portrait) {
     * {
         margin: 0;
@@ -316,35 +315,32 @@ body {
 
     /* Adjusted sheet music margins */
     .sheet-music-img {
-        margin-top: 10px;  /* Changed from 20px to 10px */
-        margin-bottom: 10px;  /* Changed from 20px to 10px */
+        margin-top: 10px;  
+        margin-bottom: 10px; 
     }
 
-    /* Dropdown buttons with padding and margins */
     #categorySelector,
     #exerciseSelector,
     #playlistSelector,
     #playlistQueue {
         width: 90%;
-        text-align: left;  /* Aligned text to the left */
-        margin: 0 8px;  /* Side margins of 8px */
-        padding: 5px 8px;  /* Top and bottom padding of 5px, side padding of 8px */
+        text-align: left;
+        margin: 0 8px;
+        padding: 5px 8px;
     }
 
     #categorySelector {
         grid-column: 1 / -1;
     }
 
-    /* Playlist selector adjustments */
     #playlistSelector {
         grid-column: 1 / -1;
     }
 
-    /* Playlist group with gap adjustment */
     .playlist-group {
         display: grid;
         grid-template-columns: auto 1fr auto;
-        gap: 10px;  /* Changed gap from 3px to 10px */
+        gap: 10px;
         width: 90%;
         grid-column: 1 / -1;
         justify-items: center;
@@ -358,20 +354,17 @@ body {
         text-align: center;
     }
 
-    /* Playlist queue alignment */
     #playlistQueue {
         width: 100%;
     }
 
-    /* Stop playlist button margins */
     #stopPlaylistBtn {
         grid-column: 1 / -1;
         width: 90%;
         text-align: center;
-        margin: 6px 12px;  /* Top and bottom margin of 6px, side margins of 12px */
+        margin: 6px 12px;
     }
 
-    /* Exercise selector adjustments */
     #exerciseSelector {
         width: 90%;
     }
@@ -383,31 +376,28 @@ body {
         text-align: center;
     }
 
-    /* Exercise group with gap adjustment */
     .exercise-group {
         grid-column: 1 / -1;
         display: grid;
         grid-template-columns: auto 1fr auto;
-        gap: 10px;  /* Changed gap from 3px to 10px */
+        gap: 10px;
         width: 90%;
         justify-items: center;
         margin: 0;
     }
 
-    /* Removed top margin on random exercise button and adjusted margins */
     #randomExerciseBtn {
         grid-column: 1 / -1;
         width: 90%;
         text-align: center;
-        margin: 0 12px 6px 12px;  /* Removed top margin, side margins of 12px, bottom margin of 6px */
+        margin: 0 12px 6px 12px;
     }
 
-    /* Bigger buttons with adjusted margins */
     #playPauseBtn,
     #randomTempoBtn {
         width: 90%;
         text-align: center;
-        margin: 6px 12px;  /* Top and bottom margin of 6px, side margins of 12px */
+        margin: 6px 12px;
     }
 
     #playPauseBtn {
@@ -418,7 +408,6 @@ body {
         grid-column: 2 / -1;
     }
 
-    /* Tempo input fields */
     #minTempo,
     #maxTempo {
         width: 90%;
@@ -435,13 +424,11 @@ body {
         grid-column: 2 / -1;
     }
 
-    /* Ensure full width for selectors and queues */
     #exerciseSelector,
     #playlistQueue {
         width: 100%;
     }
 
-    /* Exercise and playlist groups adjustments */
     .exercise-group,
     .playlist-group {
         grid-template-columns: auto 1fr auto;
