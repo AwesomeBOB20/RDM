@@ -690,31 +690,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     audio.addEventListener('ended', function() {
-    resetProgressBar();
-    playPauseBtn.textContent = 'Play';
-
-    // This logic only runs when not playing a playlist
-    if (!isPlayingPlaylist) {
-        // If auto-randomize is enabled, handle the repetition counting and randomization
-        if (isRandomizeEnabled) {
-            currentRepCount++;
-            if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
-                repsBeforeChange = 1;
-            }
-
-            if (currentRepCount >= repsBeforeChange) {
-                pickRandomTempo();
-                currentRepCount = 0;
-            }
+    // If you're currently in playlist mode, exit early to avoid conflicts.
+    if (isPlayingPlaylist) {
+        return;
+    }
+    
+    // If auto-randomize is enabled, check if we've hit the required number of reps.
+    if (isRandomizeEnabled) {
+        currentRepCount++;
+        if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
+            repsBeforeChange = 1;
         }
 
-        // Regardless of whether auto-randomize is enabled, always start the audio again
-        audio.currentTime = 0;
-        audio.play();
-        playPauseBtn.textContent = 'Pause';
-        updateProgressBarSmoothly();
+        if (currentRepCount >= repsBeforeChange) {
+            pickRandomTempo();
+            currentRepCount = 0;
+        }
     }
+
+    // Always restart the track from the beginning, regardless of auto-randomization.
+    audio.currentTime = 0;
+    audio.play();
+
+    // Update UI to reflect that it's playing again
+    playPauseBtn.textContent = 'Pause';
+
+    // Optionally, if you don't want the progress bar to visually reset every time:
+    // You can remove the calls to resetProgressBar() from this handler.
+    // If you still want to reset the visual progress, leave it as is. 
+    // resetProgressBar(); // Remove this if you prefer not to visually reset each loop.
+
+    // Smoothly update the progress bar as the track plays.
+    updateProgressBarSmoothly();
 });
+
 
 
 
