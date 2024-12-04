@@ -464,6 +464,10 @@ button#randomTempoBtn:hover {
     .auto-label {
      display: flex;
     }   
+
+    #repsPerTempo {
+        width: 90%;
+    }
 }
 
 /* Icon Buttons */
