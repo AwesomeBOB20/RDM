@@ -224,6 +224,7 @@ button#randomTempoBtn:hover {
 .control-container input {
     margin: 5px;
     font-weight: normal;
+    width: 90%;
 }
 
 .tempo-input {
