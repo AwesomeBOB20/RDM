@@ -537,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isPlaylistMode) {
             playPauseBtn.textContent = 'Play';
             audio.pause();
-            audio.loop = true;
+            audio.loop = false;
         } else {
             audio.loop = false;
         }
@@ -690,27 +690,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     audio.addEventListener('ended', function() {
-        resetProgressBar();
-        playPauseBtn.textContent = 'Play';
+    resetProgressBar();
+    playPauseBtn.textContent = 'Play';
 
-        // Auto-Randomization Logic
-        if (!isPlayingPlaylist && isRandomizeEnabled) {
-            currentRepCount++;
-            if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
-                repsBeforeChange = 1;
-            }
-
-            if (currentRepCount >= repsBeforeChange) {
-                pickRandomTempo();
-                currentRepCount = 0;
-            }
-
-            // Start again automatically after picking a new tempo or even if no tempo change
-            audio.play();
-            playPauseBtn.textContent = 'Pause';
-            updateProgressBarSmoothly();
+    // Auto-Randomization Logic
+    if (!isPlayingPlaylist && isRandomizeEnabled) {
+        currentRepCount++;
+        if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
+            repsBeforeChange = 1;
         }
-    });
+
+        if (currentRepCount >= repsBeforeChange) {
+            pickRandomTempo();
+            currentRepCount = 0;
+        }
+
+        // Restart the audio to loop manually
+        audio.currentTime = 0;
+        audio.play();
+        playPauseBtn.textContent = 'Pause';
+        updateProgressBarSmoothly();
+    }
+});
+
 
     volumeSlider.addEventListener('input', function() {
         audio.volume = this.value;
