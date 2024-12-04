@@ -30,7 +30,6 @@ body {
 
 /* Selector Styles */
 .selector {
-    width: 300px;
     max-width: 100%;
     padding: 5px 8px;
     font-size: 0.9rem;
