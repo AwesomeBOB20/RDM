@@ -420,7 +420,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const playlistProgressPercentage = document.getElementById('playlistProgressPercentage');
     const prevExerciseBtn = document.getElementById('prevExerciseBtn');
     const nextExerciseBtn = document.getElementById('nextExerciseBtn');
-
     const autoRandomizeToggle = document.getElementById('autoRandomizeToggle');
     const repsPerTempoInput = document.getElementById('repsPerTempo');
 
@@ -441,18 +440,10 @@ document.addEventListener('DOMContentLoaded', function() {
     minTempoInput.value = '';
     maxTempoInput.value = '';
 
-    // Auto-randomization variables
     let isRandomizeEnabled = false;
     let repsBeforeChange = 1;
     let currentRepCount = 0;
 
-    // CHANGED: Remove disabling of prev/next exercise buttons here. They should always be enabled.
-    // prevPlaylistItemBtn.disabled = true; // You can still keep these disabled until playlist mode if you prefer.
-    // nextPlaylistItemBtn.disabled = true; // Up to you if you want to keep playlist prev/next disabled.
-    // prevExerciseBtn.disabled = true;     // Removed disabling here
-    // nextExerciseBtn.disabled = true;     // Removed disabling here
-
-    // Event listeners for auto-randomization
     autoRandomizeToggle.addEventListener('change', function() {
         isRandomizeEnabled = this.checked;
         currentRepCount = 0; // reset when toggled
@@ -463,11 +454,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isNaN(val) && val > 0) {
             repsBeforeChange = val;
         } else {
-            repsBeforeChange = 1; // default to 1
+            repsBeforeChange = 1; // default
         }
     });
 
     populatePlaylistSelector();
+
+    // **Always enable exercise navigation (prevExerciseBtn, nextExerciseBtn)**
+    // These are NOT disabled at start.
+
+    // **Disable playlist navigation at start**
+    prevPlaylistItemBtn.disabled = true; // Only enabled in playlist mode
+    nextPlaylistItemBtn.disabled = true; // Only enabled in playlist mode
 
     function populatePlaylistSelector() {
         playlistSelector.innerHTML = '';
@@ -476,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
         defaultOption.textContent = 'Select a Playlist';
         playlistSelector.appendChild(defaultOption);
 
-        if (typeof playlists !== 'undefined' && Array.isArray(playlists)) {
+        if (Array.isArray(playlists)) {
             playlists.forEach((playlist, index) => {
                 const option = document.createElement('option');
                 option.value = index;
@@ -794,12 +792,10 @@ document.addEventListener('DOMContentLoaded', function() {
         randomExerciseBtn.disabled = true;
         randomTempoBtn.disabled = true;
         tempoSlider.disabled = true;
+
+        // Enable playlist navigation now that we are in playlist mode
         prevPlaylistItemBtn.disabled = false;
         nextPlaylistItemBtn.disabled = false;
-
-        // CHANGED: Do not disable prevExerciseBtn and nextExerciseBtn here, since we want them always working
-        // prevExerciseBtn.disabled = false;
-        // nextExerciseBtn.disabled = false;
 
         stopPlaylistBtn.disabled = false;
         playlistQueueSelect.disabled = false;
@@ -948,12 +944,9 @@ document.addEventListener('DOMContentLoaded', function() {
         randomTempoBtn.disabled = false;
         tempoSlider.disabled = false;
 
+        // Disable playlist navigation buttons again since leaving playlist mode
         prevPlaylistItemBtn.disabled = true;
         nextPlaylistItemBtn.disabled = true;
-
-        // CHANGED: Don't disable prevExerciseBtn and nextExerciseBtn here.
-        // prevExerciseBtn.disabled = true; // Removed
-        // nextExerciseBtn.disabled = true; // Removed
 
         playPauseBtn.textContent = 'Play';
         playlistSelector.value = '';
