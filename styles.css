@@ -213,7 +213,7 @@ button#randomTempoBtn:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 7.5px;
     margin: 15px auto;
     flex-wrap: wrap; /* allow wrapping on smaller screens */
     width: 100%;
@@ -227,7 +227,7 @@ button#randomTempoBtn:hover {
 }
 
 .tempo-input {
-    width: 130px;
+    width: 6.4rem;
     padding: 6px;
     font-size: 1rem;
     border: 2px solid #000;
