@@ -446,6 +446,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let repsBeforeChange = 1;
     let currentRepCount = 0;
 
+    // ** Disable the purple buttons by default **
+    prevPlaylistItemBtn.disabled = true;
+    nextPlaylistItemBtn.disabled = true;
+    prevExerciseBtn.disabled = true;
+    nextExerciseBtn.disabled = true;
+
     // Event listeners for auto-randomization
     autoRandomizeToggle.addEventListener('change', function() {
         isRandomizeEnabled = this.checked;
