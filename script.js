@@ -446,11 +446,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let repsBeforeChange = 1;
     let currentRepCount = 0;
 
-    // ** Disable the purple buttons by default **
-    prevPlaylistItemBtn.disabled = true;
-    nextPlaylistItemBtn.disabled = true;
-    prevExerciseBtn.disabled = true;
-    nextExerciseBtn.disabled = true;
+    // CHANGED: Remove disabling of prev/next exercise buttons here. They should always be enabled.
+    // prevPlaylistItemBtn.disabled = true; // You can still keep these disabled until playlist mode if you prefer.
+    // nextPlaylistItemBtn.disabled = true; // Up to you if you want to keep playlist prev/next disabled.
+    // prevExerciseBtn.disabled = true;     // Removed disabling here
+    // nextExerciseBtn.disabled = true;     // Removed disabling here
 
     // Event listeners for auto-randomization
     autoRandomizeToggle.addEventListener('change', function() {
@@ -696,42 +696,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     audio.addEventListener('ended', function() {
-    // If you're currently in playlist mode, exit early to avoid conflicts.
-    if (isPlayingPlaylist) {
-        return;
-    }
-    
-    // If auto-randomize is enabled, check if we've hit the required number of reps.
-    if (isRandomizeEnabled) {
-        currentRepCount++;
-        if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
-            repsBeforeChange = 1;
+        // If you're currently in playlist mode, exit early to avoid conflicts.
+        if (isPlayingPlaylist) {
+            return;
+        }
+        
+        // If auto-randomize is enabled, check if we've hit the required number of reps.
+        if (isRandomizeEnabled) {
+            currentRepCount++;
+            if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
+                repsBeforeChange = 1;
+            }
+
+            if (currentRepCount >= repsBeforeChange) {
+                pickRandomTempo();
+                currentRepCount = 0;
+            }
         }
 
-        if (currentRepCount >= repsBeforeChange) {
-            pickRandomTempo();
-            currentRepCount = 0;
-        }
-    }
+        // Always restart the track from the beginning, regardless of auto-randomization.
+        audio.currentTime = 0;
+        audio.play();
 
-    // Always restart the track from the beginning, regardless of auto-randomization.
-    audio.currentTime = 0;
-    audio.play();
+        // Update UI to reflect that it's playing again
+        playPauseBtn.textContent = 'Pause';
 
-    // Update UI to reflect that it's playing again
-    playPauseBtn.textContent = 'Pause';
-
-    // Optionally, if you don't want the progress bar to visually reset every time:
-    // You can remove the calls to resetProgressBar() from this handler.
-    // If you still want to reset the visual progress, leave it as is. 
-    // resetProgressBar(); // Remove this if you prefer not to visually reset each loop.
-
-    // Smoothly update the progress bar as the track plays.
-    updateProgressBarSmoothly();
-});
-
-
-
+        updateProgressBarSmoothly();
+    });
 
     volumeSlider.addEventListener('input', function() {
         audio.volume = this.value;
@@ -805,6 +796,10 @@ document.addEventListener('DOMContentLoaded', function() {
         tempoSlider.disabled = true;
         prevPlaylistItemBtn.disabled = false;
         nextPlaylistItemBtn.disabled = false;
+
+        // CHANGED: Do not disable prevExerciseBtn and nextExerciseBtn here, since we want them always working
+        // prevExerciseBtn.disabled = false;
+        // nextExerciseBtn.disabled = false;
 
         stopPlaylistBtn.disabled = false;
         playlistQueueSelect.disabled = false;
@@ -952,8 +947,14 @@ document.addEventListener('DOMContentLoaded', function() {
         randomExerciseBtn.disabled = false;
         randomTempoBtn.disabled = false;
         tempoSlider.disabled = false;
+
         prevPlaylistItemBtn.disabled = true;
         nextPlaylistItemBtn.disabled = true;
+
+        // CHANGED: Don't disable prevExerciseBtn and nextExerciseBtn here.
+        // prevExerciseBtn.disabled = true; // Removed
+        // nextExerciseBtn.disabled = true; // Removed
+
         playPauseBtn.textContent = 'Play';
         playlistSelector.value = '';
         playlistProgressContainer.style.display = 'none';
