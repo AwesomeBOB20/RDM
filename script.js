@@ -442,9 +442,6 @@ document.addEventListener('DOMContentLoaded', function() {
     minTempoInput.value = '';
     maxTempoInput.value = '';
 
-    prevPlaylistItemBtn.disabled = true;
-    nextPlaylistItemBtn.disabled = true;
-
     // Variables for auto-randomization
     let isRandomizeEnabled = false;
     let repsBeforeChange = 1;
@@ -461,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isNaN(val) && val > 0) {
             repsBeforeChange = val;
         } else {
-            repsBeforeChange = 1;
+            repsBeforeChange = 1; // default to 1 if empty or invalid
         }
     });
 
@@ -706,16 +703,19 @@ document.addEventListener('DOMContentLoaded', function() {
         playPauseBtn.textContent = 'Play';
 
         // Auto-Randomization Logic
-        // If in normal mode (not playlist) and auto-randomize is enabled,
-        // increment count, and if reps are reached, pick new tempo.
         if (!isPlayingPlaylist && isRandomizeEnabled) {
             currentRepCount++;
+            // Ensure repsBeforeChange is always at least 1:
+            if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
+                repsBeforeChange = 1;
+            }
+
             if (currentRepCount >= repsBeforeChange) {
                 pickRandomTempo();
                 currentRepCount = 0;
             }
-            // Automatically replay after randomization if desired
-            // If you want it to start playing again automatically:
+
+            // Start again automatically after picking a new tempo
             audio.play();
             playPauseBtn.textContent = 'Pause';
             updateProgressBarSmoothly();
