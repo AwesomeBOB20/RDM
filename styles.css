@@ -105,7 +105,6 @@ body {
     background-color: #c25227;
 }
 
-/* Within the random-container, we have the text and the auto toggle */
 .random-container button#randomTempoBtn {
     background: none;
     border: none;
@@ -119,7 +118,7 @@ body {
 .vertical-divider {
     width: 2px;
     background-color: #000;
-    align-self: stretch; /* Make it fill the container height */
+    align-self: stretch;
     margin: 0;
 }
 
@@ -131,7 +130,6 @@ body {
     font-weight: normal;
     margin: 0;
     padding: 6px 12px;
-    /* The entire container is clickable, so no need for separate cursor: */
 }
 .auto-label input[type="checkbox"] {
     margin-right: 5px;
@@ -204,7 +202,7 @@ body {
     align-items: center;
     gap: 10px;
     margin: 15px auto;
-    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    flex-wrap: wrap; /* allow wrapping on smaller screens */
     width: 100%;
 }
 
@@ -292,20 +290,135 @@ body {
     white-space: nowrap;
 }
 
-/* Responsive Design */
+/* This is the older @media query block you originally had */
+ /* Responsive Design */
 @media (max-width: 600px) and (orientation: portrait) {
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     .control-container {
         display: grid;
-        grid-template-columns: 1fr;
+        gap: 5px;
+        grid-template-columns: 2fr;
+        width: 100%;
         justify-items: center;
     }
 
-    .random-container {
-        width: 90%;
-        margin: 0 auto;
-        justify-content: space-between;
+    .control-container > * {
+        padding: 5px 0;
+        margin: 5px 0;
+        text-align: center;
+        width: 100%;
     }
 
+    /* Adjusted sheet music margins */
+    .sheet-music-img {
+        margin-top: 10px;  /* Changed from 20px to 10px */
+        margin-bottom: 10px;  /* Changed from 20px to 10px */
+    }
+
+    /* Dropdown buttons with padding and margins */
+    #categorySelector,
+    #exerciseSelector,
+    #playlistSelector,
+    #playlistQueue {
+        width: 90%;
+        text-align: left;  /* Aligned text to the left */
+        margin: 0 8px;  /* Side margins of 8px */
+        padding: 5px 8px;  /* Top and bottom padding of 5px, side padding of 8px */
+    }
+
+    #categorySelector {
+        grid-column: 1 / -1;
+    }
+
+    /* Playlist selector adjustments */
+    #playlistSelector {
+        grid-column: 1 / -1;
+    }
+
+    /* Playlist group with gap adjustment */
+    .playlist-group {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;  /* Changed gap from 3px to 10px */
+        width: 90%;
+        grid-column: 1 / -1;
+        justify-items: center;
+        margin: 0;
+    }
+
+    #prevPlaylistItemBtn,
+    #nextPlaylistItemBtn {
+        width: 45px;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    /* Playlist queue alignment */
+    #playlistQueue {
+        width: 100%;
+    }
+
+    /* Stop playlist button margins */
+    #stopPlaylistBtn {
+        grid-column: 1 / -1;
+        width: 90%;
+        text-align: center;
+        margin: 6px 12px;  /* Top and bottom margin of 6px, side margins of 12px */
+    }
+
+    /* Exercise selector adjustments */
+    #exerciseSelector {
+        width: 90%;
+    }
+
+    #prevExerciseBtn,
+    #nextExerciseBtn {
+        width: 45px;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    /* Exercise group with gap adjustment */
+    .exercise-group {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;  /* Changed gap from 3px to 10px */
+        width: 90%;
+        justify-items: center;
+        margin: 0;
+    }
+
+    /* Removed top margin on random exercise button and adjusted margins */
+    #randomExerciseBtn {
+        grid-column: 1 / -1;
+        width: 90%;
+        text-align: center;
+        margin: 0 12px 6px 12px;  /* Removed top margin, side margins of 12px, bottom margin of 6px */
+    }
+
+    /* Bigger buttons with adjusted margins */
+    #playPauseBtn,
+    #randomTempoBtn {
+        width: 90%;
+        text-align: center;
+        margin: 6px 12px;  /* Top and bottom margin of 6px, side margins of 12px */
+    }
+
+    #playPauseBtn {
+        grid-column: 1 / 2;
+    }
+
+    #randomTempoBtn {
+        grid-column: 2 / -1;
+    }
+
+    /* Tempo input fields */
     #minTempo,
     #maxTempo {
         width: 90%;
@@ -314,9 +427,25 @@ body {
         margin: 5px auto;
     }
 
-    #repsPerTempo {
+    #minTempo {
+        grid-column: 1 / 2;
+    }
+
+    #maxTempo {
+        grid-column: 2 / -1;
+    }
+
+    /* Ensure full width for selectors and queues */
+    #exerciseSelector,
+    #playlistQueue {
+        width: 100%;
+    }
+
+    /* Exercise and playlist groups adjustments */
+    .exercise-group,
+    .playlist-group {
+        grid-template-columns: auto 1fr auto;
         width: 90%;
-        margin: 5px auto;
     }
 }
 
