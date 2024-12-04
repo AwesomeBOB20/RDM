@@ -693,25 +693,29 @@ document.addEventListener('DOMContentLoaded', function() {
     resetProgressBar();
     playPauseBtn.textContent = 'Play';
 
-    // Auto-Randomization Logic
-    if (!isPlayingPlaylist && isRandomizeEnabled) {
-        currentRepCount++;
-        if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
-            repsBeforeChange = 1;
+    // This logic only runs when not playing a playlist
+    if (!isPlayingPlaylist) {
+        // If auto-randomize is enabled, handle the repetition counting and randomization
+        if (isRandomizeEnabled) {
+            currentRepCount++;
+            if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
+                repsBeforeChange = 1;
+            }
+
+            if (currentRepCount >= repsBeforeChange) {
+                pickRandomTempo();
+                currentRepCount = 0;
+            }
         }
 
-        if (currentRepCount >= repsBeforeChange) {
-            pickRandomTempo();
-            currentRepCount = 0;
-        }
-
-        // Restart the audio to loop manually
+        // Regardless of whether auto-randomize is enabled, always start the audio again
         audio.currentTime = 0;
         audio.play();
         playPauseBtn.textContent = 'Pause';
         updateProgressBarSmoothly();
     }
 });
+
 
 
     volumeSlider.addEventListener('input', function() {
