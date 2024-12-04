@@ -133,6 +133,7 @@ body {
 }
 .auto-label input[type="checkbox"] {
     margin-right: 5px;
+    margin-left: 0px;
     accent-color: #96318d;
 }
 
