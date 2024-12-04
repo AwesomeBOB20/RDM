@@ -89,7 +89,7 @@ body {
     background-color: #81227a;
 }
 
-/* Randomize Tempo and Auto Toggle Container */
+/* Random Container for Randomize Tempo + Auto Toggle */
 .random-container {
     display: flex;
     align-items: center;
@@ -97,38 +97,42 @@ body {
     border: 2px solid #000;
     border-radius: 5px;
     overflow: hidden;
-    margin: 10px 5px; /* Consistent spacing with other controls */
+    margin: 10px 5px;
+    cursor: pointer; /* Entire container is clickable */
 }
 
-.random-btn {
+.random-container:hover {
+    background-color: #c25227;
+}
+
+/* Within the random-container, we have the text and the auto toggle */
+.random-container button#randomTempoBtn {
     background: none;
     border: none;
     color: #fff;
     font-size: 1.2rem;
-    padding: 6px 12px;
-    cursor: pointer;
     font-weight: normal;
     margin: 0;
-}
-
-.random-btn:hover {
-    background-color: #c25227;
+    padding: 6px 12px;
 }
 
 .vertical-divider {
     width: 2px;
     background-color: #000;
-    height: 80%;
-    margin: 0 10px;
+    align-self: stretch; /* Make it fill the container height */
+    margin: 0;
 }
 
 .auto-label {
     display: flex;
     align-items: center;
-    font-size: 14px;
     color: #fff;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+    padding: 6px 12px;
+    /* The entire container is clickable, so no need for separate cursor: */
 }
-
 .auto-label input[type="checkbox"] {
     margin-right: 5px;
     accent-color: #96318d;
@@ -220,7 +224,6 @@ body {
     margin-left: 10px;
     font-weight: normal;
 }
-
 .tempo-input::placeholder {
     color: #666;
 }
@@ -311,7 +314,6 @@ body {
         margin: 5px auto;
     }
 
-    /* Adjust if needed */
     #repsPerTempo {
         width: 90%;
         margin: 5px auto;
