@@ -421,7 +421,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevExerciseBtn = document.getElementById('prevExerciseBtn');
     const nextExerciseBtn = document.getElementById('nextExerciseBtn');
 
-    // New elements for auto randomization
     const autoRandomizeToggle = document.getElementById('autoRandomizeToggle');
     const repsPerTempoInput = document.getElementById('repsPerTempo');
 
@@ -442,15 +441,15 @@ document.addEventListener('DOMContentLoaded', function() {
     minTempoInput.value = '';
     maxTempoInput.value = '';
 
-    // Variables for auto-randomization
+    // Auto-randomization variables
     let isRandomizeEnabled = false;
     let repsBeforeChange = 1;
     let currentRepCount = 0;
 
-    // Event listeners for new features
+    // Event listeners for auto-randomization
     autoRandomizeToggle.addEventListener('change', function() {
         isRandomizeEnabled = this.checked;
-        currentRepCount = 0; // reset count when toggled
+        currentRepCount = 0; // reset when toggled
     });
 
     repsPerTempoInput.addEventListener('input', function() {
@@ -458,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isNaN(val) && val > 0) {
             repsBeforeChange = val;
         } else {
-            repsBeforeChange = 1; // default to 1 if empty or invalid
+            repsBeforeChange = 1; // default to 1
         }
     });
 
@@ -501,20 +500,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateExerciseList(category) {
         exerciseSelector.innerHTML = '';
-        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
-            const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
-            filteredExercises.forEach((exercise, index) => {
-                const option = document.createElement('option');
-                option.value = exercise.id;
-                option.textContent = exercise.name;
-                if (index === 0) {
-                    option.classList.add('active-option');
-                }
-                exerciseSelector.appendChild(option);
-            });
-            if (filteredExercises.length > 0) {
-                initializeExercise(filteredExercises[0]);
+        const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
+        filteredExercises.forEach((exercise, index) => {
+            const option = document.createElement('option');
+            option.value = exercise.id;
+            option.textContent = exercise.name;
+            if (index === 0) {
+                option.classList.add('active-option');
             }
+            exerciseSelector.appendChild(option);
+        });
+        if (filteredExercises.length > 0) {
+            initializeExercise(filteredExercises[0]);
         }
     }
 
@@ -587,27 +584,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     exerciseSelector.addEventListener('change', function() {
         const selectedExerciseId = parseInt(this.value);
-        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
-            const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
+        const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
 
-            if (isPlayingPlaylist && currentPlaylist) {
-                const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
-                if (indexInPlaylist !== -1) {
-                    currentPlaylistItemIndex = indexInPlaylist;
-                    currentTempoIndex = 0;
-                    currentRepetition = 0;
-                    playCurrentPlaylistItem();
-                    updatePlaylistQueueDisplay();
-                    updatePlaylistProgressBar();
-                } else {
-                    console.error('Selected exercise is not in the current playlist');
-                }
+        if (isPlayingPlaylist && currentPlaylist) {
+            const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
+            if (indexInPlaylist !== -1) {
+                currentPlaylistItemIndex = indexInPlaylist;
+                currentTempoIndex = 0;
+                currentRepetition = 0;
+                playCurrentPlaylistItem();
+                updatePlaylistQueueDisplay();
+                updatePlaylistProgressBar();
             } else {
-                initializeExercise(selectedExercise);
-                audio.pause();
-                resetProgressBar();
-                playPauseBtn.textContent = 'Play';
+                console.error('Selected exercise is not in the current playlist');
             }
+        } else {
+            initializeExercise(selectedExercise);
+            audio.pause();
+            resetProgressBar();
+            playPauseBtn.textContent = 'Play';
         }
     });
 
@@ -616,17 +611,15 @@ document.addEventListener('DOMContentLoaded', function() {
             stopPlaylist();
         }
         const category = categorySelector.value;
-        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
-            const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
-            const randomIndex = Math.floor(Math.random() * filteredExercises.length);
-            initializeExercise(filteredExercises[randomIndex]);
-            exerciseSelector.value = filteredExercises[randomIndex].id;
-            audio.pause();
-            resetProgressBar();
-            playPauseBtn.textContent = 'Play';
-            minTempoInput.value = '';
-            maxTempoInput.value = '';
-        }
+        const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
+        const randomIndex = Math.floor(Math.random() * filteredExercises.length);
+        initializeExercise(filteredExercises[randomIndex]);
+        exerciseSelector.value = filteredExercises[randomIndex].id;
+        audio.pause();
+        resetProgressBar();
+        playPauseBtn.textContent = 'Play';
+        minTempoInput.value = '';
+        maxTempoInput.value = '';
     });
 
     randomTempoBtn.addEventListener('click', function() {
@@ -640,35 +633,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function pickRandomTempo() {
-        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
-            const selectedExercise = exercises.find(e => e.id === parseInt(exerciseSelector.value));
-            let minTempo = parseInt(minTempoInput.value);
-            let maxTempo = parseInt(maxTempoInput.value);
+        const selectedExercise = exercises.find(e => e.id === parseInt(exerciseSelector.value));
+        let minTempo = parseInt(minTempoInput.value);
+        let maxTempo = parseInt(maxTempoInput.value);
 
-            const defaultMin = Math.floor(selectedExercise.originalTempo / 2);
-            const defaultMax = selectedExercise.originalTempo * 2;
+        const defaultMin = Math.floor(selectedExercise.originalTempo / 2);
+        const defaultMax = selectedExercise.originalTempo * 2;
 
-            if (isNaN(minTempo) || minTempo < 1 || minTempo > 999) {
-                minTempo = defaultMin;
-            }
-            if (isNaN(maxTempo) || maxTempo < 1 || maxTempo > 999) {
-                maxTempo = defaultMax;
-            }
-
-            if (minTempo > maxTempo) {
-                [minTempo, maxTempo] = [maxTempo, minTempo];
-            }
-
-            const sliderMin = parseInt(tempoSlider.min);
-            const sliderMax = parseInt(tempoSlider.max);
-            minTempo = Math.max(minTempo, sliderMin);
-            maxTempo = Math.min(maxTempo, sliderMax);
-
-            const randomTempo = Math.floor(Math.random() * (maxTempo - minTempo + 1)) + minTempo;
-            tempoSlider.value = randomTempo;
-            updatePlaybackRate();
-            updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+        if (isNaN(minTempo) || minTempo < 1 || minTempo > 999) {
+            minTempo = defaultMin;
         }
+        if (isNaN(maxTempo) || maxTempo < 1 || maxTempo > 999) {
+            maxTempo = defaultMax;
+        }
+
+        if (minTempo > maxTempo) {
+            [minTempo, maxTempo] = [maxTempo, minTempo];
+        }
+
+        const sliderMin = parseInt(tempoSlider.min);
+        const sliderMax = parseInt(tempoSlider.max);
+        minTempo = Math.max(minTempo, sliderMin);
+        maxTempo = Math.min(maxTempo, sliderMax);
+
+        const randomTempo = Math.floor(Math.random() * (maxTempo - minTempo + 1)) + minTempo;
+        tempoSlider.value = randomTempo;
+        updatePlaybackRate();
+        updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
     }
 
     playPauseBtn.addEventListener('click', function() {
@@ -705,7 +696,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Auto-Randomization Logic
         if (!isPlayingPlaylist && isRandomizeEnabled) {
             currentRepCount++;
-            // Ensure repsBeforeChange is always at least 1:
             if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
                 repsBeforeChange = 1;
             }
@@ -715,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentRepCount = 0;
             }
 
-            // Start again automatically after picking a new tempo
+            // Start again automatically after picking a new tempo or even if no tempo change
             audio.play();
             playPauseBtn.textContent = 'Pause';
             updateProgressBarSmoothly();
@@ -1094,28 +1084,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         exerciseSelector.selectedIndex = newIndex;
 
-        if (typeof exercises !== 'undefined' && Array.isArray(exercises)) {
-            const selectedExerciseId = parseInt(exerciseSelector.value);
-            const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
+        const selectedExerciseId = parseInt(exerciseSelector.value);
+        const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
 
-            if (isPlayingPlaylist && currentPlaylist) {
-                const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
-                if (indexInPlaylist !== -1) {
-                    currentPlaylistItemIndex = indexInPlaylist;
-                    currentTempoIndex = 0;
-                    currentRepetition = 0;
-                    playCurrentPlaylistItem();
-                    updatePlaylistQueueDisplay();
-                    updatePlaylistProgressBar();
-                } else {
-                    console.error('Selected exercise is not in the current playlist');
-                }
+        if (isPlayingPlaylist && currentPlaylist) {
+            const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
+            if (indexInPlaylist !== -1) {
+                currentPlaylistItemIndex = indexInPlaylist;
+                currentTempoIndex = 0;
+                currentRepetition = 0;
+                playCurrentPlaylistItem();
+                updatePlaylistQueueDisplay();
+                updatePlaylistProgressBar();
             } else {
-                initializeExercise(selectedExercise);
-                audio.pause();
-                resetProgressBar();
-                playPauseBtn.textContent = 'Play';
+                console.error('Selected exercise is not in the current playlist');
             }
+        } else {
+            initializeExercise(selectedExercise);
+            audio.pause();
+            resetProgressBar();
+            playPauseBtn.textContent = 'Play';
         }
     }
 });
