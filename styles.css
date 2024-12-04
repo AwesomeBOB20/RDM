@@ -460,6 +460,10 @@ button#randomTempoBtn:hover {
         grid-template-columns: auto 1fr auto;
         width: 90%;
     }
+
+    .auto-label {
+     display: flex;
+    }   
 }
 
 /* Icon Buttons */
