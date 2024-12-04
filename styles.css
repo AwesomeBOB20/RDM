@@ -30,6 +30,7 @@ body {
 
 /* Selector Styles */
 .selector {
+    width: 10rem;
     max-width: 100%;
     padding: 5px 8px;
     font-size: 0.9rem;
@@ -300,6 +301,10 @@ button#randomTempoBtn:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+#repsPerTempo {
+    width: 5rem;
 }
 
 /* Responsive Design */
