@@ -62,7 +62,6 @@ body {
 }
 
 /* Buttons */
-#stopPlaylistBtn,
 .play-btn,
 #randomExerciseBtn {
     background-color: #d35400;
@@ -78,10 +77,28 @@ body {
     font-weight: normal;
 }
 
-#stopPlaylistBtn:hover,
 .play-btn:hover,
 #randomExerciseBtn:hover {
     background-color: #c25227;
+}
+
+/* Stop Playlist Button (Purple) */
+#stopPlaylistBtn {
+    background-color: #96318d; 
+    border: 2px solid #000000;
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: auto;
+    text-align: center;
+    margin: 10px 5px;
+    font-weight: normal;
+}
+
+#stopPlaylistBtn:hover {
+    background-color: #81227a;
 }
 
 .play-btn.playlist-mode {
@@ -215,7 +232,7 @@ button#randomTempoBtn:hover {
     align-items: center;
     gap: 7.5px;
     margin: 15px auto;
-    flex-wrap: wrap; /* allow wrapping on smaller screens */
+    flex-wrap: wrap;
     width: 100%;
 }
 
@@ -234,13 +251,11 @@ button#randomTempoBtn:hover {
     border-radius: 5px;
     margin-left: 10px;
     font-weight: normal;
+    background: #fff;
+    color: #000;
 }
 
-.tempo-input::placeholder {
-    color: #666;
-}
-
-/* Disabled Styles */
+/* Disabled Styles (Using :disabled for actual disabled elements) */
 .play-btn:disabled,
 #randomExerciseBtn:disabled,
 #exerciseSelector:disabled,
@@ -304,9 +319,16 @@ button#randomTempoBtn:hover {
     white-space: nowrap;
 }
 
+#repsPerTempo,
 #minTempo,
-#maxTempo, {
-    background: aliceblue;
+#maxTempo {
+    background: #fff; 
+    color: #000;
+    border: 2px solid #000; 
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 6px;
+    font-weight: normal;
 }
 
 #repsPerTempo {
@@ -336,7 +358,6 @@ button#randomTempoBtn:hover {
         width: 100%;
     }
 
-    /* Adjusted sheet music margins */
     .sheet-music-img {
         margin-top: 10px;  
         margin-bottom: 10px; 
@@ -416,9 +437,6 @@ button#randomTempoBtn:hover {
         margin: 0 12px 6px 12px;
     }
 
-    /*
-     1. The play button (#playPauseBtn) on its own line
-    */
     #playPauseBtn {
         display: block;
         width: 90%;
@@ -426,10 +444,6 @@ button#randomTempoBtn:hover {
         margin: 10px auto;
     }
 
-    /*
-     2. The randomize tempo button (#randomTempoBtn) and auto checkbox on the same line
-       - The .random-container will stay flex to keep them together on one line.
-    */
     .random-container {
         display: flex;
         flex-direction: row;
@@ -446,10 +460,6 @@ button#randomTempoBtn:hover {
         margin: 6px 12px;
     }
 
-    /*
-     3. Reps, Min Tempo, and Max Tempo each on their own line
-       Assuming #reps is the element for repetitions. If not present, it can be ignored.
-    */
     #reps,
     #minTempo,
     #maxTempo {
@@ -677,4 +687,29 @@ button#randomTempoBtn:hover {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #e67e22;
+}
+
+/* Simulate disabled state with .playlist-mode for certain elements */
+.playlist-mode #randomTempoBtn,
+.playlist-mode .auto-label,
+.playlist-mode .auto-label input[type="checkbox"],
+.playlist-mode #repsPerTempo,
+.playlist-mode #minTempo,
+.playlist-mode #maxTempo {
+    /* Match the disabled style of categorySelector & randomExerciseBtn:disabled */
+    background-color: #a84300;
+    cursor: not-allowed;
+    pointer-events: none;
+    color: #fff; /* Ensure text is visible against the background */
+    border-color: #000;
+}
+
+.playlist-mode #randomTempoBtn:hover,
+.playlist-mode .auto-label:hover,
+.playlist-mode #repsPerTempo:hover,
+.playlist-mode #minTempo:hover,
+.playlist-mode #maxTempo:hover {
+    background-color: #a84300;
+    cursor: not-allowed;
+    color: #fff;
 }
