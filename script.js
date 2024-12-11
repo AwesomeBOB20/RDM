@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: 75, name: "Thirteen", category: ["accent-tap", "one-handers", "exercises"], audioSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66f8e768f4440d06e074601b.mpeg", sheetMusicSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66f8e6734c8d5ff0156ea1a5.png", originalTempo: 60 },      
     { "id": 59, "name": "Triplet - 16th", "category": ["timing"], "audioSrc": "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66eb89e065c6703f5148efeb.mpeg", "sheetMusicSrc": "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66eb89ec7172d7c61b73b992.png", "originalTempo": 120 },
     { id: 134, name: "Triplet - 16th 2 Note Timing Gauntlet", category: ["timing"], audioSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/673dd1508860417b9a180952.mpeg", sheetMusicSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/673dc9781b64963a4b358ea6.png", originalTempo: 110 }, 
-    { id: 168, name: "Triplet - 16th Roll", category: ["timing", "rolls"], audioSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/675832cfb1300c4d795ed3fc.mpeg", sheetMusicSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/675832c0b5c0945a215152ad.png", originalTempo: 100},
+    { id: 168, name: "Triplet -16th Roll", category: ["timing, rolls"], audioSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/675832cfb1300c4d795ed3fc.mpeg", sheetMusicSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/675832c0b5c0945a215152ad.png", originalTempo: 100},
     { id: 167, name: "Triplet - 5let", category: ["timing"], audioSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/675832cfb1300c134b5ed3fb.mpeg", sheetMusicSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/675832c0988a5f05dba39a6c.png", originalTempo: 100},
     { "id": 62, "name": "Triplet - 5let Roll", "category": ["timing", "rolls"], "audioSrc": "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66eb89e065c670b0fb48efea.mpeg", "sheetMusicSrc": "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/66eb89ecc6a839421950a5df.png", "originalTempo": 120 },       
     { id: 49, name: "Triplet - 8th", category: ["timing"], audioSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/669c9be92477efffbb0e6d2a.mpeg", sheetMusicSrc: "https://storage.googleapis.com/msgsndr/pFMv0RyoaIz90Z0Nbyos/media/669ca4892477ef0ee40f510a.png", originalTempo: 150 },
@@ -823,6 +823,7 @@ document.addEventListener('DOMContentLoaded', function() {
     currentRepetition = 0;
     isPlayingPlaylist = true;
 
+    // Disable various controls
     categorySelector.disabled = true;
     minTempoInput.disabled = true;
     maxTempoInput.disabled = true;
@@ -833,14 +834,22 @@ document.addEventListener('DOMContentLoaded', function() {
     autoRandomizeToggle.disabled = true;
     repsPerTempoInput.disabled = true;
 
-    // Add the .disabled class to the auto-label to show the disabled styling
+    // Disable the auto-label visually
     const autoLabel = document.querySelector('.auto-label');
     if (autoLabel) {
         autoLabel.classList.add('disabled');
     }
 
+    // Disable the random-container visually
+    const randomContainer = document.querySelector('.random-container');
+    if (randomContainer) {
+        randomContainer.classList.add('disabled');
+    }
+
+    // Enable playlist navigation
     prevPlaylistItemBtn.disabled = false;
     nextPlaylistItemBtn.disabled = false;
+
     stopPlaylistBtn.disabled = false;
     playlistQueueSelect.disabled = false;
 
@@ -848,6 +857,7 @@ document.addEventListener('DOMContentLoaded', function() {
     categorySelector.disabled = true;
 
     playlistProgressContainer.style.display = 'flex';
+
     playlistSelector.value = playlistId;
 
     updateExerciseListForPlaylist(currentPlaylist);
@@ -975,6 +985,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateExerciseList(categorySelector.value);
     playPauseBtn.classList.remove('playlist-mode');
 
+    // Re-enable everything
     categorySelector.disabled = false;
     minTempoInput.disabled = false;
     maxTempoInput.disabled = false;
@@ -983,10 +994,16 @@ document.addEventListener('DOMContentLoaded', function() {
     autoRandomizeToggle.disabled = false;
     repsPerTempoInput.disabled = false;
 
-    // Remove the .disabled class from the auto-label
+    // Remove the disabled class from auto-label
     const autoLabel = document.querySelector('.auto-label');
     if (autoLabel) {
         autoLabel.classList.remove('disabled');
+    }
+
+    // Remove the disabled class from random-container
+    const randomContainer = document.querySelector('.random-container');
+    if (randomContainer) {
+        randomContainer.classList.remove('disabled');
     }
 }
 
