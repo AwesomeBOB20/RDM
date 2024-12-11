@@ -678,11 +678,20 @@ button#randomTempoBtn:hover {
 .play-btn:disabled,
 .selector:disabled,
 input:disabled,
-.random-container.disabled,
 #autoRandomizeToggle:disabled,
 #randomTempoBtn:disabled,
 .auto-label.disabled {
     background-color: #a84300;
+    cursor: not-allowed;
+}
+
+.random-container.disabled {
+    background-color: #a84300;
+    cursor: not-allowed;
+}
+
+.random-container.disabled button,
+.random-container.disabled .auto-label {
     cursor: not-allowed;
 }
 
