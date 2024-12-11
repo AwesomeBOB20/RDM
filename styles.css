@@ -304,6 +304,11 @@ button#randomTempoBtn:hover {
     white-space: nowrap;
 }
 
+#minTempo,
+#maxTempo, {
+    background: aliceblue;
+}
+
 #repsPerTempo {
     width: 5rem;
 }
