@@ -670,6 +670,25 @@ button#randomTempoBtn:hover {
     font-weight: normal;
 }
 
+/* Ensure disabled buttons and inputs show the not-allowed cursor and same background color */
+.play-btn:disabled,
+.selector:disabled,
+input:disabled,
+#autoRandomizeToggle:disabled,
+#randomTempoBtn:disabled,
+.auto-label.disabled {
+    background-color: #a84300;
+    cursor: not-allowed;
+}
+
+.play-btn:disabled:hover,
+#autoRandomizeToggle:disabled:hover,
+#randomTempoBtn:disabled:hover,
+.auto-label.disabled:hover {
+    background-color: #a84300; /* No hover color change, just fixed color */
+}
+
+
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
     width: 8px;
@@ -687,29 +706,4 @@ button#randomTempoBtn:hover {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #e67e22;
-}
-
-/* Simulate disabled state with .playlist-mode for certain elements */
-.playlist-mode #randomTempoBtn,
-.playlist-mode .auto-label,
-.playlist-mode .auto-label input[type="checkbox"],
-.playlist-mode #repsPerTempo,
-.playlist-mode #minTempo,
-.playlist-mode #maxTempo {
-    /* Match the disabled style of categorySelector & randomExerciseBtn:disabled */
-    background-color: #a84300;
-    cursor: not-allowed;
-    pointer-events: none;
-    color: #fff; /* Ensure text is visible against the background */
-    border-color: #000;
-}
-
-.playlist-mode #randomTempoBtn:hover,
-.playlist-mode .auto-label:hover,
-.playlist-mode #repsPerTempo:hover,
-.playlist-mode #minTempo:hover,
-.playlist-mode #maxTempo:hover {
-    background-color: #a84300;
-    cursor: not-allowed;
-    color: #fff;
 }
