@@ -817,44 +817,50 @@ document.addEventListener('DOMContentLoaded', function() {
     updateExerciseList('all');
 
     function startPlaylist(playlistId) {
-        currentPlaylist = playlists[playlistId];
-        currentPlaylistItemIndex = 0;
-        currentTempoIndex = 0;
-        currentRepetition = 0;
-        isPlayingPlaylist = true;
+    currentPlaylist = playlists[playlistId];
+    currentPlaylistItemIndex = 0;
+    currentTempoIndex = 0;
+    currentRepetition = 0;
+    isPlayingPlaylist = true;
 
-        categorySelector.disabled = true;
-        minTempoInput.disabled = true;
-        maxTempoInput.disabled = true;
-        randomExerciseBtn.disabled = true;
-        randomTempoBtn.disabled = true;
-        tempoSlider.disabled = true;
+    categorySelector.disabled = true;
+    minTempoInput.disabled = true;
+    maxTempoInput.disabled = true;
+    randomExerciseBtn.disabled = true;
+    tempoSlider.disabled = true;
 
-        // Enable playlist navigation now that we are in playlist mode
-        prevPlaylistItemBtn.disabled = false;
-        nextPlaylistItemBtn.disabled = false;
+    randomTempoBtn.disabled = true;
+    autoRandomizeToggle.disabled = true;
+    repsPerTempoInput.disabled = true;
 
-        stopPlaylistBtn.disabled = false;
-        playlistQueueSelect.disabled = false;
-
-        categorySelector.value = 'all';
-        categorySelector.disabled = true;
-
-        playlistProgressContainer.style.display = 'flex';
-
-        playlistSelector.value = playlistId;
-
-        updateExerciseListForPlaylist(currentPlaylist);
-
-        playPauseBtn.classList.add('playlist-mode');
-        exerciseSelector.classList.add('purple-btn');
-        prevExerciseBtn.classList.add('purple-btn');
-        nextExerciseBtn.classList.add('purple-btn');
-
-        playCurrentPlaylistItem();
-        updatePlaylistQueueDisplay();
-        updatePlaylistProgressBar();
+    // Add the .disabled class to the auto-label to show the disabled styling
+    const autoLabel = document.querySelector('.auto-label');
+    if (autoLabel) {
+        autoLabel.classList.add('disabled');
     }
+
+    prevPlaylistItemBtn.disabled = false;
+    nextPlaylistItemBtn.disabled = false;
+    stopPlaylistBtn.disabled = false;
+    playlistQueueSelect.disabled = false;
+
+    categorySelector.value = 'all';
+    categorySelector.disabled = true;
+
+    playlistProgressContainer.style.display = 'flex';
+    playlistSelector.value = playlistId;
+
+    updateExerciseListForPlaylist(currentPlaylist);
+
+    exerciseSelector.classList.add('purple-btn');
+    prevExerciseBtn.classList.add('purple-btn');
+    nextExerciseBtn.classList.add('purple-btn');
+
+    playCurrentPlaylistItem();
+    updatePlaylistQueueDisplay();
+    updatePlaylistProgressBar();
+}
+
 
     function updateExerciseListForPlaylist(playlist) {
         exerciseSelector.innerHTML = '';
@@ -960,15 +966,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function stopPlaylist() {
-        audio.pause();
-        isPlayingPlaylist = false;
-        currentPlaylist = null;
-        playPauseBtn.textContent = 'Play';
-        resetPlaylistControls();
-        resetProgressBar();
-        updateExerciseList(categorySelector.value);
-        playPauseBtn.classList.remove('playlist-mode');
+    audio.pause();
+    isPlayingPlaylist = false;
+    currentPlaylist = null;
+    playPauseBtn.textContent = 'Play';
+    resetPlaylistControls();
+    resetProgressBar();
+    updateExerciseList(categorySelector.value);
+    playPauseBtn.classList.remove('playlist-mode');
+
+    categorySelector.disabled = false;
+    minTempoInput.disabled = false;
+    maxTempoInput.disabled = false;
+    randomExerciseBtn.disabled = false;
+    randomTempoBtn.disabled = false;
+    autoRandomizeToggle.disabled = false;
+    repsPerTempoInput.disabled = false;
+
+    // Remove the .disabled class from the auto-label
+    const autoLabel = document.querySelector('.auto-label');
+    if (autoLabel) {
+        autoLabel.classList.remove('disabled');
     }
+}
 
     function resetPlaylistControls() {
         stopPlaylistBtn.disabled = true;
