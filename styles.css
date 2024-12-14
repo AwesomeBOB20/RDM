@@ -6,8 +6,8 @@ body {
     font-weight: normal;
     margin: 0;
     padding: 0;
-    background-color: #1c1c1c; /* Background color */
-    color: #ffffff; /* Default text color */
+    background-color: #1c1c1c; 
+    color: #ffffff; 
 }
 
 .container {
@@ -17,7 +17,6 @@ body {
     text-align: center;
 }
 
-/* Sheet Music Styles */
 .sheet-music {
     margin: 20px 0;
 }
@@ -26,6 +25,12 @@ body {
     max-width: 100%;
     height: auto;
     border: 2px solid #000;
+}
+
+/* Ensure Ubuntu font on all selects and exercise-list items */
+.selector, #playlistSelector, #playlistQueue, .exercise-list li {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: normal;
 }
 
 /* Selector Styles */
@@ -71,10 +76,9 @@ body {
     padding: 6px 12px;
     border-radius: 5px;
     cursor: pointer;
-    width: auto;
-    text-align: center;
     margin: 10px 5px;
     font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 #randomTempoBtn {
@@ -86,7 +90,7 @@ body {
     background-color: #c25227;
 }
 
-/* Stop Playlist Button (Purple) */
+/* Stop Playlist Button */
 #stopPlaylistBtn {
     background-color: #96318d; 
     border: 2px solid #000000;
@@ -95,10 +99,9 @@ body {
     padding: 6px 12px;
     border-radius: 5px;
     cursor: pointer;
-    width: auto;
-    text-align: center;
     margin: 10px 5px;
     font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 #stopPlaylistBtn:hover {
@@ -113,7 +116,7 @@ body {
     background-color: #81227a;
 }
 
-/* Random Container for Randomize Tempo + Auto Toggle */
+/* Random Container */
 .random-container {
     display: flex;
     align-items: center;
@@ -122,6 +125,7 @@ body {
     overflow: hidden;
     margin: 10px 5px;
     background-color: #d35400;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 button#randomTempoBtn {
@@ -133,6 +137,7 @@ button#randomTempoBtn {
     margin: 0;
     padding: 6px 12px;
     cursor: pointer;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 button#randomTempoBtn:hover {
@@ -156,6 +161,7 @@ button#randomTempoBtn:hover {
     padding: 6px 12px;
     cursor: pointer;
     display: inline-flex;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .auto-label:hover {
@@ -238,6 +244,7 @@ button#randomTempoBtn:hover {
     margin: 15px auto;
     flex-wrap: wrap;
     width: 100%;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .control-container select,
@@ -245,6 +252,7 @@ button#randomTempoBtn:hover {
 .control-container input {
     margin: 5px;
     font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .tempo-input {
@@ -257,9 +265,10 @@ button#randomTempoBtn:hover {
     font-weight: normal;
     background: #fff;
     color: #000;
+    font-family: 'Ubuntu', sans-serif;
 }
 
-/* Disabled Styles (Using :disabled for actual disabled elements) */
+/* Disabled Styles */
 .play-btn:disabled,
 #randomExerciseBtn:disabled,
 #exerciseSelector:disabled,
@@ -280,6 +289,7 @@ button#randomTempoBtn:hover {
 .selector option.active-option {
     background-color: #ffffff;
     color: inherit;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 #exerciseSelector option.active-option {
@@ -304,6 +314,7 @@ button#randomTempoBtn:hover {
     flex-wrap: nowrap;
 }
 
+/* On initialization prev/next playlist buttons are disabled */
 #prevPlaylistItemBtn,
 #nextPlaylistItemBtn,
 #prevExerciseBtn,
@@ -313,6 +324,7 @@ button#randomTempoBtn:hover {
     text-align: center;
     flex-shrink: 0;
     font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 #playlistQueue {
@@ -333,20 +345,16 @@ button#randomTempoBtn:hover {
     font-size: 1rem;
     padding: 6px;
     font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
+    margin: 10px;
 }
 
 #repsPerTempo {
     width: 5rem;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 600px) and (orientation: portrait) {
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
     .control-container {
         display: grid;
         gap: 5px;
@@ -359,7 +367,7 @@ button#randomTempoBtn:hover {
         padding: 5px 0;
         margin: 5px 0;
         text-align: center;
-        width: 100%;
+        width: 90%;
     }
 
     .sheet-music-img {
@@ -395,17 +403,6 @@ button#randomTempoBtn:hover {
         margin: 0;
     }
 
-    #prevPlaylistItemBtn,
-    #nextPlaylistItemBtn {
-        width: 45px;
-        font-size: 1.2rem;
-        text-align: center;
-    }
-
-    #playlistQueue {
-        width: 100%;
-    }
-
     #stopPlaylistBtn {
         grid-column: 1 / -1;
         width: 90%;
@@ -415,13 +412,6 @@ button#randomTempoBtn:hover {
 
     #exerciseSelector {
         width: 90%;
-    }
-
-    #prevExerciseBtn,
-    #nextExerciseBtn {
-        width: 45px;
-        font-size: 1.2rem;
-        text-align: center;
     }
 
     .exercise-group {
@@ -464,16 +454,6 @@ button#randomTempoBtn:hover {
         margin: 6px 12px;
     }
 
-    #reps,
-    #minTempo,
-    #maxTempo {
-        display: block;
-        width: 90%;
-        text-align: center;
-        padding: 5px;
-        margin: 10px auto;
-    }
-
     #exerciseSelector,
     #playlistQueue {
         width: 100%;
@@ -486,7 +466,7 @@ button#randomTempoBtn:hover {
     }
 
     .auto-label {
-     display: flex;
+        display: flex;
     }   
 
     #repsPerTempo {
@@ -495,6 +475,14 @@ button#randomTempoBtn:hover {
         padding-right: 5px;
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+
+    /* On mobile, center the exercise-list and prevent overflow */
+    .exercise-list {
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(100% - 1rem);
+        margin-left: 0;
     }
 }
 
@@ -506,10 +494,9 @@ button#randomTempoBtn:hover {
     padding: 6px 12px;
     border-radius: 5px;
     cursor: pointer;
-    width: auto;
-    text-align: center;
     margin: 10px 5px;
     font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 #prevExerciseBtn,
@@ -550,11 +537,12 @@ button#randomTempoBtn:hover {
     cursor: not-allowed;
 }
 
+/* Exercise Group */
 .exercise-group {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 7.5px;
     flex-wrap: nowrap;
 }
 
@@ -591,6 +579,7 @@ button#randomTempoBtn:hover {
 .volume-control,
 .tempo-control {
     margin: 25px 0;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .volume-control label,
@@ -599,10 +588,6 @@ button#randomTempoBtn:hover {
 .tempo-control span {
     color: #fff;
     font-weight: normal;
-}
-
-.tempo-control {
-    margin: 25px 0 50px 0;
 }
 
 /* Progress Bars */
@@ -637,6 +622,7 @@ button#randomTempoBtn:hover {
     font-size: 1rem;
     color: #000;
     font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 /* Playlist Progress Bar */
@@ -672,9 +658,10 @@ button#randomTempoBtn:hover {
     font-size: 1rem;
     color: #000;
     font-weight: normal;
+    font-family: 'Ubuntu', sans-serif;
 }
 
-/* Ensure disabled buttons and inputs show the not-allowed cursor and same background color */
+/* Disabled styles */
 .play-btn:disabled,
 .selector:disabled,
 input:disabled,
@@ -699,11 +686,10 @@ input:disabled,
 #autoRandomizeToggle:disabled:hover,
 #randomTempoBtn:disabled:hover,
 .auto-label.disabled:hover {
-    background-color: #a84300; /* No hover color change, just fixed color */
+    background-color: #a84300; 
 }
 
-
-/* Scrollbar Styles */
+/* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -720,4 +706,100 @@ input:disabled,
 
 ::-webkit-scrollbar-thumb:hover {
     background: #e67e22;
+}
+
+/* Exercise Searchable Dropdown */
+.exercise-container {
+    position: relative;
+    display: inline-flex; 
+    flex: 1; 
+    max-width: 100%;
+}
+
+#exerciseSearch.selector {
+    width: 100%;
+    border: 2px solid #000;
+    border-radius: 5px;
+    padding: 5px 8px;
+    background-color: #d35400;
+    color: #fff;
+    font-size: 0.9rem;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+#exerciseSearch.selector:focus {
+    background-color: #c25227;
+    outline: none;
+}
+
+/* Purple mode for exerciseSearch and exerciseList */
+#exerciseSearch.selector.purple-btn {
+    background-color: #96318d;
+}
+#exerciseSearch.selector.purple-btn:focus {
+    background-color: #81227a;
+}
+
+/* Exercise List */
+.exercise-list {
+    position: absolute;
+    top: 100%;
+    margin-top: -5px; 
+    margin-left: 0.25rem; 
+    background-color: #d35400;
+    border: 1px solid #808080;
+    border-radius: 3px;
+    list-style-type: none;
+    padding: 3px;
+    max-height: 100vh; 
+    overflow-y: auto;
+    display: none;
+    z-index: 999;
+    font-family: 'Ubuntu', sans-serif;
+    white-space: nowrap; 
+    text-align: left;
+
+    /* New and modified properties */
+    min-width: fit-content;
+    width: auto; /* Ensure no fixed width */
+}
+
+.exercise-list.purple-btn {
+    background-color: #96318d;
+    border-color: #000;
+}
+
+.exercise-list li {
+    padding: 5px 8px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 0.9rem; 
+    font-family: 'Ubuntu', sans-serif;
+    text-align: left;
+}
+
+/* Hover: white background, orange text */
+.exercise-list li:hover {
+    background-color: #53525d;
+    color: #ffffff;
+    margin: 0px;
+    border-radius: 1.25px;
+}
+
+.exercise-list li.active-option {
+    background-color: #ffffff;
+    color: #d35400;
+    margin: 0px; 
+    border-radius: 1.25px; 
+}
+
+/* Playlist mode hover text color */
+.exercise-list.playlist-mode li:hover {
+    background-color: #53525d;
+    color: #ffffff !important;
+}
+
+.exercise-list.playlist-mode li.active-option {
+    background-color: #ffffff;
+    color: #96318d !important;
 }
