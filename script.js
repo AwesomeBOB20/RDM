@@ -447,7 +447,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const volumePercentageDisplay = document.getElementById('volumePercentage');
     const tempoSlider = document.getElementById('tempoSlider');
     const tempoLabel = document.getElementById('tempoLabel');
-    const exerciseSelector = document.getElementById('exerciseSelector');
     const categorySelector = document.getElementById('categorySelector');
     const sheetMusicImg = document.querySelector('.sheet-music img');
     const progressContainer = document.querySelector('.progress-bar');
@@ -468,10 +467,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextExerciseBtn = document.getElementById('nextExerciseBtn');
     const autoRandomizeToggle = document.getElementById('autoRandomizeToggle');
     const repsPerTempoInput = document.getElementById('repsPerTempo');
+    const exerciseSearchInput = document.getElementById('exerciseSearch');
+    const exerciseList = document.getElementById('exerciseList');
 
+    // State variables
     let isDragging = false;
     playlistQueueSelect.disabled = true;
     stopPlaylistBtn.disabled = true;
+    prevPlaylistItemBtn.disabled = true;
+    nextPlaylistItemBtn.disabled = true;
 
     let currentPlaylist = null;
     let currentPlaylistItemIndex = 0;
@@ -484,51 +488,146 @@ document.addEventListener('DOMContentLoaded', function() {
 
     playlistSelector.value = '';
     minTempoInput.value = '';
-    maxTempoInput.value = '';
 
     let isRandomizeEnabled = false;
     let repsBeforeChange = 1;
     let currentRepCount = 0;
+    let displayedExercises = [];
+    let currentExerciseIndex = 0;
+    let currentSelectedExercise = null;
 
+    // Event listeners for toggles and inputs
     autoRandomizeToggle.addEventListener('change', function() {
         isRandomizeEnabled = this.checked;
-        currentRepCount = 0; // reset when toggled
+        currentRepCount = 0;
     });
 
     repsPerTempoInput.addEventListener('input', function() {
         const val = parseInt(this.value);
-        if (!isNaN(val) && val > 0) {
-            repsBeforeChange = val;
+        repsBeforeChange = (!isNaN(val) && val > 0) ? val : 1;
+    });
+
+    // Initialize
+    populatePlaylistSelector();
+    categorySelector.value = 'all';
+    exerciseSearchInput.placeholder = "Search Exercises...";
+
+    if (exercises.length > 0) {
+        displayedExercises = filterExercisesForMode();
+        if (displayedExercises.length > 0) {
+            currentExerciseIndex = 0;
+            currentSelectedExercise = displayedExercises[currentExerciseIndex];
+            initializeExercise(currentSelectedExercise);
+        }
+    }
+
+    exerciseList.style.display = 'none';
+
+    // Functions
+    function filterExercisesForMode() {
+        if (isPlayingPlaylist && currentPlaylist) {
+            const playlistExerciseIds = currentPlaylist.items.map(i => i.exerciseId);
+            return exercises.filter(ex => playlistExerciseIds.includes(ex.id));
         } else {
-            repsBeforeChange = 1; // default
+            const category = categorySelector.value;
+            return exercises.filter(ex => category === 'all' || ex.category.includes(category));
+        }
+    }
+
+    function populateExerciseList(filter = '') {
+        exerciseList.innerHTML = '';
+        displayedExercises = filterExercisesForMode().filter(ex => ex.name.toLowerCase().includes(filter.toLowerCase()));
+        displayedExercises.forEach((exercise, idx) => {
+            const li = document.createElement('li');
+            li.textContent = exercise.name;
+            li.dataset.id = exercise.id;
+            if (exercise === currentSelectedExercise && idx === currentExerciseIndex) {
+                li.classList.add('active-option');
+            }
+            li.addEventListener('click', () => {
+                currentExerciseIndex = displayedExercises.indexOf(exercise);
+                currentSelectedExercise = exercise;
+                selectExercise(exercise);
+            });
+            exerciseList.appendChild(li);
+        });
+
+        if (displayedExercises.length > 0 && document.activeElement === exerciseSearchInput) {
+            exerciseList.style.display = 'block';
+        } else {
+            exerciseList.style.display = 'none';
+        }
+        // Removed dynamic width code here to allow fit-content
+    }
+
+    function selectExercise(exercise) {
+        exerciseSearchInput.value = '';
+        exerciseSearchInput.placeholder = exercise.name;
+        exerciseList.style.display = 'none';
+        initializeExercise(exercise);
+        audio.pause();
+        resetProgressBar();
+        playPauseBtn.textContent = 'Play';
+
+        if (isPlayingPlaylist && currentPlaylist) {
+            const idx = currentPlaylist.items.findIndex(i => i.exerciseId === exercise.id);
+            if (idx !== -1) {
+                currentPlaylistItemIndex = idx;
+                currentTempoIndex = 0;
+                currentRepetition = 0;
+                updatePlaylistQueueDisplay();
+                updatePlaylistProgressBar();
+                playCurrentPlaylistItem();
+            }
+        }
+    }
+
+    exerciseSearchInput.addEventListener('focus', () => {
+        populateExerciseList(exerciseSearchInput.value);
+    });
+
+    exerciseSearchInput.addEventListener('input', () => {
+        populateExerciseList(exerciseSearchInput.value);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.exercise-container')) {
+            exerciseList.style.display = 'none';
         }
     });
 
-    populatePlaylistSelector();
+    function navigateExercise(direction) {
+        displayedExercises = filterExercisesForMode();
+        if (displayedExercises.length === 0) return;
+        currentExerciseIndex += direction;
+        if (currentExerciseIndex < 0) currentExerciseIndex = displayedExercises.length - 1;
+        if (currentExerciseIndex >= displayedExercises.length) currentExerciseIndex = 0;
 
-    // **Always enable exercise navigation (prevExerciseBtn, nextExerciseBtn)**
-    // These are NOT disabled at start.
+        currentSelectedExercise = displayedExercises[currentExerciseIndex];
+        exerciseSearchInput.value = '';
+        exerciseSearchInput.placeholder = currentSelectedExercise.name;
+        initializeExercise(currentSelectedExercise);
+        audio.pause();
+        resetProgressBar();
+        playPauseBtn.textContent = 'Play';
 
-    // **Disable playlist navigation at start**
-    prevPlaylistItemBtn.disabled = true; // Only enabled in playlist mode
-    nextPlaylistItemBtn.disabled = true; // Only enabled in playlist mode
-
-    function populatePlaylistSelector() {
-        playlistSelector.innerHTML = '';
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Select a Playlist';
-        playlistSelector.appendChild(defaultOption);
-
-        if (Array.isArray(playlists)) {
-            playlists.forEach((playlist, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = playlist.name;
-                playlistSelector.appendChild(option);
-            });
+        if (isPlayingPlaylist && currentPlaylist) {
+            const idx = currentPlaylist.items.findIndex(i => i.exerciseId === currentSelectedExercise.id);
+            if (idx !== -1) {
+                currentPlaylistItemIndex = idx;
+                currentTempoIndex = 0;
+                currentRepetition = 0;
+                updatePlaylistQueueDisplay();
+                updatePlaylistProgressBar();
+                playCurrentPlaylistItem();
+            }
         }
+
+        populateExerciseList();
     }
+
+    prevExerciseBtn.addEventListener('click', () => navigateExercise(-1));
+    nextExerciseBtn.addEventListener('click', () => navigateExercise(1));
 
     function formatTime(timeInSeconds) {
         const minutes = Math.floor(timeInSeconds / 60);
@@ -548,56 +647,25 @@ document.addEventListener('DOMContentLoaded', function() {
         currentTimeDisplay.textContent = formatTime(currentTime);
     }
 
-    function updateExerciseList(category) {
-        exerciseSelector.innerHTML = '';
-        const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
-        filteredExercises.forEach((exercise, index) => {
-            const option = document.createElement('option');
-            option.value = exercise.id;
-            option.textContent = exercise.name;
-            if (index === 0) {
-                option.classList.add('active-option');
-            }
-            exerciseSelector.appendChild(option);
-        });
-        if (filteredExercises.length > 0) {
-            initializeExercise(filteredExercises[0]);
-        }
-    }
-
-    function initializeExercise(selectedExercise, isPlaylistMode = false) {
-        audio.src = selectedExercise.audioSrc;
+    function initializeExercise(ex) {
+        audio.src = ex.audioSrc;
         audio.preload = 'auto';
         audio.load();
-        sheetMusicImg.src = selectedExercise.sheetMusicSrc;
-        tempoSlider.min = selectedExercise.originalTempo / 2;
-        tempoSlider.max = selectedExercise.originalTempo * 2;
-        tempoSlider.value = selectedExercise.originalTempo;
-        tempoLabel.textContent = 'BPM: ' + selectedExercise.originalTempo;
+        sheetMusicImg.src = ex.sheetMusicSrc;
+        tempoSlider.min = ex.originalTempo / 2;
+        tempoSlider.max = ex.originalTempo * 2;
+        tempoSlider.value = ex.originalTempo;
+        tempoLabel.textContent = 'BPM: ' + ex.originalTempo;
         updatePlaybackRate();
         updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
         updateSliderBackground(volumeSlider, '#96318d', '#ffffff');
-        audio.onloadedmetadata = function() {
-            updateTotalTime();
-        };
+        audio.onloadedmetadata = updateTotalTime;
         minTempoInput.value = '';
         maxTempoInput.value = '';
         resetProgressBar();
-
-        if (!isPlaylistMode) {
-            playPauseBtn.textContent = 'Play';
-            audio.pause();
-            audio.loop = false;
-        } else {
-            audio.loop = false;
-        }
-
-        Array.from(exerciseSelector.options).forEach(option => {
-            option.classList.remove('active-option');
-            if (parseInt(option.value) === selectedExercise.id) {
-                option.classList.add('active-option');
-            }
-        });
+        audio.loop = false; 
+        playPauseBtn.textContent = 'Play';
+        audio.pause();
     }
 
     function updatePlaybackRate() {
@@ -629,48 +697,58 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isPlayingPlaylist) {
             stopPlaylist();
         }
-        updateExerciseList(this.value);
-    });
-
-    exerciseSelector.addEventListener('change', function() {
-        const selectedExerciseId = parseInt(this.value);
-        const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
-
-        if (isPlayingPlaylist && currentPlaylist) {
-            const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
-            if (indexInPlaylist !== -1) {
-                currentPlaylistItemIndex = indexInPlaylist;
-                currentTempoIndex = 0;
-                currentRepetition = 0;
-                playCurrentPlaylistItem();
-                updatePlaylistQueueDisplay();
-                updatePlaylistProgressBar();
-            } else {
-                console.error('Selected exercise is not in the current playlist');
-            }
-        } else {
-            initializeExercise(selectedExercise);
+        currentExerciseIndex = 0;
+        const filtered = filterExercisesForMode();
+        if (filtered.length > 0) {
+            currentSelectedExercise = filtered[currentExerciseIndex];
+            initializeExercise(currentSelectedExercise);
+            exerciseSearchInput.value = '';
+            exerciseSearchInput.placeholder = currentSelectedExercise.name;
             audio.pause();
             resetProgressBar();
             playPauseBtn.textContent = 'Play';
+        } else {
+            currentSelectedExercise = null;
+            exerciseSearchInput.value = '';
+            exerciseSearchInput.placeholder = "Search Exercises...";
         }
+        populateExerciseList();
     });
 
     randomExerciseBtn.addEventListener('click', function() {
         if (isPlayingPlaylist) {
             stopPlaylist();
         }
-        const category = categorySelector.value;
-        const filteredExercises = exercises.filter(ex => category === 'all' || ex.category.includes(category));
+        pickRandomExercise();
+    });
+
+    function pickRandomExercise() {
+        const filteredExercises = filterExercisesForMode();
+        if (filteredExercises.length === 0) return;
         const randomIndex = Math.floor(Math.random() * filteredExercises.length);
-        initializeExercise(filteredExercises[randomIndex]);
-        exerciseSelector.value = filteredExercises[randomIndex].id;
+        currentExerciseIndex = randomIndex;
+        currentSelectedExercise = filteredExercises[currentExerciseIndex];
+        exerciseSearchInput.value = '';
+        exerciseSearchInput.placeholder = currentSelectedExercise.name;
+        initializeExercise(currentSelectedExercise);
         audio.pause();
         resetProgressBar();
         playPauseBtn.textContent = 'Play';
         minTempoInput.value = '';
         maxTempoInput.value = '';
-    });
+
+        if (isPlayingPlaylist && currentPlaylist) {
+            const idx = currentPlaylist.items.findIndex(i => i.exerciseId === currentSelectedExercise.id);
+            if (idx !== -1) {
+                currentPlaylistItemIndex = idx;
+                currentTempoIndex = 0;
+                currentRepetition = 0;
+                updatePlaylistQueueDisplay();
+                updatePlaylistProgressBar();
+                playCurrentPlaylistItem();
+            }
+        }
+    }
 
     randomTempoBtn.addEventListener('click', function() {
         if (isPlayingPlaylist) {
@@ -683,12 +761,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function pickRandomTempo() {
-        const selectedExercise = exercises.find(e => e.id === parseInt(exerciseSelector.value));
+        if (!currentSelectedExercise) return;
         let minTempo = parseInt(minTempoInput.value);
         let maxTempo = parseInt(maxTempoInput.value);
 
-        const defaultMin = Math.floor(selectedExercise.originalTempo / 2);
-        const defaultMax = selectedExercise.originalTempo * 2;
+        const defaultMin = Math.floor(currentSelectedExercise.originalTempo / 2);
+        const defaultMax = currentSelectedExercise.originalTempo * 2;
 
         if (isNaN(minTempo) || minTempo < 1 || minTempo > 999) {
             minTempo = defaultMin;
@@ -722,7 +800,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateProgressBarSmoothly();
             }).catch((error) => {
                 console.error('Error playing audio:', error);
-                alert('Audio is not ready to play yet. Please try again in a moment.');
+                alert('Audio is not ready yet. Please wait a moment.');
             });
         } else {
             audio.pause();
@@ -740,31 +818,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     audio.addEventListener('ended', function() {
-        // If you're currently in playlist mode, exit early to avoid conflicts.
         if (isPlayingPlaylist) {
             return;
         }
-        
-        // If auto-randomize is enabled, check if we've hit the required number of reps.
-        if (isRandomizeEnabled) {
-            currentRepCount++;
-            if (isNaN(repsBeforeChange) || repsBeforeChange < 1) {
-                repsBeforeChange = 1;
-            }
 
+        if (isRandomizeEnabled && currentSelectedExercise) {
+            currentRepCount++;
             if (currentRepCount >= repsBeforeChange) {
                 pickRandomTempo();
                 currentRepCount = 0;
             }
         }
 
-        // Always restart the track from the beginning, regardless of auto-randomization.
         audio.currentTime = 0;
         audio.play();
-
-        // Update UI to reflect that it's playing again
         playPauseBtn.textContent = 'Pause';
-
         updateProgressBarSmoothly();
     });
 
@@ -810,7 +878,7 @@ document.addEventListener('DOMContentLoaded', function() {
             x = e.clientX - rect.left;
         }
         const width = progressContainer.clientWidth;
-        let clickedValue = (x / width);
+        let clickedValue = x / width;
         clickedValue = Math.min(1, Math.max(0, clickedValue));
         audio.currentTime = clickedValue * audio.duration;
         updateProgressBar();
@@ -820,145 +888,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const progressPercent = (audio.currentTime / audio.duration) * 100;
         progress.style.width = progressPercent + '%';
         updateCurrentTime();
-    }
-
-    categorySelector.value = 'all';
-    updateExerciseList('all');
-
-    function startPlaylist(playlistId) {
-    currentPlaylist = playlists[playlistId];
-    currentPlaylistItemIndex = 0;
-    currentTempoIndex = 0;
-    currentRepetition = 0;
-    isPlayingPlaylist = true;
-
-    // Disable various controls
-    categorySelector.disabled = true;
-    minTempoInput.disabled = true;
-    maxTempoInput.disabled = true;
-    randomExerciseBtn.disabled = true;
-    tempoSlider.disabled = true;
-
-    randomTempoBtn.disabled = true;
-    autoRandomizeToggle.disabled = true;
-    repsPerTempoInput.disabled = true;
-
-    // Disable the auto-label visually
-    const autoLabel = document.querySelector('.auto-label');
-    if (autoLabel) {
-        autoLabel.classList.add('disabled');
-    }
-
-    // Disable the random-container visually
-    const randomContainer = document.querySelector('.random-container');
-    if (randomContainer) {
-        randomContainer.classList.add('disabled');
-    }
-
-    // Enable playlist navigation
-    prevPlaylistItemBtn.disabled = false;
-    nextPlaylistItemBtn.disabled = false;
-
-    stopPlaylistBtn.disabled = false;
-    playlistQueueSelect.disabled = false;
-
-    categorySelector.value = 'all';
-    categorySelector.disabled = true;
-
-    playlistProgressContainer.style.display = 'flex';
-
-    playlistSelector.value = playlistId;
-
-    updateExerciseListForPlaylist(currentPlaylist);
-
-    exerciseSelector.classList.add('purple-btn');
-    prevExerciseBtn.classList.add('purple-btn');
-    nextExerciseBtn.classList.add('purple-btn');
-
-    playCurrentPlaylistItem();
-    updatePlaylistQueueDisplay();
-    updatePlaylistProgressBar();
-}
-
-
-    function updateExerciseListForPlaylist(playlist) {
-        exerciseSelector.innerHTML = '';
-        const exerciseIds = [...new Set(playlist.items.map(item => item.exerciseId))];
-        exerciseIds.forEach((exerciseId) => {
-            const exercise = exercises.find(ex => ex.id === exerciseId);
-            if (exercise) {
-                const option = document.createElement('option');
-                option.value = exercise.id;
-                option.textContent = exercise.name;
-                exerciseSelector.appendChild(option);
-            }
-        });
-        if (exerciseSelector.options.length > 0) {
-            exerciseSelector.selectedIndex = 0;
-        }
-    }
-
-    function playCurrentPlaylistItem() {
-        if (!currentPlaylist) return;
-
-        const item = currentPlaylist.items[currentPlaylistItemIndex];
-        const exerciseId = item.exerciseId;
-        const exercise = exercises.find(ex => ex.id === exerciseId);
-
-        if (!exercise) {
-            console.error('Exercise not found: ' + exerciseId);
-            return;
-        }
-
-        initializeExercise(exercise, true);
-
-        exerciseSelector.value = exercise.id;
-
-        const tempo = item.tempos[currentTempoIndex];
-        tempoSlider.value = tempo;
-        updatePlaybackRate();
-        updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
-
-        playExerciseRepetitions(item.repetitionsPerTempo);
-        updatePlaylistQueueDisplay();
-        updatePlaylistProgressBar();
-    }
-
-    function playExerciseRepetitions(repetitions) {
-        function playNextRepetition() {
-            if (currentRepetition < repetitions) {
-                audio.currentTime = 0;
-                audio.onended = null;
-                audio.play();
-                playPauseBtn.textContent = 'Pause';
-                updateProgressBarSmoothly();
-
-                audio.onended = function() {
-                    currentRepetition++;
-                    updatePlaylistQueueDisplay();
-                    updatePlaylistProgressBar();
-                    playNextRepetition();
-                };
-
-                updatePlaylistQueueDisplay();
-                updatePlaylistProgressBar();
-            } else {
-                currentTempoIndex++;
-                currentRepetition = 0;
-                if (currentTempoIndex >= currentPlaylist.items[currentPlaylistItemIndex].tempos.length) {
-                    currentPlaylistItemIndex++;
-                    currentTempoIndex = 0;
-                    if (currentPlaylistItemIndex >= currentPlaylist.items.length) {
-                        isPlayingPlaylist = false;
-                        currentPlaylist = null;
-                        resetPlaylistControls();
-                        return;
-                    }
-                }
-                playCurrentPlaylistItem();
-            }
-        }
-        playNextRepetition();
     }
 
     playlistSelector.addEventListener('change', function() {
@@ -978,6 +907,149 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function populatePlaylistSelector() {
+        playlistSelector.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select a Playlist';
+        playlistSelector.appendChild(defaultOption);
+
+        if (Array.isArray(playlists)) {
+            playlists.forEach((playlist, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = playlist.name;
+                playlistSelector.appendChild(option);
+            });
+        }
+    }
+
+    function startPlaylist(playlistId) {
+        currentPlaylist = playlists[playlistId];
+        currentPlaylistItemIndex = 0;
+        currentTempoIndex = 0;
+        currentRepetition = 0;
+        isPlayingPlaylist = true;
+
+        categorySelector.disabled = true;
+        minTempoInput.disabled = true;
+        maxTempoInput.disabled = true;
+        randomExerciseBtn.disabled = true;
+        randomTempoBtn.disabled = true;
+        autoRandomizeToggle.disabled = true;
+        repsPerTempoInput.disabled = true;
+        tempoSlider.disabled = true;
+
+        const autoLabel = document.querySelector('.auto-label');
+        if (autoLabel) {
+            autoLabel.classList.add('disabled');
+        }
+
+        const randomContainer = document.querySelector('.random-container');
+        if (randomContainer) {
+            randomContainer.classList.add('disabled');
+        }
+
+        prevPlaylistItemBtn.disabled = false;
+        nextPlaylistItemBtn.disabled = false;
+        stopPlaylistBtn.disabled = false;
+        playlistQueueSelect.disabled = false;
+        categorySelector.value = 'all';
+        categorySelector.disabled = true;
+        playlistProgressContainer.style.display = 'flex';
+        playlistSelector.value = playlistId;
+
+        displayedExercises = filterExercisesForMode();
+        if (displayedExercises.length > 0) {
+            currentExerciseIndex = 0;
+            currentSelectedExercise = displayedExercises[0];
+        }
+
+        exerciseSearchInput.classList.add('purple-btn');
+        exerciseList.classList.add('purple-btn');
+
+        // Add playlist-mode class for purple hover text
+        exerciseList.classList.add('playlist-mode');
+
+        prevExerciseBtn.classList.add('purple-btn');
+        nextExerciseBtn.classList.add('purple-btn');
+
+        playCurrentPlaylistItem();
+    }
+
+    function playCurrentPlaylistItem() {
+    if (!currentPlaylist) return;
+    const item = currentPlaylist.items[currentPlaylistItemIndex];
+    const exerciseId = item.exerciseId;
+    const exercise = exercises.find(ex => ex.id === exerciseId);
+
+    if (!exercise) {
+        console.error('Exercise not found: ' + exerciseId);
+        return;
+    }
+
+    currentSelectedExercise = exercise;
+
+    // Ensure displayedExercises is up-to-date
+    displayedExercises = filterExercisesForMode();
+    currentExerciseIndex = displayedExercises.indexOf(exercise);
+
+    // Update the exerciseSearchInput placeholder
+    exerciseSearchInput.value = '';
+    exerciseSearchInput.placeholder = exercise.name;
+
+    // Initialize the exercise and then populate the exercise list
+    initializeExercise(exercise, true);
+    populateExerciseList();
+
+    const tempo = item.tempos[currentTempoIndex];
+    tempoSlider.value = tempo;
+    updatePlaybackRate();
+    updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+
+    playExerciseRepetitions(item.repetitionsPerTempo);
+    updatePlaylistQueueDisplay();
+    updatePlaylistProgressBar();
+}
+
+
+    function playExerciseRepetitions(repetitions) {
+        function playNextRepetition() {
+            if (currentRepetition < repetitions) {
+                audio.currentTime = 0;
+                audio.onended = null;
+                audio.play();
+                playPauseBtn.textContent = 'Pause';
+                updateProgressBarSmoothly();
+
+                audio.onended = function() {
+                    currentRepetition++;
+                    updatePlaylistQueueDisplay();
+                    updatePlaylistProgressBar();
+                    playNextRepetition();
+                };
+
+            } else {
+                currentTempoIndex++;
+                currentRepetition = 0;
+                if (currentTempoIndex >= currentPlaylist.items[currentPlaylistItemIndex].tempos.length) {
+                    currentPlaylistItemIndex++;
+                    currentTempoIndex = 0;
+                    if (currentPlaylistItemIndex >= currentPlaylist.items.length) {
+                        isPlayingPlaylist = false;
+                        currentPlaylist = null;
+                        stopPlaylist();
+                        return;
+                    }
+                }
+                updatePlaylistQueueDisplay();
+                updatePlaylistProgressBar();
+                playCurrentPlaylistItem();
+            }
+        }
+        playNextRepetition();
+    }
+
     stopPlaylistBtn.addEventListener('click', function() {
         if (isPlayingPlaylist) {
             stopPlaylist();
@@ -985,41 +1057,52 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function stopPlaylist() {
-    audio.pause();
-    isPlayingPlaylist = false;
-    currentPlaylist = null;
-    playPauseBtn.textContent = 'Play';
-    resetPlaylistControls();
-    resetProgressBar();
-    updateExerciseList(categorySelector.value);
-    playPauseBtn.classList.remove('playlist-mode');
+        audio.pause();
+        isPlayingPlaylist = false;
+        currentPlaylist = null;
+        playPauseBtn.textContent = 'Play';
+        resetPlaylistControls();
+        resetProgressBar();
+        displayedExercises = filterExercisesForMode();
+        populateExerciseList();
+        playPauseBtn.classList.remove('playlist-mode');
 
-    // Re-enable everything
-    categorySelector.disabled = false;
-    minTempoInput.disabled = false;
-    maxTempoInput.disabled = false;
-    randomExerciseBtn.disabled = false;
-    randomTempoBtn.disabled = false;
-    autoRandomizeToggle.disabled = false;
-    repsPerTempoInput.disabled = false;
+        categorySelector.disabled = false;
+        minTempoInput.disabled = false;
+        maxTempoInput.disabled = false;
+        randomExerciseBtn.disabled = false;
+        randomTempoBtn.disabled = false;
+        autoRandomizeToggle.disabled = false;
+        repsPerTempoInput.disabled = false;
+        tempoSlider.disabled = false; 
 
-    // Remove the disabled class from auto-label
-    const autoLabel = document.querySelector('.auto-label');
-    if (autoLabel) {
-        autoLabel.classList.remove('disabled');
+        const autoLabel = document.querySelector('.auto-label');
+        if (autoLabel) {
+            autoLabel.classList.remove('disabled');
+        }
+
+        const randomContainer = document.querySelector('.random-container');
+        if (randomContainer) {
+            randomContainer.classList.remove('disabled');
+        }
+
+        exerciseSearchInput.classList.remove('purple-btn');
+        exerciseList.classList.remove('purple-btn');
+
+        // Remove playlist-mode class
+        exerciseList.classList.remove('playlist-mode');
+
+        prevExerciseBtn.classList.remove('purple-btn');
+        nextExerciseBtn.classList.remove('purple-btn');
+
+        exerciseSearchInput.value = '';
+        exerciseSearchInput.placeholder = currentSelectedExercise ? currentSelectedExercise.name : "Search Exercises...";
     }
-
-    // Remove the disabled class from random-container
-    const randomContainer = document.querySelector('.random-container');
-    if (randomContainer) {
-        randomContainer.classList.remove('disabled');
-    }
-}
 
     function resetPlaylistControls() {
         stopPlaylistBtn.disabled = true;
         playlistQueueSelect.disabled = true;
-        exerciseSelector.disabled = false;
+        exerciseSearchInput.disabled = false;
         categorySelector.disabled = false;
         minTempoInput.disabled = false;
         maxTempoInput.disabled = false;
@@ -1027,7 +1110,6 @@ document.addEventListener('DOMContentLoaded', function() {
         randomTempoBtn.disabled = false;
         tempoSlider.disabled = false;
 
-        // Disable playlist navigation buttons again since leaving playlist mode
         prevPlaylistItemBtn.disabled = true;
         nextPlaylistItemBtn.disabled = true;
 
@@ -1036,10 +1118,6 @@ document.addEventListener('DOMContentLoaded', function() {
         playlistProgressContainer.style.display = 'none';
         updatePlaylistQueueDisplay();
         updatePlaylistProgressBar();
-
-        exerciseSelector.classList.remove('purple-btn');
-        prevExerciseBtn.classList.remove('purple-btn');
-        nextExerciseBtn.classList.remove('purple-btn');
     }
 
     function updatePlaylistQueueDisplay() {
@@ -1056,48 +1134,40 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        let optionIndex = 0;
-        for (let i = 0; i < currentPlaylist.items.length; i++) {
-            const item = currentPlaylist.items[i];
-            const exercise = exercises.find(ex => ex.id === item.exerciseId);
-            if (!exercise) continue;
-
-            const tempos = item.tempos;
-            const reps = item.repetitionsPerTempo;
-            for (let t = 0; t < tempos.length; t++) {
-                const tempoValue = tempos[t];
-                for (let r = 0; r < reps; r++) {
-                    const option = document.createElement('option');
-                    option.value = optionIndex;
-                    option.textContent = `${exercise.name} at ${tempoValue} BPM`;
+        currentPlaylist.items.forEach((item, i) => {
+            item.tempos.forEach((t, ti) => {
+                for (let r = 0; r < item.repetitionsPerTempo; r++) {
                     playlistQueueMap.push({
                         playlistItemIndex: i,
-                        tempoIndex: t,
+                        tempoIndex: ti,
                         repetition: r
                     });
-
-                    if (i === currentPlaylistItemIndex && t === currentTempoIndex && r === currentRepetition) {
-                        option.classList.add('active-option');
-                        option.selected = true;
-                    }
-
-                    playlistQueueSelect.appendChild(option);
-                    optionIndex++;
                 }
-            }
-        }
-    }
+            });
+        });
 
-    function getCurrentPlaylistQueueIndex() {
-        for (let i = 0; i < playlistQueueMap.length; i++) {
-            const position = playlistQueueMap[i];
-            if (position.playlistItemIndex === currentPlaylistItemIndex &&
-                position.tempoIndex === currentTempoIndex &&
-                position.repetition === currentRepetition) {
-                return i;
+        for (let idx = 0; idx < playlistQueueMap.length; idx++) {
+            const pos = playlistQueueMap[idx];
+            const pItem = currentPlaylist.items[pos.playlistItemIndex];
+            const ex = exercises.find(exx => exx.id === pItem.exerciseId);
+            if (!ex) continue;
+            const tempoVal = pItem.tempos[pos.tempoIndex];
+            const option = document.createElement('option');
+            option.value = idx;
+            option.textContent = `${ex.name} at ${tempoVal} BPM`;
+
+            if (pos.playlistItemIndex === currentPlaylistItemIndex &&
+                pos.tempoIndex === currentTempoIndex &&
+                pos.repetition === currentRepetition) {
+                option.classList.add('active-option');
+                option.selected = true; 
             }
+
+            playlistQueueSelect.appendChild(option);
         }
-        return -1;
+
+        prevPlaylistItemBtn.disabled = (playlistQueueMap.length <= 1);
+        nextPlaylistItemBtn.disabled = (playlistQueueMap.length <= 1);
     }
 
     playlistQueueSelect.addEventListener('change', function() {
@@ -1107,14 +1177,22 @@ document.addEventListener('DOMContentLoaded', function() {
             currentPlaylistItemIndex = position.playlistItemIndex;
             currentTempoIndex = position.tempoIndex;
             currentRepetition = position.repetition;
-            playCurrentPlaylistItem();
             updatePlaylistQueueDisplay();
             updatePlaylistProgressBar();
+            playCurrentPlaylistItem();
         }
     });
 
+    function getCurrentPlaylistQueueIndex() {
+        return playlistQueueMap.findIndex(pos =>
+            pos.playlistItemIndex === currentPlaylistItemIndex &&
+            pos.tempoIndex === currentTempoIndex &&
+            pos.repetition === currentRepetition
+        );
+    }
+
     prevPlaylistItemBtn.addEventListener('click', function() {
-        if (isPlayingPlaylist) {
+        if (isPlayingPlaylist && playlistQueueMap.length > 0) {
             let currentOptionIndex = getCurrentPlaylistQueueIndex();
             if (currentOptionIndex > 0) {
                 currentOptionIndex--;
@@ -1122,15 +1200,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentPlaylistItemIndex = position.playlistItemIndex;
                 currentTempoIndex = position.tempoIndex;
                 currentRepetition = position.repetition;
-                playCurrentPlaylistItem();
                 updatePlaylistQueueDisplay();
                 updatePlaylistProgressBar();
+                playCurrentPlaylistItem();
             }
         }
     });
 
     nextPlaylistItemBtn.addEventListener('click', function() {
-        if (isPlayingPlaylist) {
+        if (isPlayingPlaylist && playlistQueueMap.length > 0) {
             let currentOptionIndex = getCurrentPlaylistQueueIndex();
             if (currentOptionIndex < playlistQueueMap.length - 1) {
                 currentOptionIndex++;
@@ -1138,70 +1216,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentPlaylistItemIndex = position.playlistItemIndex;
                 currentTempoIndex = position.tempoIndex;
                 currentRepetition = position.repetition;
-                playCurrentPlaylistItem();
                 updatePlaylistQueueDisplay();
                 updatePlaylistProgressBar();
+                playCurrentPlaylistItem();
             }
         }
     });
 
     function updatePlaylistProgressBar() {
-        if (!isPlayingPlaylist || !currentPlaylist) {
+        if (!isPlayingPlaylist || !currentPlaylist || playlistQueueMap.length === 0) {
+            playlistProgress.style.width = '0%';
+            playlistProgressPercentage.textContent = '0%';
+            return;
+        }
+
+        const currentIndex = getCurrentPlaylistQueueIndex();
+        if (currentIndex === -1) {
             playlistProgress.style.width = '0%';
             playlistProgressPercentage.textContent = '0%';
             return;
         }
 
         const totalItems = playlistQueueMap.length;
-        const currentIndex = getCurrentPlaylistQueueIndex();
-        if (totalItems > 0) {
-            const progressPercent = ((currentIndex + 1) / totalItems) * 100;
-            playlistProgress.style.width = progressPercent + '%';
-            playlistProgressPercentage.textContent = Math.floor(progressPercent) + '%';
-        }
+        const progressPercent = ((currentIndex + 1) / totalItems) * 100;
+        playlistProgress.style.width = progressPercent + '%';
+        playlistProgressPercentage.textContent = Math.floor(progressPercent) + '%';
     }
 
-    prevExerciseBtn.addEventListener('click', function() {
-        navigateExercise(-1);
-    });
-
-    nextExerciseBtn.addEventListener('click', function() {
-        navigateExercise(1);
-    });
-
-    function navigateExercise(direction) {
-        const currentIndex = exerciseSelector.selectedIndex;
-        const totalOptions = exerciseSelector.options.length;
-
-        let newIndex = currentIndex + direction;
-        if (newIndex < 0) {
-            newIndex = totalOptions - 1;
-        } else if (newIndex >= totalOptions) {
-            newIndex = 0;
-        }
-
-        exerciseSelector.selectedIndex = newIndex;
-
-        const selectedExerciseId = parseInt(exerciseSelector.value);
-        const selectedExercise = exercises.find(ex => ex.id === selectedExerciseId);
-
-        if (isPlayingPlaylist && currentPlaylist) {
-            const indexInPlaylist = currentPlaylist.items.findIndex(item => item.exerciseId === selectedExerciseId);
-            if (indexInPlaylist !== -1) {
-                currentPlaylistItemIndex = indexInPlaylist;
-                currentTempoIndex = 0;
-                currentRepetition = 0;
-                playCurrentPlaylistItem();
-                updatePlaylistQueueDisplay();
-                updatePlaylistProgressBar();
-            } else {
-                console.error('Selected exercise is not in the current playlist');
-            }
-        } else {
-            initializeExercise(selectedExercise);
-            audio.pause();
-            resetProgressBar();
-            playPauseBtn.textContent = 'Play';
-        }
-    }
 });
