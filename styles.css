@@ -85,7 +85,7 @@ body.playlist-mode #playlistQueueSearch.selector {
     background-color: #81227a;
 }
 .playlist-queue-container #playlistQueueSearch.selector:hover {
-    background-color: #81227a;
+    background-color: #752070;
 }
 
 /* Exercise (Orange by default) */
@@ -622,6 +622,11 @@ button#randomTempoBtn:hover {
     color: #96318d;
 }
 
+/* When NOT in playlist mode, don't change color on hover for playlist queue items */
+body:not(.playlist-mode) .playlist-queue-list li:hover {
+    background-color: inherit;
+    cursor: default;
+}
 
 /* On mobile, center lists under their parent element */
 @media (max-width: 600px) and (orientation: portrait) {
@@ -767,8 +772,6 @@ button#randomTempoBtn:hover {
     }
 }
 
-
-
 /* Playlist Mode Purple Theme for Exercises */
 body.playlist-mode #exerciseSearch.selector {
     background-color: #96318d;
@@ -810,3 +813,17 @@ body.playlist-mode #prevExerciseBtn:hover,
 body.playlist-mode #nextExerciseBtn:hover {
     background-color: #81227a;
 }
+
+/* In playlist mode, disable category selector */
+body.playlist-mode .category-container #categorySearch.selector {
+   background-color: #a84300;
+   cursor: not-allowed;
+}
+body.playlist-mode .category-container #categorySearch.selector:focus,
+body.playlist-mode .category-container #categorySearch.selector:hover {
+   background-color: #a84300;
+}
+
+
+
+
