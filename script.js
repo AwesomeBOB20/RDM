@@ -465,7 +465,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const autoRandomizeToggle = document.getElementById('autoRandomizeToggle');
     const repsPerTempoInput = document.getElementById('repsPerTempo');
 
-    // For UL-based dropdowns
     const categorySearchInput = document.getElementById('categorySearch');
     const categoryList = document.getElementById('categoryList');
     const exerciseSearchInput = document.getElementById('exerciseSearch');
@@ -476,10 +475,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const playlistQueueList = document.getElementById('playlistQueueList');
 
     let isDragging = false;
-    playlistQueueSearchInput.disabled = true;
-    stopPlaylistBtn.disabled = true;
-    prevPlaylistItemBtn.disabled = true;
-    nextPlaylistItemBtn.disabled = true;
+    if (playlistQueueSearchInput) playlistQueueSearchInput.disabled = true;
+    if (stopPlaylistBtn) stopPlaylistBtn.disabled = true;
+    if (prevPlaylistItemBtn) prevPlaylistItemBtn.disabled = true;
+    if (nextPlaylistItemBtn) nextPlaylistItemBtn.disabled = true;
 
     let currentPlaylist = null;
     let currentPlaylistItemIndex = 0;
@@ -497,7 +496,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let displayedCategories = ["all", "one-handers", "accent-tap", "timing", "paradiddles", "singles", "rolls", "flams", "78-grids", "exercises"];
 
-    // Create a map to display category names nicely
     const categoryDisplayMap = {
         "accent-tap": "Accent Tap",
         "one-handers": "One Handers",
@@ -513,16 +511,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let displayedPlaylists = playlists.map((p, i) => ({ index: i, name: p.name }));
 
-    audio.loop = false;
+    if (audio) audio.loop = false;
 
     // Initialize
     initializeCategoryList();
     initializePlaylistList();
     populateExerciseList();
-    exerciseList.style.display = 'none';
-    categoryList.style.display = 'none';
-    playlistList.style.display = 'none';
-    playlistQueueList.style.display = 'none';
+    if (exerciseList) exerciseList.style.display = 'none';
+    if (categoryList) categoryList.style.display = 'none';
+    if (playlistList) playlistList.style.display = 'none';
+    if (playlistQueueList) playlistQueueList.style.display = 'none';
 
     // Initial exercise load
     displayedExercises = filterExercisesForMode();
@@ -530,183 +528,224 @@ document.addEventListener('DOMContentLoaded', function() {
         currentExerciseIndex = 0;
         currentSelectedExercise = displayedExercises[currentExerciseIndex];
         initializeExercise(currentSelectedExercise);
-        exerciseSearchInput.placeholder = currentSelectedExercise.name;
+        if (exerciseSearchInput) exerciseSearchInput.placeholder = currentSelectedExercise.name;
     } else {
-        exerciseSearchInput.placeholder = "Search Exercises...";
+        if (exerciseSearchInput) exerciseSearchInput.placeholder = "Search Exercises...";
     }
 
-    autoRandomizeToggle.addEventListener('change', function() {
-        isRandomizeEnabled = this.checked;
-        currentRepCount = 0;
-    });
+    if (autoRandomizeToggle) {
+        autoRandomizeToggle.addEventListener('change', function() {
+            isRandomizeEnabled = this.checked;
+            currentRepCount = 0;
+        });
+    }
 
-    repsPerTempoInput.addEventListener('input', function() {
-        const val = parseInt(this.value);
-        repsBeforeChange = (!isNaN(val) && val > 0) ? val : 1;
-    });
+    if (repsPerTempoInput) {
+        repsPerTempoInput.addEventListener('input', function() {
+            const val = parseInt(this.value);
+            repsBeforeChange = (!isNaN(val) && val > 0) ? val : 1;
+        });
+    }
 
-    randomExerciseBtn.addEventListener('click', function() {
-        if (isPlayingPlaylist) {
-            stopPlaylist();
-        }
-        pickRandomExercise();
-    });
-
-    randomTempoBtn.addEventListener('click', function() {
-        if (isPlayingPlaylist) {
-            stopPlaylist();
-        }
-        pickRandomTempo();
-        audio.pause();
-        resetProgressBar();
-        playPauseBtn.textContent = 'Play';
-    });
-
-    playPauseBtn.addEventListener('click', function() {
-        if (audio.paused) {
-            if (audio.readyState < 3) {
-                audio.load();
+    if (randomExerciseBtn) {
+        randomExerciseBtn.addEventListener('click', function() {
+            if (isPlayingPlaylist) {
+                stopPlaylist();
             }
-            audio.play().then(() => {
-                this.textContent = 'Pause';
-                updateProgressBarSmoothly();
-            }).catch((error) => {
-                console.error('Error playing audio:', error);
-                alert('Audio is not ready yet. Please wait a moment.');
-            });
-        } else {
-            audio.pause();
-            this.textContent = 'Play';
-        }
-    });
+            pickRandomExercise();
+        });
+    }
 
-    audio.addEventListener('ended', function() {
-        if (isPlayingPlaylist) {
-            return; // handled by playlist logic
-        }
-
-        if (isRandomizeEnabled && currentSelectedExercise) {
-            currentRepCount++;
-            if (currentRepCount >= repsBeforeChange) {
-                pickRandomTempo();
-                currentRepCount = 0;
+    if (randomTempoBtn) {
+        randomTempoBtn.addEventListener('click', function() {
+            if (isPlayingPlaylist) {
+                stopPlaylist();
             }
-        }
-        audio.currentTime = 0;
-        audio.play();
-        playPauseBtn.textContent = 'Pause';
-        updateProgressBarSmoothly();
-    });
+            pickRandomTempo();
+            if (audio) {
+                audio.pause();
+                resetProgressBar();
+            }
+            if (playPauseBtn) playPauseBtn.textContent = 'Play';
+        });
+    }
 
-    volumeSlider.addEventListener('input', function() {
-        audio.volume = this.value;
-        volumePercentageDisplay.textContent = Math.round(this.value * 100) + '%';
-        updateSliderBackground(this, '#96318d', '#ffffff');
-    });
+    if (playPauseBtn && audio) {
+        playPauseBtn.addEventListener('click', function() {
+            if (audio.paused) {
+                if (audio.readyState < 3) {
+                    audio.load();
+                }
+                audio.play().then(() => {
+                    this.textContent = 'Pause';
+                    updateProgressBarSmoothly();
+                }).catch((error) => {
+                    console.error('Error playing audio:', error);
+                    alert('Audio is not ready yet. Please wait a moment.');
+                });
+            } else {
+                audio.pause();
+                this.textContent = 'Play';
+            }
+        });
+    }
 
-    tempoSlider.addEventListener('input', function() {
-        updatePlaybackRate();
-        updateSliderBackground(this, '#96318d', '#ffffff');
-    });
+    if (audio) {
+        audio.addEventListener('ended', function() {
+            if (isPlayingPlaylist) {
+                return; // handled by playlist logic
+            }
 
-    progressContainer.addEventListener('mousedown', startDragging);
-    progressContainer.addEventListener('touchstart', startDragging);
+            if (isRandomizeEnabled && currentSelectedExercise) {
+                currentRepCount++;
+                if (currentRepCount >= repsBeforeChange) {
+                    pickRandomTempo();
+                    currentRepCount = 0;
+                }
+            }
+            audio.currentTime = 0;
+            audio.play();
+            if (playPauseBtn) playPauseBtn.textContent = 'Pause';
+            updateProgressBarSmoothly();
+        });
+    }
+
+    if (volumeSlider && audio && volumePercentageDisplay) {
+        volumeSlider.addEventListener('input', function() {
+            audio.volume = this.value;
+            volumePercentageDisplay.textContent = Math.round(this.value * 100) + '%';
+            updateSliderBackground(this, '#96318d', '#ffffff');
+        });
+    }
+
+    if (tempoSlider) {
+        tempoSlider.addEventListener('input', function() {
+            updatePlaybackRate();
+            updateSliderBackground(this, '#96318d', '#ffffff');
+        });
+    }
+
+    if (progressContainer) {
+        progressContainer.addEventListener('mousedown', startDragging);
+        progressContainer.addEventListener('touchstart', startDragging);
+    }
     document.addEventListener('mousemove', dragProgress);
     document.addEventListener('touchmove', dragProgress);
     document.addEventListener('mouseup', stopDragging);
     document.addEventListener('touchend', stopDragging);
 
-    prevExerciseBtn.addEventListener('click', () => navigateExercise(-1));
-    nextExerciseBtn.addEventListener('click', () => navigateExercise(1));
+    if (prevExerciseBtn) {
+        prevExerciseBtn.addEventListener('click', () => navigateExercise(-1));
+    }
 
-    stopPlaylistBtn.addEventListener('click', function() {
-        if (isPlayingPlaylist) {
-            stopPlaylist();
-        }
-    });
+    if (nextExerciseBtn) {
+        nextExerciseBtn.addEventListener('click', () => navigateExercise(1));
+    }
 
-    prevPlaylistItemBtn.addEventListener('click', function() {
-        if (isPlayingPlaylist && playlistQueueMap.length > 0) {
-            let currentOptionIndex = getCurrentPlaylistQueueIndex();
-            if (currentOptionIndex > 0) {
-                currentOptionIndex--;
-                const position = playlistQueueMap[currentOptionIndex];
-                currentPlaylistItemIndex = position.playlistItemIndex;
-                currentTempoIndex = position.tempoIndex;
-                currentRepetition = position.repetition;
-                updatePlaylistQueueDisplay();
-                updatePlaylistProgressBar();
-                playCurrentPlaylistItem();
+    if (stopPlaylistBtn) {
+        stopPlaylistBtn.addEventListener('click', function() {
+            if (isPlayingPlaylist) {
+                stopPlaylist();
             }
-        }
-    });
+        });
+    }
 
-    nextPlaylistItemBtn.addEventListener('click', function() {
-        if (isPlayingPlaylist && playlistQueueMap.length > 0) {
-            let currentOptionIndex = getCurrentPlaylistQueueIndex();
-            if (currentOptionIndex < playlistQueueMap.length - 1) {
-                currentOptionIndex++;
-                const position = playlistQueueMap[currentOptionIndex];
-                currentPlaylistItemIndex = position.playlistItemIndex;
-                currentTempoIndex = position.tempoIndex;
-                currentRepetition = position.repetition;
-                updatePlaylistQueueDisplay();
-                updatePlaylistProgressBar();
-                playCurrentPlaylistItem();
+    if (prevPlaylistItemBtn) {
+        prevPlaylistItemBtn.addEventListener('click', function() {
+            if (isPlayingPlaylist && playlistQueueMap.length > 0) {
+                let currentOptionIndex = getCurrentPlaylistQueueIndex();
+                if (currentOptionIndex > 0) {
+                    currentOptionIndex--;
+                    const position = playlistQueueMap[currentOptionIndex];
+                    currentPlaylistItemIndex = position.playlistItemIndex;
+                    currentTempoIndex = position.tempoIndex;
+                    currentRepetition = position.repetition;
+                    updatePlaylistQueueDisplay();
+                    updatePlaylistProgressBar();
+                    playCurrentPlaylistItem();
+                }
             }
-        }
-    });
+        });
+    }
+
+    if (nextPlaylistItemBtn) {
+        nextPlaylistItemBtn.addEventListener('click', function() {
+            if (isPlayingPlaylist && playlistQueueMap.length > 0) {
+                let currentOptionIndex = getCurrentPlaylistQueueIndex();
+                if (currentOptionIndex < playlistQueueMap.length - 1) {
+                    currentOptionIndex++;
+                    const position = playlistQueueMap[currentOptionIndex];
+                    currentPlaylistItemIndex = position.playlistItemIndex;
+                    currentTempoIndex = position.tempoIndex;
+                    currentRepetition = position.repetition;
+                    updatePlaylistQueueDisplay();
+                    updatePlaylistProgressBar();
+                    playCurrentPlaylistItem();
+                }
+            }
+        });
+    }
 
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.exercise-container')) {
+        if (!e.target.closest('.exercise-container') && exerciseList) {
             exerciseList.style.display = 'none';
         }
-        if (!e.target.closest('.category-container')) {
+        if (!e.target.closest('.category-container') && categoryList) {
             categoryList.style.display = 'none';
         }
-        if (!e.target.closest('.playlist-container')) {
+        if (!e.target.closest('.playlist-container') && playlistList) {
             playlistList.style.display = 'none';
         }
-        if (!e.target.closest('.playlist-queue-container')) {
+        if (!e.target.closest('.playlist-queue-container') && playlistQueueList) {
             playlistQueueList.style.display = 'none';
         }
     });
 
-    exerciseSearchInput.addEventListener('focus', () => {
-        populateExerciseList(exerciseSearchInput.value);
-    });
+    if (exerciseSearchInput) {
+        exerciseSearchInput.addEventListener('focus', () => {
+            populateExerciseList(exerciseSearchInput.value);
+        });
 
-    exerciseSearchInput.addEventListener('input', () => {
-        populateExerciseList(exerciseSearchInput.value);
-    });
+        exerciseSearchInput.addEventListener('input', () => {
+            populateExerciseList(exerciseSearchInput.value);
+        });
+    }
 
-    categorySearchInput.addEventListener('focus', () => {
-        populateCategoryList(categorySearchInput.value);
-    });
+    if (categorySearchInput) {
+        categorySearchInput.addEventListener('focus', () => {
+            populateCategoryList(categorySearchInput.value);
+        });
 
-    categorySearchInput.addEventListener('input', () => {
-        populateCategoryList(categorySearchInput.value);
-    });
+        categorySearchInput.addEventListener('input', () => {
+            populateCategoryList(categorySearchInput.value);
+        });
+    }
 
-    playlistSearchInput.addEventListener('focus', () => {
-        populatePlaylistList(playlistSearchInput.value);
-    });
+    if (playlistSearchInput) {
+        playlistSearchInput.addEventListener('focus', () => {
+            populatePlaylistList(playlistSearchInput.value);
+        });
 
-    playlistSearchInput.addEventListener('input', () => {
-        populatePlaylistList(playlistSearchInput.value);
-    });
+        playlistSearchInput.addEventListener('input', () => {
+            populatePlaylistList(playlistSearchInput.value);
+        });
+    }
 
-    playlistQueueSearchInput.addEventListener('focus', () => {
-        populatePlaylistQueueList(playlistQueueSearchInput.value);
-    });
+    if (playlistQueueSearchInput) {
+        playlistQueueSearchInput.addEventListener('focus', () => {
+            populatePlaylistQueueList(playlistQueueSearchInput.value);
+        });
 
-    playlistQueueSearchInput.addEventListener('input', () => {
-        populatePlaylistQueueList(playlistQueueSearchInput.value);
-    });
+        playlistQueueSearchInput.addEventListener('input', () => {
+            populatePlaylistQueueList(playlistQueueSearchInput.value);
+        });
+    }
 
-    audio.addEventListener('loadedmetadata', updateTotalTime);
-    audio.addEventListener('ratechange', updateTotalTime);
-    audio.addEventListener('ratechange', updateCurrentTime);
+    if (audio) {
+        audio.addEventListener('loadedmetadata', updateTotalTime);
+        audio.addEventListener('ratechange', updateTotalTime);
+        audio.addEventListener('ratechange', updateCurrentTime);
+    }
 
     function filterExercisesForMode() {
         if (isPlayingPlaylist && currentPlaylist) {
@@ -719,16 +758,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getSelectedCategory() {
+        if (!categorySearchInput) return 'all';
+
         let placeholder = categorySearchInput.placeholder;
         if (placeholder === '' || placeholder === 'All Categories') {
             return 'all';
         }
-        // Try to find a key in categoryDisplayMap that matches the placeholder
         let entry = Object.entries(categoryDisplayMap).find(([key, val]) => val.toLowerCase() === placeholder.toLowerCase());
         return entry ? entry[0] : 'all';
     }
 
     function initializeExercise(ex) {
+        if (!audio || !tempoSlider || !tempoLabel || !sheetMusicImg) return;
         audio.src = ex.audioSrc;
         audio.preload = 'auto';
         audio.load();
@@ -739,32 +780,36 @@ document.addEventListener('DOMContentLoaded', function() {
         tempoLabel.textContent = 'BPM: ' + ex.originalTempo;
         updatePlaybackRate();
         updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
-        updateSliderBackground(volumeSlider, '#96318d', '#ffffff');
+        if (volumeSlider) updateSliderBackground(volumeSlider, '#96318d', '#ffffff');
         audio.onloadedmetadata = updateTotalTime;
-        minTempoInput.value = '';
-        maxTempoInput.value = '';
+        if (minTempoInput) minTempoInput.value = '';
+        if (maxTempoInput) maxTempoInput.value = '';
         resetProgressBar();
         audio.pause();
-        playPauseBtn.textContent = 'Play';
+        if (playPauseBtn) playPauseBtn.textContent = 'Play';
     }
 
     function updatePlaybackRate() {
+        if (!audio || !tempoSlider) return;
         const currentTempo = parseInt(tempoSlider.value);
         const originalTempo = parseInt(tempoSlider.max) / 2;
         const playbackRate = currentTempo / originalTempo;
         audio.playbackRate = playbackRate;
-        tempoLabel.textContent = 'BPM: ' + currentTempo;
+        if (tempoLabel) tempoLabel.textContent = 'BPM: ' + currentTempo;
         updateTotalTime();
         updateCurrentTime();
     }
 
     function resetProgressBar() {
-        progress.style.width = '0%';
-        currentTimeDisplay.textContent = '0:00';
-        audio.currentTime = 0;
+        if (progress && currentTimeDisplay && audio) {
+            progress.style.width = '0%';
+            currentTimeDisplay.textContent = '0:00';
+            audio.currentTime = 0;
+        }
     }
 
     function updateSliderBackground(slider, color1, color2) {
+        if (!slider) return;
         const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
         slider.style.background = `linear-gradient(to right, ${color1} 0%, ${color1} ${value}%, ${color2} ${value}%, ${color2} 100%)`;
     }
@@ -776,18 +821,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateTotalTime() {
-        if (audio.duration) {
+        if (audio && totalTimeDisplay && audio.duration) {
             const duration = audio.duration / audio.playbackRate;
             totalTimeDisplay.textContent = formatTime(duration);
         }
     }
 
     function updateCurrentTime() {
+        if (!audio || !currentTimeDisplay) return;
         const currentTime = audio.currentTime / audio.playbackRate;
         currentTimeDisplay.textContent = formatTime(currentTime);
     }
 
     function updateProgressBarSmoothly() {
+        if (!audio || !progress || !currentTimeDisplay) return;
         if (!audio.paused) {
             const progressPercent = (audio.currentTime / audio.duration) * 100;
             progress.style.width = progressPercent + '%';
@@ -812,6 +859,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateProgress(e) {
+        if (!audio || !progressContainer || !progress) return;
         const rect = progressContainer.getBoundingClientRect();
         let x;
         if (e.type.startsWith('touch')) {
@@ -834,12 +882,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const randomIndex = Math.floor(Math.random() * filteredExercises.length);
         currentExerciseIndex = randomIndex;
         currentSelectedExercise = filteredExercises[currentExerciseIndex];
-        exerciseSearchInput.value = '';
-        exerciseSearchInput.placeholder = currentSelectedExercise.name;
+        if (exerciseSearchInput) {
+            exerciseSearchInput.value = '';
+            exerciseSearchInput.placeholder = currentSelectedExercise.name;
+        }
         initializeExercise(currentSelectedExercise);
-        audio.pause();
-        resetProgressBar();
-        playPauseBtn.textContent = 'Play';
+        if (audio) {
+            audio.pause();
+            resetProgressBar();
+        }
+        if (playPauseBtn) playPauseBtn.textContent = 'Play';
 
         if (isPlayingPlaylist && currentPlaylist) {
             const idx = currentPlaylist.items.findIndex(i => i.exerciseId === currentSelectedExercise.id);
@@ -855,9 +907,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function pickRandomTempo() {
-        if (!currentSelectedExercise) return;
-        let minTempo = parseInt(minTempoInput.value);
-        let maxTempo = parseInt(maxTempoInput.value);
+        if (!currentSelectedExercise || !tempoSlider) return;
+        let minTempo = parseInt(minTempoInput ? minTempoInput.value : '');
+        let maxTempo = parseInt(maxTempoInput ? maxTempoInput.value : '');
 
         const defaultMin = Math.floor(currentSelectedExercise.originalTempo / 2);
         const defaultMax = currentSelectedExercise.originalTempo * 2;
@@ -892,12 +944,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentExerciseIndex >= displayedExercises.length) currentExerciseIndex = 0;
 
         currentSelectedExercise = displayedExercises[currentExerciseIndex];
-        exerciseSearchInput.value = '';
-        exerciseSearchInput.placeholder = currentSelectedExercise.name;
+        if (exerciseSearchInput) {
+            exerciseSearchInput.value = '';
+            exerciseSearchInput.placeholder = currentSelectedExercise.name;
+        }
         initializeExercise(currentSelectedExercise);
-        audio.pause();
-        resetProgressBar();
-        playPauseBtn.textContent = 'Play';
+        if (audio) {
+            audio.pause();
+            resetProgressBar();
+        }
+        if (playPauseBtn) playPauseBtn.textContent = 'Play';
 
         if (isPlayingPlaylist && currentPlaylist) {
             const idx = currentPlaylist.items.findIndex(i => i.exerciseId === currentSelectedExercise.id);
@@ -915,6 +971,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function populateExerciseList(filter = '') {
+        if (!exerciseList) return;
         exerciseList.innerHTML = '';
         displayedExercises = filterExercisesForMode().filter(ex => ex.name.toLowerCase().includes(filter.toLowerCase()));
         displayedExercises.forEach((exercise, idx) => {
@@ -940,13 +997,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function selectExercise(exercise) {
-        exerciseSearchInput.value = '';
-        exerciseSearchInput.placeholder = exercise.name;
-        exerciseList.style.display = 'none';
+        if (exerciseSearchInput) {
+            exerciseSearchInput.value = '';
+            exerciseSearchInput.placeholder = exercise.name;
+        }
+        if (exerciseList) exerciseList.style.display = 'none';
         initializeExercise(exercise);
-        audio.pause();
-        resetProgressBar();
-        playPauseBtn.textContent = 'Play';
+        if (audio) {
+            audio.pause();
+            resetProgressBar();
+        }
+        if (playPauseBtn) playPauseBtn.textContent = 'Play';
 
         if (isPlayingPlaylist && currentPlaylist) {
             const idx = currentPlaylist.items.findIndex(i => i.exerciseId === exercise.id);
@@ -962,22 +1023,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initializeCategoryList() {
-        categorySearchInput.placeholder = "All Categories";
+        if (categorySearchInput) categorySearchInput.placeholder = "All Categories";
     }
 
     function populateCategoryList(filter = '') {
+        if (!categoryList) return;
         categoryList.innerHTML = '';
         const filteredCats = displayedCategories.filter(cat => cat.toLowerCase().includes(filter.toLowerCase()));
         filteredCats.forEach(cat => {
             const li = document.createElement('li');
             const displayName = categoryDisplayMap[cat] || cat;
             li.textContent = displayName;
-            if (li.textContent === categorySearchInput.placeholder) {
+            if (categorySearchInput && li.textContent === categorySearchInput.placeholder) {
                 li.classList.add('active-option');
             }
             li.addEventListener('click', () => {
-                categorySearchInput.value = '';
-                categorySearchInput.placeholder = displayName;
+                if (categorySearchInput) {
+                    categorySearchInput.value = '';
+                    categorySearchInput.placeholder = displayName;
+                }
                 categoryList.style.display = 'none';
                 if (isPlayingPlaylist) {
                     stopPlaylist();
@@ -987,15 +1051,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (filtered.length > 0) {
                     currentSelectedExercise = filtered[currentExerciseIndex];
                     initializeExercise(currentSelectedExercise);
-                    exerciseSearchInput.value = '';
-                    exerciseSearchInput.placeholder = currentSelectedExercise.name;
-                    audio.pause();
-                    resetProgressBar();
-                    playPauseBtn.textContent = 'Play';
+                    if (exerciseSearchInput) {
+                        exerciseSearchInput.value = '';
+                        exerciseSearchInput.placeholder = currentSelectedExercise.name;
+                    }
+                    if (audio) {
+                        audio.pause();
+                        resetProgressBar();
+                    }
+                    if (playPauseBtn) playPauseBtn.textContent = 'Play';
                 } else {
                     currentSelectedExercise = null;
-                    exerciseSearchInput.value = '';
-                    exerciseSearchInput.placeholder = "Search Exercises...";
+                    if (exerciseSearchInput) {
+                        exerciseSearchInput.value = '';
+                        exerciseSearchInput.placeholder = "Search Exercises...";
+                    }
                 }
                 populateExerciseList();
             });
@@ -1010,10 +1080,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function initializePlaylistList() {
-        playlistSearchInput.placeholder = "Select a Playlist";
+        if (playlistSearchInput) playlistSearchInput.placeholder = "Select a Playlist";
     }
 
     function populatePlaylistList(filter = '') {
+        if (!playlistList) return;
         playlistList.innerHTML = '';
         const filteredPlaylists = displayedPlaylists.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
         filteredPlaylists.forEach(pl => {
@@ -1024,8 +1095,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 li.classList.add('active-option');
             }
             li.addEventListener('click', () => {
-                playlistSearchInput.value = '';
-                playlistSearchInput.placeholder = li.textContent;
+                if (playlistSearchInput) {
+                    playlistSearchInput.value = '';
+                    playlistSearchInput.placeholder = li.textContent;
+                }
                 playlistList.style.display = 'none';
                 if (isPlayingPlaylist) {
                     stopPlaylist();
@@ -1043,6 +1116,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function populatePlaylistQueueList(filter = '') {
+        if (!playlistQueueList) return;
         playlistQueueList.innerHTML = '';
         if (!isPlayingPlaylist || !currentPlaylist || playlistQueueMap.length === 0) {
             playlistQueueList.style.display = 'none';
@@ -1071,8 +1145,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentPlaylistItemIndex = item.pos.playlistItemIndex;
                 currentTempoIndex = item.pos.tempoIndex;
                 currentRepetition = item.pos.repetition;
-                playlistQueueSearchInput.value = '';
-                playlistQueueSearchInput.placeholder = 'Playlist Queue';
+                if (playlistQueueSearchInput) {
+                    playlistQueueSearchInput.value = '';
+                    playlistQueueSearchInput.placeholder = 'Playlist Queue';
+                }
                 playlistQueueList.style.display = 'none';
                 updatePlaylistQueueDisplay();
                 updatePlaylistProgressBar();
@@ -1096,16 +1172,16 @@ document.addEventListener('DOMContentLoaded', function() {
         isPlayingPlaylist = true;
 
         document.body.classList.add('playlist-mode');
-        categorySearchInput.placeholder = "All Categories";
+        if (categorySearchInput) categorySearchInput.placeholder = "All Categories";
 
-        categorySearchInput.disabled = true;
-        minTempoInput.disabled = true;
-        maxTempoInput.disabled = true;
-        randomExerciseBtn.disabled = true;
-        randomTempoBtn.disabled = true;
-        autoRandomizeToggle.disabled = true;
-        repsPerTempoInput.disabled = true;
-        tempoSlider.disabled = true;
+        if (categorySearchInput) categorySearchInput.disabled = true;
+        if (minTempoInput) minTempoInput.disabled = true;
+        if (maxTempoInput) maxTempoInput.disabled = true;
+        if (randomExerciseBtn) randomExerciseBtn.disabled = true;
+        if (randomTempoBtn) randomTempoBtn.disabled = true;
+        if (autoRandomizeToggle) autoRandomizeToggle.disabled = true;
+        if (repsPerTempoInput) repsPerTempoInput.disabled = true;
+        if (tempoSlider) tempoSlider.disabled = true;
 
         const autoLabel = document.querySelector('.auto-label');
         if (autoLabel) {
@@ -1117,11 +1193,11 @@ document.addEventListener('DOMContentLoaded', function() {
             randomContainer.classList.add('disabled');
         }
 
-        prevPlaylistItemBtn.disabled = false;
-        nextPlaylistItemBtn.disabled = false;
-        stopPlaylistBtn.disabled = false;
-        playlistQueueSearchInput.disabled = false;
-        playlistProgressContainer.style.display = 'flex';
+        if (prevPlaylistItemBtn) prevPlaylistItemBtn.disabled = false;
+        if (nextPlaylistItemBtn) nextPlaylistItemBtn.disabled = false;
+        if (stopPlaylistBtn) stopPlaylistBtn.disabled = false;
+        if (playlistQueueSearchInput) playlistQueueSearchInput.disabled = false;
+        if (playlistProgressContainer) playlistProgressContainer.style.display = 'flex';
 
         displayedExercises = filterExercisesForMode();
         if (displayedExercises.length > 0) {
@@ -1147,17 +1223,21 @@ document.addEventListener('DOMContentLoaded', function() {
         displayedExercises = filterExercisesForMode();
         currentExerciseIndex = displayedExercises.indexOf(exercise);
 
-        exerciseSearchInput.value = '';
-        exerciseSearchInput.placeholder = exercise.name;
+        if (exerciseSearchInput) {
+            exerciseSearchInput.value = '';
+            exerciseSearchInput.placeholder = exercise.name;
+        }
 
         initializeExercise(exercise);
 
         const tempo = item.tempos[currentTempoIndex];
-        tempoSlider.value = tempo;
+        if (tempoSlider) tempoSlider.value = tempo;
         updatePlaybackRate();
-        updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+        if (tempoSlider) updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
 
-        playlistQueueSearchInput.placeholder = exercise.name + " at " + tempo + " BPM";
+        if (playlistQueueSearchInput) {
+            playlistQueueSearchInput.placeholder = exercise.name + " at " + tempo + " BPM";
+        }
 
         playExerciseRepetitions(item.repetitionsPerTempo);
         updatePlaylistQueueDisplay();
@@ -1166,11 +1246,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function playExerciseRepetitions(repetitions) {
         function playNextRepetition() {
+            if (!audio) return;
             if (currentRepetition < repetitions) {
                 audio.currentTime = 0;
                 audio.onended = null;
                 audio.play();
-                playPauseBtn.textContent = 'Pause';
+                if (playPauseBtn) playPauseBtn.textContent = 'Pause';
                 updateProgressBarSmoothly();
 
                 audio.onended = function() {
@@ -1203,24 +1284,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function stopPlaylist() {
-        audio.pause();
+        if (audio) audio.pause();
         isPlayingPlaylist = false;
         currentPlaylist = null;
-        playPauseBtn.textContent = 'Play';
+        if (playPauseBtn) playPauseBtn.textContent = 'Play';
         resetPlaylistControls();
         resetProgressBar();
         displayedExercises = filterExercisesForMode();
         populateExerciseList();
-        playPauseBtn.classList.remove('playlist-mode');
 
-        categorySearchInput.disabled = false;
-        minTempoInput.disabled = false;
-        maxTempoInput.disabled = false;
-        randomExerciseBtn.disabled = false;
-        randomTempoBtn.disabled = false;
-        autoRandomizeToggle.disabled = false;
-        repsPerTempoInput.disabled = false;
-        tempoSlider.disabled = false;
+        if (playPauseBtn) playPauseBtn.classList.remove('playlist-mode');
+
+        if (categorySearchInput) categorySearchInput.disabled = false;
+        if (minTempoInput) minTempoInput.disabled = false;
+        if (maxTempoInput) maxTempoInput.disabled = false;
+        if (randomExerciseBtn) randomExerciseBtn.disabled = false;
+        if (randomTempoBtn) randomTempoBtn.disabled = false;
+        if (autoRandomizeToggle) autoRandomizeToggle.disabled = false;
+        if (repsPerTempoInput) repsPerTempoInput.disabled = false;
+        if (tempoSlider) tempoSlider.disabled = false;
 
         const autoLabel = document.querySelector('.auto-label');
         if (autoLabel) {
@@ -1232,27 +1314,30 @@ document.addEventListener('DOMContentLoaded', function() {
             randomContainer.classList.remove('disabled');
         }
 
-        exerciseSearchInput.value = '';
-        exerciseSearchInput.placeholder = currentSelectedExercise ? currentSelectedExercise.name : "Search Exercises...";
+        if (exerciseSearchInput) {
+            exerciseSearchInput.value = '';
+            exerciseSearchInput.placeholder = currentSelectedExercise ? currentSelectedExercise.name : "Search Exercises...";
+        }
 
         document.body.classList.remove('playlist-mode');
-        playlistQueueSearchInput.placeholder = 'Playlist Queue';
+        if (playlistQueueSearchInput) playlistQueueSearchInput.placeholder = 'Playlist Queue';
     }
 
     function resetPlaylistControls() {
-        stopPlaylistBtn.disabled = true;
-        playlistQueueSearchInput.disabled = true;
-        prevPlaylistItemBtn.disabled = true;
-        nextPlaylistItemBtn.disabled = true;
-        playPauseBtn.textContent = 'Play';
-        playlistSearchInput.placeholder = 'Select a Playlist';
-        playlistQueueSearchInput.placeholder = 'Playlist Queue';
-        playlistProgressContainer.style.display = 'none';
+        if (stopPlaylistBtn) stopPlaylistBtn.disabled = true;
+        if (playlistQueueSearchInput) playlistQueueSearchInput.disabled = true;
+        if (prevPlaylistItemBtn) prevPlaylistItemBtn.disabled = true;
+        if (nextPlaylistItemBtn) nextPlaylistItemBtn.disabled = true;
+        if (playPauseBtn) playPauseBtn.textContent = 'Play';
+        if (playlistSearchInput) playlistSearchInput.placeholder = 'Select a Playlist';
+        if (playlistQueueSearchInput) playlistQueueSearchInput.placeholder = 'Playlist Queue';
+        if (playlistProgressContainer) playlistProgressContainer.style.display = 'none';
         updatePlaylistQueueDisplay();
         updatePlaylistProgressBar();
     }
 
     function updatePlaylistQueueDisplay() {
+        if (!playlistQueueList) return;
         playlistQueueList.innerHTML = '';
         playlistQueueMap = [];
 
@@ -1284,6 +1369,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updatePlaylistProgressBar() {
+        if (!playlistProgress || !playlistProgressPercentage) return;
         if (!isPlayingPlaylist || !currentPlaylist || playlistQueueMap.length === 0) {
             playlistProgress.style.width = '0%';
             playlistProgressPercentage.textContent = '0%';
