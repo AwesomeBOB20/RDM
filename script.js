@@ -575,7 +575,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentExerciseIndex = 0;
     let currentSelectedExercise = null;
 
-    let displayedCategories = ["all", "one-handers", "accent-tap", "timing", "paradiddles", "singles", "rolls", "flams", "78-grids", "exercises"];
+    let displayedCategories = ["all", "one-handers", "accent-tap", "timing", "paradiddles", "singles", "rolls", "natural-decays", "flams", "78-grids", "exercises"];
 
     const categoryDisplayMap = {
         "accent-tap": "Accent Tap",
@@ -584,6 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "paradiddles": "Paradiddles",
         "singles": "Singles",
         "rolls": "Rolls",
+        "natural-decays": "Natural Decays",
         "flams": "Flams",
         "78-grids": "7/8 Grids",
         "exercises": "Exercises",
