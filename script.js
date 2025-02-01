@@ -435,10 +435,10 @@ document.addEventListener('DOMContentLoaded', function() {
   name: 'Paradiddle Warm Up Easy',
   items: [
     // Paradiddle builder (266)
-    { exerciseId: 266, tempos: [100, 130, 160], repetitionsPerTempo: 3 },
+    { exerciseId: 185, tempos: [100, 130, 160], repetitionsPerTempo: 3 },
 
     // Double Paradiddle Builder (185)
-    { exerciseId: 185, tempos: [70, 90, 110], repetitionsPerTempo: 3 },
+    { exerciseId: 266, tempos: [70, 90, 110], repetitionsPerTempo: 3 },
 
     // Paradiddle diddle builder (73)
     { exerciseId: 73, tempos: [80, 100, 120], repetitionsPerTempo: 3 },
@@ -462,10 +462,10 @@ document.addEventListener('DOMContentLoaded', function() {
   name: 'Paradiddle Warm Up Hard',
   items: [
     // Paradiddle builder (266)
-    { exerciseId: 266, tempos: [150, 170, 190, 210], repetitionsPerTempo: 3 },
+    { exerciseId: 185, tempos: [150, 170, 190, 210], repetitionsPerTempo: 3 },
 
     // Double Paradiddle Builder (185)
-    { exerciseId: 185, tempos: [90, 110, 130, 150], repetitionsPerTempo: 3 },
+    { exerciseId: 266, tempos: [90, 110, 130, 150], repetitionsPerTempo: 3 },
 
     // Paradiddle diddle builder (73)
     { exerciseId: 73, tempos: [100, 120, 140, 160], repetitionsPerTempo: 3 },
