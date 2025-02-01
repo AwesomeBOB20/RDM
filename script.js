@@ -431,32 +431,58 @@ document.addEventListener('DOMContentLoaded', function() {
     },
 
     // Paradiddle Warm Up Easy
-    {
-        name: 'Paradiddle Warm Up Easy',
-        items: [
-            // Huckgadics (Exercise ID: 36)
-            { exerciseId: 36, tempos: [70, 85, 100, 120], repetitionsPerTempo: 4 },
-            // Paradiddle Diddle Builder (Exercise ID: 73)
-            { exerciseId: 73, tempos: [80, 95], repetitionsPerTempo: 3 },
-            { exerciseId: 73, tempos: [110, 130], repetitionsPerTempo: 2 },
-            // PDD + PD (Exercise ID: 79)
-            { exerciseId: 79, tempos: [50, 65, 80, 90], repetitionsPerTempo: 2 }
-        ]
-    },
+{
+  name: 'Paradiddle Warm Up Easy',
+  items: [
+    // Paradiddle builder (266)
+    { exerciseId: 266, tempos: [100, 130, 160], repetitionsPerTempo: 3 },
 
-    // Paradiddle Warm Up Hard
-    {
-        name: 'Paradiddle Warm Up Hard',
-        items: [
-            // Huckgadics (Exercise ID: 36)
-            { exerciseId: 36, tempos: [90, 110, 130, 150], repetitionsPerTempo: 4 },
-            // Paradiddle Diddle Builder (Exercise ID: 73)
-            { exerciseId: 73, tempos: [100, 120], repetitionsPerTempo: 3 },
-            { exerciseId: 73, tempos: [140, 150], repetitionsPerTempo: 2 },
-            // PDD + PD (Exercise ID: 79)
-            { exerciseId: 79, tempos: [70, 85, 100, 110], repetitionsPerTempo: 2 }
-        ]
-    },
+    // Double Paradiddle Builder (185)
+    { exerciseId: 185, tempos: [70, 90, 110], repetitionsPerTempo: 3 },
+
+    // Paradiddle diddle builder (73)
+    { exerciseId: 73, tempos: [80, 100, 120], repetitionsPerTempo: 3 },
+
+    // Paradiddle Pyramid (86)
+    { exerciseId: 86, tempos: [100, 130, 160], repetitionsPerTempo: 3 },
+
+    // Paradiddle Filler (85)
+    { exerciseId: 85, tempos: [100, 130, 160], repetitionsPerTempo: 3 },
+
+    // Paradiddle diddle pyramid (175)
+    { exerciseId: 175, tempos: [100, 130, 160], repetitionsPerTempo: 3 },
+
+    // PDD + PD (79)
+    { exerciseId: 79, tempos: [50, 60, 70, 80], repetitionsPerTempo: 3 }
+  ]
+},
+
+// Paradiddle Warm Up Hard
+{
+  name: 'Paradiddle Warm Up Hard',
+  items: [
+    // Paradiddle builder (266)
+    { exerciseId: 266, tempos: [150, 170, 190, 210], repetitionsPerTempo: 3 },
+
+    // Double Paradiddle Builder (185)
+    { exerciseId: 185, tempos: [90, 110, 130, 150], repetitionsPerTempo: 3 },
+
+    // Paradiddle diddle builder (73)
+    { exerciseId: 73, tempos: [100, 120, 140, 160], repetitionsPerTempo: 3 },
+
+    // Paradiddle Pyramid (86)
+    { exerciseId: 86, tempos: [140, 160, 180, 200], repetitionsPerTempo: 3 },
+
+    // Paradiddle Filler (85)
+    { exerciseId: 85, tempos: [150, 170, 190, 210], repetitionsPerTempo: 3 },
+
+    // Paradiddle diddle pyramid (175)
+    { exerciseId: 175, tempos: [150, 170, 190, 210], repetitionsPerTempo: 3 },
+
+    // PDD + PD (79)
+    { exerciseId: 79, tempos: [80, 90, 100, 110], repetitionsPerTempo: 3 }
+  ]
+},
 
     // Rolls Warm Up Easy
     {
