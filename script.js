@@ -1109,29 +1109,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    let prevTempo = null;   // module-level
+    function pickRandomTempo() {
+        if (!currentSelectedExercise || !tempoSlider) return;
+        let minTempo = parseInt(minTempoInput ? minTempoInput.value : '');
+        let maxTempo = parseInt(maxTempoInput ? maxTempoInput.value : '');
 
-function pickRandomTempo() {
-  if (!currentSelectedExercise) return;
+        const defaultMin = Math.floor(currentSelectedExercise.originalTempo / 2);
+        const defaultMax = currentSelectedExercise.originalTempo * 2;
 
-  const { originalTempo } = currentSelectedExercise;
-  let rand = originalTempo;
+        if (isNaN(minTempo) || minTempo < 1 || minTempo > 999) {
+            minTempo = defaultMin;
+        }
+        if (isNaN(maxTempo) || maxTempo < 1 || maxTempo > 999) {
+            maxTempo = defaultMax;
+        }
 
-  // insist on Δ between 8 – 90 BPM
-  do {
-    // ±40 covers full 80-BPM swing; adjust as you like
-    const offset = Math.floor(Math.random() * 81) - 40;  
-    rand = Math.max(20, originalTempo + offset);          // floor at 20 BPM
-  } while (prevTempo !== null &&
-           (Math.abs(rand - prevTempo) < 8 || Math.abs(rand - prevTempo) > 90));
+        if (minTempo > maxTempo) {
+            [minTempo, maxTempo] = [maxTempo, minTempo];
+        }
 
-  prevTempo = rand;
-  tempoSlider.value = rand;
-  updatePlaybackRate();
-  tempoLabel.textContent = `${rand} BPM`;
-  updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
-}
+        const sliderMin = parseInt(tempoSlider.min);
+        const sliderMax = parseInt(tempoSlider.max);
+        minTempo = Math.max(minTempo, sliderMin);
+        maxTempo = Math.min(maxTempo, sliderMax);
 
+        const randomTempo = Math.floor(Math.random() * (maxTempo - minTempo + 1)) + minTempo;
+        tempoSlider.value = randomTempo;
+        updatePlaybackRate();
+        updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+    }
 
     function navigateExercise(direction) {
         displayedExercises = filterExercisesForMode();
