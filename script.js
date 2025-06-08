@@ -691,6 +691,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let displayedExercises = [];
     let currentExerciseIndex = 0;
     let currentSelectedExercise = null;
+    let prevTempo = null;
+	
 
     let displayedCategories = ["all", "one-handers", "accent-tap", "rhythms", "timing", "paradiddles", "singles", "rolls", "natural-decays", "flams", "hybrids", "78-grids", "exercises", "etudes", "requests"];
 
@@ -1110,34 +1112,35 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function pickRandomTempo() {
-        if (!currentSelectedExercise || !tempoSlider) return;
-        let minTempo = parseInt(minTempoInput ? minTempoInput.value : '');
-        let maxTempo = parseInt(maxTempoInput ? maxTempoInput.value : '');
+  if (!currentSelectedExercise || !tempoSlider) return;
 
-        const defaultMin = Math.floor(currentSelectedExercise.originalTempo / 2);
-        const defaultMax = currentSelectedExercise.originalTempo * 2;
+  let minTempo = parseInt(minTempoInput?.value);
+  let maxTempo = parseInt(maxTempoInput?.value);
 
-        if (isNaN(minTempo) || minTempo < 1 || minTempo > 999) {
-            minTempo = defaultMin;
-        }
-        if (isNaN(maxTempo) || maxTempo < 1 || maxTempo > 999) {
-            maxTempo = defaultMax;
-        }
+  const defaultMin = Math.floor(currentSelectedExercise.originalTempo / 2);
+  const defaultMax = currentSelectedExercise.originalTempo * 2;
 
-        if (minTempo > maxTempo) {
-            [minTempo, maxTempo] = [maxTempo, minTempo];
-        }
+  if (isNaN(minTempo) || minTempo < 1 || minTempo > 999) minTempo = defaultMin;
+  if (isNaN(maxTempo) || maxTempo < 1 || maxTempo > 999) maxTempo = defaultMax;
+  if (minTempo > maxTempo) [minTempo, maxTempo] = [maxTempo, minTempo];
 
-        const sliderMin = parseInt(tempoSlider.min);
-        const sliderMax = parseInt(tempoSlider.max);
-        minTempo = Math.max(minTempo, sliderMin);
-        maxTempo = Math.min(maxTempo, sliderMax);
+  minTempo = Math.max(minTempo, parseInt(tempoSlider.min));
+  maxTempo = Math.min(maxTempo, parseInt(tempoSlider.max));
 
-        const randomTempo = Math.floor(Math.random() * (maxTempo - minTempo + 1)) + minTempo;
-        tempoSlider.value = randomTempo;
-        updatePlaybackRate();
-        updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
-    }
+  let randomTempo;
+  do {
+    randomTempo = Math.floor(Math.random() * (maxTempo - minTempo + 1)) + minTempo;
+  } while (
+    prevTempo !== null &&
+    (Math.abs(randomTempo - prevTempo) < 8 || Math.abs(randomTempo - prevTempo) > 90)
+  );
+
+  prevTempo = randomTempo;               // remember for next spin
+  tempoSlider.value = randomTempo;
+  updatePlaybackRate();
+  updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+}
+
 
     function navigateExercise(direction) {
         displayedExercises = filterExercisesForMode();
