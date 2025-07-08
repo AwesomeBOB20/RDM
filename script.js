@@ -421,12 +421,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // 8th - Triplet (Exercise ID: 11)
             { exerciseId: 11, tempos: [120, 140], repetitionsPerTempo: 3 },
             { exerciseId: 11, tempos: [160], repetitionsPerTempo: 2 },
-            // Triplet - 8th (Exercise ID: 49)
-            { exerciseId: 49, tempos: [120, 140], repetitionsPerTempo: 3 },
-            { exerciseId: 49, tempos: [160], repetitionsPerTempo: 2 },
-            // 16th - Triplet (Exercise ID: 58)
-            { exerciseId: 58, tempos: [100, 120], repetitionsPerTempo: 3 },
-            { exerciseId: 58, tempos: [140], repetitionsPerTempo: 2 },
             // Triplet - 16th (Exercise ID: 59)
             { exerciseId: 59, tempos: [100, 120], repetitionsPerTempo: 3 },
             { exerciseId: 59, tempos: [140], repetitionsPerTempo: 2 }
@@ -451,10 +445,6 @@ document.addEventListener('DOMContentLoaded', function() {
             { exerciseId: 53, tempos: [150, 170, 190], repetitionsPerTempo: 3 },
             // 8th - Triplet (Exercise ID: 11)
             { exerciseId: 11, tempos: [150, 170, 190], repetitionsPerTempo: 3 },
-            // Triplet - 8th (Exercise ID: 49)
-            { exerciseId: 49, tempos: [150, 170, 190], repetitionsPerTempo: 3 },
-            // 16th - Triplet (Exercise ID: 58)
-            { exerciseId: 58, tempos: [130, 145, 160], repetitionsPerTempo: 3 },
             // Triplet - 16th (Exercise ID: 59)
             { exerciseId: 59, tempos: [130, 145, 160], repetitionsPerTempo: 3 }
         ]
