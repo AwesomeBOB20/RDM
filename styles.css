@@ -53,6 +53,11 @@ body {
     font-family: 'Ubuntu', sans-serif;
 }
 
+.selector::placeholder {
+    color: rgb(255 255 255); /* white-ish placeholder suited for dark backgrounds */
+    opacity: 1; /* Firefox */
+}
+
 /* Category (Orange), Exercise (Orange), Playlist (Purple), Playlist Queue backgrounds */
 .category-container #categorySearch.selector {
     background-color: #d35400;
