@@ -1,15 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Placeholder for your exercises data array
-    // ✅ Prevent running twice if Webflow loads script multiple times
-if (window.__RDM_INIT__) throw new Error('RDM already initialized');
-window.__RDM_INIT__ = true;
-
-// ✅ Use the arrays loaded from data.js
-const exercises = Array.isArray(window.EXERCISES) ? window.EXERCISES : [];
-const playlists = Array.isArray(window.PLAYLISTS) ? window.PLAYLISTS : [];
-
-// ✅ Now the rest of your code continues as normal...
-
+    const exercises = Array.isArray(window.EXERCISES) ? window.EXERCISES : [];
+    const playlists = Array.isArray(window.PLAYLISTS) ? window.PLAYLISTS : [];
 
     const audio = document.getElementById('audio');
     const totalTimeDisplay = document.getElementById('totalTime');
@@ -45,14 +37,6 @@ const playlists = Array.isArray(window.PLAYLISTS) ? window.PLAYLISTS : [];
     const playlistList = document.getElementById('playlistList');
     const playlistQueueSearchInput = document.getElementById('playlistQueueSearch');
     const playlistQueueList = document.getElementById('playlistQueueList');
-
-	// === RDM wiring sanity ===
-function assert(el, id) { if (!el) throw new Error(id + ' not found'); }
-assert(audio, 'audio');
-assert(playPauseBtn, 'playPauseBtn');
-assert(volumeSlider, 'volumeSlider');
-assert(tempoSlider, 'tempoSlider');
-
 
     let isDragging = false;
     if (playlistQueueSearchInput) playlistQueueSearchInput.disabled = true;
@@ -168,77 +152,59 @@ if (volumeSlider && audio && volumePercentageDisplay) {
     }
 
     if (playPauseBtn && audio) {
-  playPauseBtn.addEventListener('click', function () {
-    if (audio.paused) {
-      // ensure a user gesture triggers play on the current src
-      if (audio.readyState < 3) audio.load();
-      audio.play().then(() => {
-        this.textContent = 'Pause';
-        updateProgressBarSmoothly();
-      }).catch((e) => {
-        console.error('play() failed:', e.name, e.message);
-        alert('Audio could not start. Check console for details.');
-      });
-    } else {
-      audio.pause();
-      this.textContent = 'Play';
-    }
-  });
-}
-
-
-
-
-    // ---- AUDIO + UI WIRING (replace your entire block with this) ----
-if (audio) {
-  // make sure duration/time are correct as soon as the file is known
-  audio.addEventListener('loadedmetadata', () => {
-    updatePlaybackRate();   // sets playbackRate based on current slider
-    updateTotalTime();      // updates total time label
-    updateCurrentTime();    // resets current time label
-  });
-
-  // whenever playbackRate changes, recompute times
-  audio.addEventListener('ratechange', () => {
-    updateTotalTime();
-    updateCurrentTime();
-  });
-
-  // your original loop/on-end behavior
-  audio.addEventListener('ended', function () {
-    if (isPlayingPlaylist) {
-      return; // handled by playlist logic
+        playPauseBtn.addEventListener('click', function() {
+            if (audio.paused) {
+                if (audio.readyState < 3) {
+                    audio.load();
+                }
+                audio.play().then(() => {
+                    this.textContent = 'Pause';
+                    updateProgressBarSmoothly();
+                }).catch((error) => {
+                    console.error('Error playing audio:', error);
+                    alert('Audio is not ready yet. Please wait a moment.');
+                });
+            } else {
+                audio.pause();
+                this.textContent = 'Play';
+            }
+        });
     }
 
-    if (isRandomizeEnabled && currentSelectedExercise) {
-      currentRepCount++;
-      if (currentRepCount >= repsBeforeChange) {
-        pickRandomTempo();
-        currentRepCount = 0;
-      }
+    if (audio) {
+        audio.addEventListener('ended', function() {
+            if (isPlayingPlaylist) {
+                return; // handled by playlist logic
+            }
+
+            if (isRandomizeEnabled && currentSelectedExercise) {
+                currentRepCount++;
+                if (currentRepCount >= repsBeforeChange) {
+                    pickRandomTempo();
+                    currentRepCount = 0;
+                }
+            }
+            audio.currentTime = 0;
+            audio.play();
+            if (playPauseBtn) playPauseBtn.textContent = 'Pause';
+            updateProgressBarSmoothly();
+        });
     }
-    audio.currentTime = 0;
-    audio.play();
-    if (playPauseBtn) playPauseBtn.textContent = 'Pause';
-    updateProgressBarSmoothly();
-  });
-}
 
-if (volumeSlider && audio && volumePercentageDisplay) {
-  volumeSlider.addEventListener('input', function () {
-    audio.volume = this.value; // 0..1
-    volumePercentageDisplay.textContent = Math.round(this.value * 100) + '%';
-    updateSliderBackground(this, '#96318d', '#ffffff');
-  });
-}
+    if (volumeSlider && audio && volumePercentageDisplay) {
+        volumeSlider.addEventListener('input', function() {
+            audio.volume = this.value;
+            volumePercentageDisplay.textContent = Math.round(this.value * 100) + '%';
+            updateSliderBackground(this, '#96318d', '#ffffff');
+        });
+    }
 
-if (tempoSlider) {
-  tempoSlider.addEventListener('input', function () {
-    updatePlaybackRate(); // recalculates playbackRate + labels
-    updateSliderBackground(this, '#96318d', '#ffffff');
-  });
-}
-
+    if (tempoSlider) {
+        tempoSlider.addEventListener('input', function() {
+            updatePlaybackRate();
+            updateSliderBackground(this, '#96318d', '#ffffff');
+        });
+    }
 
     if (progressContainer) {
         progressContainer.addEventListener('mousedown', startDragging);
@@ -384,46 +350,29 @@ if (tempoSlider) {
     }
 
     function initializeExercise(ex) {
-  if (!audio || !tempoSlider || !tempoLabel || !sheetMusicImg) return;
+    if (!audio || !tempoSlider || !tempoLabel || !sheetMusicImg) return;
 
-  // 1) Wire the assets
-  audio.src = ex.audioSrc;
-  audio.preload = 'auto';
-  audio.crossOrigin = 'anonymous'; // important with CDN audio
-  audio.load();
+    audio.src  = ex.audioSrc;
+    audio.preload = 'auto';
+    audio.load();
 
-  sheetMusicImg.src = ex.sheetMusicSrc;
+    sheetMusicImg.src = ex.sheetMusicSrc;
 
-  // 2) Reset transport + UI baselines
-  if (playPauseBtn) playPauseBtn.textContent = 'Play';
-  if (progress) progress.style.width = '0%';
-  if (currentTimeDisplay) currentTimeDisplay.textContent = '0:00';
+    tempoSlider.min = ex.originalTempo / 2;
+    tempoSlider.max = ex.originalTempo * 2;
+    tempoSlider.value = ex.originalTempo;
+    tempoLabel.textContent = 'BPM: ' + ex.originalTempo;
 
-  // 3) Tempo controls (your original logic)
-  tempoSlider.min = ex.originalTempo / 2;
-  tempoSlider.max = ex.originalTempo * 2;
-  tempoSlider.value = ex.originalTempo;
-  tempoLabel.textContent = 'BPM: ' + ex.originalTempo;
+    // 🔽 🔽  NEW  🔽 🔽
+    if (exerciseSearchInput) {
+        exerciseSearchInput.value = '';
+        exerciseSearchInput.placeholder = ex.name;
+    }
 
-  // Update exercise search placeholder
-  if (exerciseSearchInput) {
-    exerciseSearchInput.value = '';
-    exerciseSearchInput.placeholder = ex.name;
-  }
-
-  // 4) Wait for audio to be truly ready before enabling play & durations
-  audio.onloadedmetadata = () => {
-    updatePlaybackRate();        // sets playbackRate + BPM label
-    updateTotalTime();           // shows total time using current rate
-  };
-
-  // defensive: if it was cached, fire manually
-  if (audio.readyState >= 1) {
     updatePlaybackRate();
-    updateTotalTime();
-  }
+    updateSliderBackground(tempoSlider, '#96318d', '#ffffff');
+    // …rest of the function…
 }
-
 
 
     function updatePlaybackRate() {
@@ -1051,7 +1000,4 @@ function populateExerciseList(filter = '') {
         playlistProgressPercentage.textContent = Math.floor(progressPercent) + '%';
     }
 });
-
-
-
 
