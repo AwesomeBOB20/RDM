@@ -654,17 +654,3 @@ window.PLAYLISTS = [
         ]
     }
 ];
-
-
-// ---- CDN NORMALIZATION (add at the very end of data.js) ----
-(function () {
-  const CDN = 'https://cdn.jsdelivr.net/gh/AwesomeBOB20/RDM@main/';
-  if (Array.isArray(window.EXERCISES)) {
-    window.EXERCISES = window.EXERCISES.map(ex => {
-      const fixedAudio = ex.audioSrc?.startsWith('http') ? ex.audioSrc : (CDN + String(ex.audioSrc || '').replace(/^\.?\/?/, ''));
-      const fixedImg   = ex.sheetMusicSrc?.startsWith('http') ? ex.sheetMusicSrc : (CDN + String(ex.sheetMusicSrc || '').replace(/^\.?\/?/, ''));
-      return { ...ex, audioSrc: fixedAudio, sheetMusicSrc: fixedImg };
-    });
-  }
-})();
-
