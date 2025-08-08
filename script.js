@@ -12,6 +12,8 @@ const playlists = Array.isArray(window.PLAYLISTS) ? window.PLAYLISTS : [];
 
 
     const audio = document.getElementById('audio');
+	// audio.src = 'https://cdn.jsdelivr.net/gh/AwesomeBOB20/RDM@main/audio/your-smallest-file.mp3';
+
     const totalTimeDisplay = document.getElementById('totalTime');
     const currentTimeDisplay = document.getElementById('currentTime');
 // TEMP sanity check: comment out after confirming audio plays
@@ -180,6 +182,7 @@ if (volumeSlider && audio && volumePercentageDisplay) {
     }
   });
 }
+
 
 
     if (audio) {
@@ -1011,5 +1014,6 @@ function populateExerciseList(filter = '') {
         playlistProgressPercentage.textContent = Math.floor(progressPercent) + '%';
     }
 });
+
 
 
