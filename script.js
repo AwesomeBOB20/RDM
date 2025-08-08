@@ -14,6 +14,8 @@ const playlists = Array.isArray(window.PLAYLISTS) ? window.PLAYLISTS : [];
     const audio = document.getElementById('audio');
     const totalTimeDisplay = document.getElementById('totalTime');
     const currentTimeDisplay = document.getElementById('currentTime');
+// TEMP sanity check: comment out after confirming audio plays
+// audio.src = 'https://cdn.jsdelivr.net/gh/AwesomeBOB20/RDM@main/audio/your-smallest-file.mp3';
     const playPauseBtn = document.getElementById('playPauseBtn');
     const volumeSlider = document.getElementById('volumeSlider');
     const volumePercentageDisplay = document.getElementById('volumePercentage');
@@ -160,24 +162,25 @@ if (volumeSlider && audio && volumePercentageDisplay) {
     }
 
     if (playPauseBtn && audio) {
-        playPauseBtn.addEventListener('click', function() {
-            if (audio.paused) {
-                if (audio.readyState < 3) {
-                    audio.load();
-                }
-                audio.play().then(() => {
-                    this.textContent = 'Pause';
-                    updateProgressBarSmoothly();
-                }).catch((error) => {
-                    console.error('Error playing audio:', error);
-                    alert('Audio is not ready yet. Please wait a moment.');
-                });
-            } else {
-                audio.pause();
-                this.textContent = 'Play';
-            }
+  playPauseBtn.addEventListener('click', function () {
+    if (audio.paused) {
+      if (audio.readyState < 3) audio.load();
+      audio.play()
+        .then(() => {
+          this.textContent = 'Pause';
+          updateProgressBarSmoothly();
+        })
+        .catch((e) => {
+          console.error('play() failed:', e.name, e.message);
+          alert('Audio could not start. Open the browser console for the exact error.');
         });
+    } else {
+      audio.pause();
+      this.textContent = 'Play';
     }
+  });
+}
+
 
     if (audio) {
         audio.addEventListener('ended', function() {
@@ -1008,4 +1011,5 @@ function populateExerciseList(filter = '') {
         playlistProgressPercentage.textContent = Math.floor(progressPercent) + '%';
     }
 });
+
 
