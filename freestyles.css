@@ -153,7 +153,7 @@ input[type="range"]:disabled::-webkit-slider-thumb{ background:#9b9b9b; }
 
 /* ===== Centered picker dialog (transparent wrapper; separate header & list) ===== */
 .picker-overlay{
-  position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; z-index:9999;
+  position:fixed; inset:0; background:rgba(0,0,0,.75); display:none; z-index:9999;
   backdrop-filter:blur(4px);
 }
 .picker-overlay[data-open="1"]{ display:block; }
