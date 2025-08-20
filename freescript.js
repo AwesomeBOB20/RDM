@@ -29,10 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const pickerList    = document.getElementById('pickerList');
   let pickerMode = null; // 'exercise' | 'category'
 
-  // Device heuristic: treat small, coarse-pointer screens as "phone"
-  const isPhone =
-    window.matchMedia('(pointer: coarse) and (max-width: 800px)').matches ||
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  // Heuristic for mobile/tablet
+  const isCoarse = window.matchMedia('(pointer: coarse)').matches;
 
   // State
   let isDragging = false;
@@ -55,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Audio defaults
   if (audio) {
-    audio.loop = false;
+    audio.loop = true; // keep looping until paused or exercise changes
     if ('preservesPitch' in audio)       audio.preservesPitch = true;
     if ('webkitPreservesPitch' in audio) audio.webkitPreservesPitch = true;
     if ('mozPreservesPitch' in audio)    audio.mozPreservesPitch = true;
@@ -111,12 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Ended: reset UI
+  // With loop=true, don't reset UI on 'ended'
   if (audio) {
     audio.addEventListener('ended', () => {
-      if (playPauseBtn) playPauseBtn.textContent = 'Play';
-      resetProgressBarInstant();
-      stopProgressTicker();
+      if (!audio.loop) {
+        if (playPauseBtn) playPauseBtn.textContent = 'Play';
+        resetProgressBarInstant();
+        stopProgressTicker();
+      }
     });
   }
 
@@ -332,6 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     audio.src     = ex.audioSrc;
     audio.preload = 'auto';
+    audio.loop    = true; // ensure loop stays enabled per track
     audio.load();
 
     if ('preservesPitch' in audio)       audio.preservesPitch = true;
@@ -404,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeExercise(currentSelectedExercise);
     if (audio) {
-      audio.pause();
+      audio.pause(); // stop when switching
       resetProgressBarInstant();
       if (playPauseBtn) playPauseBtn.textContent = 'Play';
     }
@@ -414,9 +415,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (categorySearchInput) categorySearchInput.placeholder = "All Categories";
   }
 
-  // ------ Picker (modal) ------
-  setupTrigger(exerciseSearchInput, 'exercise');
-  setupTrigger(categorySearchInput, 'category');
+  // ------ Picker (modal): open on selector click, no autofocus on mobile ------
+  bindSelector(exerciseSearchInput, 'exercise');
+  bindSelector(categorySearchInput,  'category');
 
   pickerClose?.addEventListener('click', closePicker);
   pickerOverlay?.addEventListener('click', (e) => { if (e.target === pickerOverlay) closePicker(); });
@@ -425,26 +426,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   pickerSearch?.addEventListener('input', () => renderPickerItems(pickerSearch.value));
 
-  function setupTrigger(el, mode) {
+  function bindSelector(el, mode) {
     if (!el) return;
 
-    if (isPhone) {
-      el.setAttribute('readonly', 'true');      // prevent mobile keyboard
-      el.setAttribute('inputmode', 'none');     // extra iOS hint
-      el.setAttribute('role', 'button');
-      el.setAttribute('aria-haspopup', 'listbox');
-      el.addEventListener('focus', () => el.blur(), { passive: true });
-      el.addEventListener('pointerdown', (e) => {
-        e.preventDefault(); // stop focus -> no keyboard
-        openPicker(mode, { autofocus: false });
-      }, { passive: false });
-      // Safety: ignore click default focusing
-      el.addEventListener('click', (e) => e.preventDefault());
-    } else {
-      // Desktop: open picker and autofocus search for quick typing
-      try { el.removeAttribute('readonly'); } catch {}
-      el.addEventListener('click', () => openPicker(mode, { autofocus: true }));
-    }
+    // Prevent input focus on mobile/tablet → avoids keyboard
+    el.addEventListener('touchstart', (e) => {
+      if (!isCoarse) return;
+      e.preventDefault();
+      e.stopPropagation();
+      try { el.blur(); } catch {}
+      openPicker(mode, { autofocus: false });
+    }, { passive: false });
+
+    el.addEventListener('pointerdown', (e) => {
+      if (!(isCoarse && e.pointerType === 'touch')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      try { el.blur(); } catch {}
+      openPicker(mode, { autofocus: false });
+    }, { passive: false });
+
+    // Desktop: open modal, keep caret out of the input
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      openPicker(mode, { autofocus: !isCoarse });
+    });
   }
 
   function openPicker(mode, opts = {}) {
@@ -461,7 +467,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderPickerItems(pickerSearch?.value || '');
 
-    const shouldAutofocus = (opts.autofocus !== undefined) ? opts.autofocus : !isPhone;
+    // Don’t autofocus on coarse pointers → no keyboard
+    const shouldAutofocus = opts.autofocus ?? !isCoarse;
     if (shouldAutofocus) requestAnimationFrame(() => pickerSearch?.focus());
   }
 
@@ -473,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pickerSearch) pickerSearch.value = '';
   }
 
-  function renderPickerItems(query) {
+  function renderPickerItems(query){
     if (!pickerList) return;
     const q = (query || '').toLowerCase();
     pickerList.innerHTML = '';
