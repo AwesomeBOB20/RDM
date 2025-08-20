@@ -1,1 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Playalongs — Free</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Category / Exercise -->
+    <div class="control-container">
+      <div class="category-container">
+        <input type="text" id="categorySearch" class="selector selector--orange" placeholder="All Categories" autocomplete="off" />
+        <ul id="categoryList" class="menu menu--orange"></ul>
+      </div>
 
+      <div class="exercise-group">
+        <button id="prevExerciseBtn" class="btn btn--orange btn-square" aria-label="Previous exercise">-</button>
+        <div class="exercise-container">
+          <input type="text" id="exerciseSearch" class="selector selector--orange" placeholder="Search exercises..." autocomplete="off" />
+          <ul id="exerciseList" class="menu menu--orange"></ul>
+        </div>
+        <button id="nextExerciseBtn" class="btn btn--orange btn-square" aria-label="Next exercise">+</button>
+      </div>
+    </div>
+
+    <!-- Sheet music -->
+    <div class="sheet-music">
+      <img src="" alt="Sheet Music" />
+    </div>
+
+    <!-- Audio -->
+    <audio id="audio" preload="auto" src=""></audio>
+
+    <!-- Transport -->
+    <div class="control-container">
+      <button id="playPauseBtn" class="btn btn--orange">Play</button>
+    </div>
+
+    <!-- Tempo slider -->
+    <div class="tempo-control">
+      <label for="tempoSlider">Tempo: <span id="tempoLabel">BPM: 160</span></label>
+      <input type="range" id="tempoSlider" class="tempo-slider" min="80" max="320" step="1" value="160" />
+    </div>
+
+    <!-- Main progress -->
+    <div class="progress-container">
+      <div class="bar" id="progressBar">
+        <div class="bar__fill" id="progress"></div>
+        <div class="time-overlay">
+          <span class="time" id="currentTime">0:00</span>
+          <span class="slash"> / </span>
+          <span class="time" id="totalTime">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-screen picker modal -->
+  <div id="pickerOverlay" class="picker-overlay" aria-hidden="true">
+    <div class="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+      <header class="picker__header">
+        <button id="pickerClose" class="btn btn--orange btn-square" aria-label="Close">✕</button>
+        <input id="pickerSearch" class="selector selector--orange" type="search" placeholder="Search…" autocomplete="off" />
+      </header>
+      <ul id="pickerList" class="menu menu--orange picker__list" role="listbox" aria-label="Choices"></ul>
+    </div>
+  </div>
+
+  <!-- Local assets only -->
+  <script defer src="data.js"></script>
+  <script defer src="script.js"></script>
+
+  <noscript>This app needs JavaScript enabled.</noscript>
+</body>
+</html>
