@@ -29,6 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const pickerList    = document.getElementById('pickerList');
   let pickerMode = null; // 'exercise' | 'category'
 
+  // Device heuristic: treat small, coarse-pointer screens as "phone"
+  const isPhone =
+    window.matchMedia('(pointer: coarse) and (max-width: 800px)').matches ||
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
   // State
   let isDragging = false;
   let displayedExercises = [];
@@ -410,11 +415,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ------ Picker (modal) ------
-  if (exerciseSearchInput) exerciseSearchInput.readOnly = true;
-  if (categorySearchInput) categorySearchInput.readOnly = true;
-
-  exerciseSearchInput?.addEventListener('click', () => openPicker('exercise'));
-  categorySearchInput?.addEventListener('click', () => openPicker('category'));
+  setupTrigger(exerciseSearchInput, 'exercise');
+  setupTrigger(categorySearchInput, 'category');
 
   pickerClose?.addEventListener('click', closePicker);
   pickerOverlay?.addEventListener('click', (e) => { if (e.target === pickerOverlay) closePicker(); });
@@ -423,21 +425,47 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   pickerSearch?.addEventListener('input', () => renderPickerItems(pickerSearch.value));
 
-  function openPicker(mode){
+  function setupTrigger(el, mode) {
+    if (!el) return;
+
+    if (isPhone) {
+      el.setAttribute('readonly', 'true');      // prevent mobile keyboard
+      el.setAttribute('inputmode', 'none');     // extra iOS hint
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-haspopup', 'listbox');
+      el.addEventListener('focus', () => el.blur(), { passive: true });
+      el.addEventListener('pointerdown', (e) => {
+        e.preventDefault(); // stop focus -> no keyboard
+        openPicker(mode, { autofocus: false });
+      }, { passive: false });
+      // Safety: ignore click default focusing
+      el.addEventListener('click', (e) => e.preventDefault());
+    } else {
+      // Desktop: open picker and autofocus search for quick typing
+      try { el.removeAttribute('readonly'); } catch {}
+      el.addEventListener('click', () => openPicker(mode, { autofocus: true }));
+    }
+  }
+
+  function openPicker(mode, opts = {}) {
     pickerMode = mode;
     if (!pickerOverlay) return;
     pickerOverlay.dataset.open = '1';
     document.body.style.overflow = 'hidden';
+
     // Prefill search with current text (if any)
     if (pickerSearch) {
       const src = (mode === 'exercise') ? exerciseSearchInput : categorySearchInput;
       pickerSearch.value = src?.value || '';
     }
+
     renderPickerItems(pickerSearch?.value || '');
-    requestAnimationFrame(() => pickerSearch?.focus());
+
+    const shouldAutofocus = (opts.autofocus !== undefined) ? opts.autofocus : !isPhone;
+    if (shouldAutofocus) requestAnimationFrame(() => pickerSearch?.focus());
   }
 
-  function closePicker(){
+  function closePicker() {
     if (!pickerOverlay) return;
     delete pickerOverlay.dataset.open;
     document.body.style.overflow = '';
@@ -445,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pickerSearch) pickerSearch.value = '';
   }
 
-  function renderPickerItems(query){
+  function renderPickerItems(query) {
     if (!pickerList) return;
     const q = (query || '').toLowerCase();
     pickerList.innerHTML = '';
