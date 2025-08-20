@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const pickerList    = document.getElementById('pickerList');
   let pickerMode = null; // 'exercise' | 'category'
 
-  // Heuristic for mobile/tablet
+  // Heuristic for touch devices
   const isCoarse = window.matchMedia('(pointer: coarse)').matches;
 
   // State
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Audio defaults
   if (audio) {
-    audio.loop = true; // keep looping until paused or exercise changes
+    audio.loop = true; // continuous looping until pause or switch
     if ('preservesPitch' in audio)       audio.preservesPitch = true;
     if ('webkitPreservesPitch' in audio) audio.webkitPreservesPitch = true;
     if ('mozPreservesPitch' in audio)    audio.mozPreservesPitch = true;
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     audio.src     = ex.audioSrc;
     audio.preload = 'auto';
-    audio.loop    = true; // ensure loop stays enabled per track
+    audio.loop    = true;
     audio.load();
 
     if ('preservesPitch' in audio)       audio.preservesPitch = true;
@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeExercise(currentSelectedExercise);
     if (audio) {
-      audio.pause(); // stop when switching
+      audio.pause(); // keep paused after switch
       resetProgressBarInstant();
       if (playPauseBtn) playPauseBtn.textContent = 'Play';
     }
@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (categorySearchInput) categorySearchInput.placeholder = "All Categories";
   }
 
-  // ------ Picker (modal): open on selector click, no autofocus on mobile ------
+  // ------ Picker (modal): open on selector click, NO autofocus anywhere ------
   bindSelector(exerciseSearchInput, 'exercise');
   bindSelector(categorySearchInput,  'category');
 
@@ -429,13 +429,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function bindSelector(el, mode) {
     if (!el) return;
 
-    // Prevent input focus on mobile/tablet → avoids keyboard
+    // Mobile/tablet: intercept before focus to avoid keyboard
     el.addEventListener('touchstart', (e) => {
       if (!isCoarse) return;
       e.preventDefault();
       e.stopPropagation();
       try { el.blur(); } catch {}
-      openPicker(mode, { autofocus: false });
+      openPicker(mode);
     }, { passive: false });
 
     el.addEventListener('pointerdown', (e) => {
@@ -443,17 +443,17 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       e.stopPropagation();
       try { el.blur(); } catch {}
-      openPicker(mode, { autofocus: false });
+      openPicker(mode);
     }, { passive: false });
 
-    // Desktop: open modal, keep caret out of the input
+    // Desktop: still prevent caret in input, just open modal
     el.addEventListener('click', (e) => {
       e.preventDefault();
-      openPicker(mode, { autofocus: !isCoarse });
+      openPicker(mode);
     });
   }
 
-  function openPicker(mode, opts = {}) {
+  function openPicker(mode) {
     pickerMode = mode;
     if (!pickerOverlay) return;
     pickerOverlay.dataset.open = '1';
@@ -466,10 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderPickerItems(pickerSearch?.value || '');
-
-    // Don’t autofocus on coarse pointers → no keyboard
-    const shouldAutofocus = opts.autofocus ?? !isCoarse;
-    if (shouldAutofocus) requestAnimationFrame(() => pickerSearch?.focus());
+    // No autofocus anywhere → avoids mobile keyboard and desktop caret
   }
 
   function closePicker() {
