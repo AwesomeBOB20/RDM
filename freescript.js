@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Data ---
+  // Data
   const exercises = Array.isArray(window.EXERCISES) ? window.EXERCISES : [];
 
-  // --- DOM ---
+  // DOM
   const audio              = document.getElementById('audio');
   const totalTimeDisplay   = document.getElementById('totalTime');
   const currentTimeDisplay = document.getElementById('currentTime');
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const pickerList    = document.getElementById('pickerList');
   let pickerMode = null; // 'exercise' | 'category'
 
-  // --- State ---
+  // State
   let isDragging = false;
   let displayedExercises = [];
   let currentExerciseIndex = 0;
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let userIsAdjustingTempo = false;
   let suppressTempoInput   = false;
 
-  // --- Categories (free) ---
+  // Categories (free version only)
   let displayedCategories = ["all","one-handers","accent-tap","timing","rolls"];
   const categoryDisplayMap = {
     "all":"All Categories",
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     "rolls":"Rolls"
   };
 
-  // --- Audio defaults ---
+  // Audio defaults
   if (audio) {
     audio.loop = false;
     if ('preservesPitch' in audio)       audio.preservesPitch = true;
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('click', stop);
   });
 
-  // Init lists (we keep legacy dropdowns hidden; modal handles picking)
+  // Init lists (hidden; modal handles picking)
   initializeCategoryList();
   if (exerciseList) exerciseList.style.display = 'none';
   if (categoryList) categoryList.style.display = 'none';
@@ -302,6 +302,12 @@ document.addEventListener('DOMContentLoaded', () => {
   prevExerciseBtn?.addEventListener('click', () => navigateExercise(-1));
   nextExerciseBtn?.addEventListener('click', () => navigateExercise(1));
 
+  // Hide legacy dropdowns (modal replaces them)
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.exercise-container') && exerciseList) exerciseList.style.display = 'none';
+    if (!e.target.closest('.category-container') && categoryList) categoryList.style.display = 'none';
+  });
+
   // Helpers
   function filterExercisesForMode() {
     const selectedCategory = getSelectedCategory();
@@ -403,8 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (categorySearchInput) categorySearchInput.placeholder = "All Categories";
   }
 
-  // ------ Full-screen picker (centered dialog) for Exercise & Category ------
-  // Make triggers read-only but clickable
+  // ------ Picker (modal) ------
   if (exerciseSearchInput) exerciseSearchInput.readOnly = true;
   if (categorySearchInput) categorySearchInput.readOnly = true;
 
@@ -412,62 +417,33 @@ document.addEventListener('DOMContentLoaded', () => {
   categorySearchInput?.addEventListener('click', () => openPicker('category'));
 
   pickerClose?.addEventListener('click', closePicker);
-  pickerOverlay?.addEventListener('click', (e) => {
-    if (e.target === pickerOverlay) closePicker();
-  });
+  pickerOverlay?.addEventListener('click', (e) => { if (e.target === pickerOverlay) closePicker(); });
   document.addEventListener('keydown', (e) => {
-    if (pickerOverlay && pickerOverlay.getAttribute('aria-hidden') !== 'true' && e.key === 'Escape') closePicker();
+    if (pickerOverlay?.dataset.open === '1' && e.key === 'Escape') closePicker();
   });
   pickerSearch?.addEventListener('input', () => renderPickerItems(pickerSearch.value));
-
-  const supportsHistory = typeof history !== 'undefined' && 'pushState' in history;
 
   function openPicker(mode){
     pickerMode = mode;
     if (!pickerOverlay) return;
-    pickerOverlay.setAttribute('aria-hidden','false');
+    pickerOverlay.dataset.open = '1';
     document.body.style.overflow = 'hidden';
-    if (supportsHistory) history.pushState({ pickerOpen: true }, '');
-
-    // Prefill search with any typed text (if any)
+    // Prefill search with current text (if any)
     if (pickerSearch) {
       const src = (mode === 'exercise') ? exerciseSearchInput : categorySearchInput;
       pickerSearch.value = src?.value || '';
     }
     renderPickerItems(pickerSearch?.value || '');
-    // Focus after paint
     requestAnimationFrame(() => pickerSearch?.focus());
   }
 
   function closePicker(){
     if (!pickerOverlay) return;
-    pickerOverlay.setAttribute('aria-hidden','true');
+    delete pickerOverlay.dataset.open;
     document.body.style.overflow = '';
     pickerMode = null;
     if (pickerSearch) pickerSearch.value = '';
-    // If we pushed state, pop it so back button doesn't leave page
-    if (supportsHistory && history.state && history.state.pickerOpen) {
-      history.back();
-    }
   }
-
-  window.addEventListener('popstate', () => {
-    if (pickerOverlay && pickerOverlay.getAttribute('aria-hidden') !== 'true') {
-      pickerOverlay.setAttribute('aria-hidden','true');
-      document.body.style.overflow = '';
-    }
-  });
-
-  // Keep search visible when virtual keyboard opens (quirky devices)
-  const vv = window.visualViewport;
-  function adjustPickerViewport(){
-    if (!pickerOverlay || pickerOverlay.getAttribute('aria-hidden') === 'true' || !vv) return;
-    // Recenters within visible viewport if browser offsets content
-    const picker = pickerOverlay.querySelector('.picker');
-    if (picker) picker.style.marginTop = (vv.offsetTop || 0) + 'px';
-  }
-  vv?.addEventListener('resize', adjustPickerViewport);
-  vv?.addEventListener('scroll', adjustPickerViewport);
 
   function renderPickerItems(query){
     if (!pickerList) return;
