@@ -151,18 +151,18 @@ input[type="range"]:disabled::-webkit-slider-thumb{ background:#9b9b9b; }
   color:var(--orange) !important;
 }
 
-/* ===== Centered picker dialog (transparent wrapper; separate header & list) ===== */
+/* ===== Centered picker (transparent wrapper; separate header & list) ===== */
 .picker-overlay{
   position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; z-index:9999;
   backdrop-filter:blur(4px);
 }
 .picker-overlay[data-open="1"]{ display:block; }
 
-/* Transparent parent: no bg, no shadow — just centers the two boxes */
+/* Transparent parent: no bg/shadow; centers the two boxes */
 .picker{
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
   width:min(92vw, 520px); max-height:min(80vh, 600px);
-  display:flex; flex-direction:column; gap:12px;          /* vertical gap = 12px */
+  display:flex; flex-direction:column; gap:12px;  /* vertical gap = 12px */
   background:transparent; border:none; padding:0; overflow:visible;
 }
 
@@ -179,7 +179,7 @@ input[type="range"]:disabled::-webkit-slider-thumb{ background:#9b9b9b; }
   border-width:2px;
 }
 
-/* Search input: same 40px height, grows wide, 2px border */
+/* Search input: 40px height, grows wide, 2px border */
 .picker__header .selector{
   flex:1; width:auto; height:40px;
   border-width:2px; border-radius:5px;
