@@ -3,9 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Playalongs — Free</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <!-- CSS from GitHub Pages -->
+  <link rel="stylesheet" href="https://awesomebob20.github.io/RDM/freestyles.css?v=1">
 </head>
 <body>
   <div class="container">
@@ -28,7 +30,7 @@
 
     <!-- Sheet music -->
     <div class="sheet-music">
-      <img src="" alt="Sheet Music" />
+      <img src="" alt="Sheet Music" loading="eager" />
     </div>
 
     <!-- Audio -->
@@ -58,7 +60,7 @@
     </div>
   </div>
 
-  <!-- Full-screen picker modal -->
+  <!-- Picker overlay -->
   <div id="pickerOverlay" class="picker-overlay" aria-hidden="true">
     <div class="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
       <header class="picker__header">
@@ -69,9 +71,9 @@
     </div>
   </div>
 
-  <!-- Local assets only -->
-  <script defer src="data.js"></script>
-  <script defer src="script.js"></script>
+  <!-- Data + Logic from GitHub Pages (keep order) -->
+  <script defer src="https://awesomebob20.github.io/RDM/freedata.js?v=1"></script>
+  <script defer src="https://awesomebob20.github.io/RDM/freescript.js?v=1"></script>
 
   <noscript>This app needs JavaScript enabled.</noscript>
 </body>
