@@ -58,19 +58,23 @@
     </div>
   </div>
 
-  <!-- Centered picker -->
-  <div id="pickerOverlay" class="picker-overlay" aria-hidden="true">
-    <div class="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
-      <header class="picker__header">
-        <button id="pickerClose" class="btn btn--orange btn-square" aria-label="Close">✕</button>
-        <input id="pickerSearch" class="selector selector--orange" type="search" placeholder="Search…" autocomplete="off" />
-      </header>
-      <ul id="pickerList" class="menu menu--orange picker__list" role="listbox" aria-label="Choices"></ul>
-    </div>
-  </div>
+  <!-- Picker Overlay (free) -->
+<div id="pickerOverlay" class="picker-overlay" aria-hidden="true">
+  <div class="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+    <header class="picker__header">
+      <h2 id="pickerTitle" class="picker__title">Select</h2>
+      <button id="pickerClose" class="btn btn--orange btn-square" aria-label="Close">✕</button>
+      <input id="pickerSearch" class="selector selector--orange" type="search" placeholder="Search..." autocomplete="off" />
+    </header>
 
-  <!-- External assets -->
-  <script defer src="https://awesomebob20.github.io/RDM/freedata.js"></script>
+    <!-- List -->
+    <ul id="pickerList" class="picker__list" role="listbox" aria-label="Choices"></ul>
+  </div>
+</div>
+
+
+  <!-- Local assets only -->
+ <script defer src="https://awesomebob20.github.io/RDM/freedata.js"></script>
   <script defer src="https://awesomebob20.github.io/RDM/freescripts.js"></script>
 
   <noscript>This app needs JavaScript enabled.</noscript>
