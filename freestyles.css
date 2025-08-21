@@ -6,6 +6,7 @@
   --bg:#1c1c1c;
   --orange:#d35400; --orange-d:#c25227; --orange-dim:#a84300;
   --gray-1:#ddd; --gray-2:#808080; --gray-3:#53525d;
+  --control-h: 40px; /* button height & mobile control height */
 }
 
 /* ===== Global ===== */
@@ -36,7 +37,7 @@ body{ margin:0; background:var(--bg); color:var(--white); }
 .sheet-music{ margin:40px 0; }
 .sheet-music img{ max-width:100%; height:auto; border:2px solid var(--black); }
 
-/* ===== Inputs ===== */
+/* ===== Inputs (selectors) ===== */
 .selector{
   width:10rem; max-width:100%;
   padding:5px 8px; font-size:.9rem;
@@ -47,13 +48,14 @@ body{ margin:0; background:var(--bg); color:var(--white); }
 .selector--orange{ background:var(--orange); }
 .selector--orange:hover,.selector--orange:focus{ background:var(--orange-d); }
 
-/* Desktop widths for triggers */
-#exerciseSearch.selector,
-#categorySearch.selector{ width:150px; }
+/* Desktop fixed widths for top selectors */
+#categorySearch.selector,
+#exerciseSearch.selector{ width:150px; }
 
 /* ===== Buttons ===== */
 .btn{
-  height:40px; display:inline-flex; align-items:center; justify-content:center;
+  height:var(--control-h);
+  display:inline-flex; align-items:center; justify-content:center;
   border:2px solid var(--black); color:var(--white); font-size:1.2rem;
   padding:6px 12px; border-radius:5px; cursor:pointer; margin:0;
   touch-action:manipulation; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;
@@ -65,18 +67,21 @@ body{ margin:0; background:var(--bg); color:var(--white); }
   cursor:not-allowed;
   opacity:1; filter:brightness(.85) saturate(.95);
 }
-.btn-square{ width:45px; } /* plus/minus & picker close */
+.btn-square{ width:45px; }
 
 /* ===== Layout ===== */
 .control-container{
   display:flex; justify-content:center; align-items:center;
   gap:20px; margin:40px auto; flex-wrap:wrap; width:100%;
 }
+
+/* Category lives by itself (150px); Exercise group is a 3-col grid */
+.category-container{ position:relative; }
 .exercise-group{
-  display:flex; align-items:center; justify-content:center;
-  gap:20px;
+  display:grid; grid-template-columns:45px 150px 45px;
+  gap:20px; align-items:center; justify-content:center;
 }
-.exercise-container, .category-container{ position:relative; }
+.exercise-container{ position:relative; }
 
 /* ===== Tempo column ===== */
 .tempo-control{
@@ -102,10 +107,7 @@ body{ margin:0; background:var(--bg); color:var(--white); }
   border-radius:50%; border:2px solid var(--black); cursor:pointer;
 }
 .tempo-slider::-webkit-slider-runnable-track,
-.tempo-slider::-moz-range-track{
-  background:transparent; border:none;
-}
-/* Disabled visuals (if ever used) */
+.tempo-slider::-moz-range-track{ background:transparent; border:none; }
 input[type="range"]:disabled{ opacity:1; }
 input[type="range"]:disabled::-webkit-slider-runnable-track{ background:#c7b8c5; }
 input[type="range"]:disabled::-webkit-slider-thumb{ background:#9b9b9b; }
@@ -125,125 +127,143 @@ input[type="range"]:disabled::-webkit-slider-thumb{ background:#9b9b9b; }
   font-size:1rem; color:var(--black); pointer-events:none;
 }
 
-/* ===== Menus (dropdowns) ===== */
-.menu{
-  position:absolute; top:calc(100% - 5px); left:0; transform:none;
-  border:1px solid var(--gray-2); border-radius:3px;
-  list-style:none; margin:0; padding:3px; white-space:nowrap; display:none; z-index:999;
-  max-height:50vh; overflow-y:auto; min-width:100%; text-align:left;
+/* ===== Kill legacy inline UL menus so they never affect spacing ===== */
+.menu,
+#exerciseList,
+#categoryList{
+  display:none !important;
+  position:fixed !important; left:-9999px !important; top:auto !important;
+  width:0 !important; height:0 !important;
+  pointer-events:none !important; visibility:hidden !important; opacity:0 !important;
 }
-.menu--orange{ background:var(--orange); }
-.menu li{ padding:5px 8px; cursor:pointer; color:var(--white); font-size:.9rem; text-align:left; }
-.menu li:hover{ background:var(--gray-3); }
 
-/* Active items: always white bg + orange text, unaffected by hover; 5px radius */
-.menu li.active-option,
+/* ===== Active item style for modal picker list ===== */
 .picker__list li.active-option{
   background:#fff !important;
   color:var(--orange) !important;
   border-radius:5px !important;
 }
-.menu li.active-option:hover,
-.picker__list li.active-option:hover,
-.menu li.active-option:focus-visible,
-.picker__list li.active-option:focus-visible{
-  background:#fff !important;
-  color:var(--orange) !important;
-}
 
-/* ===== Centered picker (transparent wrapper; separate header & list) ===== */
+/* ===== Modal Picker (kept) ===== */
 .picker-overlay{
-  position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; z-index:9999;
-  backdrop-filter:blur(4px);
+  position:fixed; inset:0; display:none;
+  background:rgba(0,0,0,.35);
+  backdrop-filter: blur(6px) saturate(120%);
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+  z-index:9999;
+  animation: picker-fade-in .18s ease-out;
 }
 .picker-overlay[data-open="1"]{ display:block; }
 
-/* Transparent parent: no bg/shadow; centers the two boxes */
 .picker{
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:min(92vw, 520px); max-height:min(80vh, 600px);
-  display:flex; flex-direction:column; gap:12px;  /* vertical gap = 12px */
-  background:transparent; border:none; padding:0; overflow:visible;
+  width:min(520px, 92vw);
+  max-height:82vh;
+  display:flex; flex-direction:column; gap:10px;
+  background:transparent; border:none; padding:0;
+  animation: panel-pop .22s cubic-bezier(.2,.8,.2,1);
 }
 
-/* Header: no padding/bg/shadow; children align to equal height */
+/* Orange header: title + close on row 1, search full width on row 2 */
 .picker__header{
-  display:flex; align-items:stretch; gap:12px;
-  padding:0; background:transparent; border:none; box-shadow:none;
-  animation:pop .12s ease-out;
+  display:grid;
+  grid-template-columns:1fr 40px;
+  grid-template-areas:
+    "title close"
+    "search search";
+  align-items:center;
+  gap:8px 10px;
+  padding:8px;
+  background:var(--orange);
+  border:2px solid var(--black);
+  border-radius:10px;
 }
-
-/* Close button: 45x40, 2px border */
+.picker__title{
+  grid-area:title;
+  margin:0;
+  font-size:1.2rem;
+  line-height:1.2;
+  color:var(--white);
+}
 .picker__header .btn-square{
-  flex:0 0 45px; height:40px;
+  grid-area:close;
+  width:40px; height:40px;
   border-width:2px;
+  border-radius:10px;
+  background:var(--white); color:var(--black);
+}
+#pickerSearch.selector{
+  grid-area:search;
+  width:100%; height:var(--control-h); font-size:1rem;
+  padding:6px 10px;
+  background:#fff; color:#000;
+  border:2px solid var(--black);
+  border-radius:10px;
 }
 
-/* Search input: 40px height, grows wide, 2px border */
-.picker__header .selector{
-  flex:1; width:auto; height:40px;
-  border-width:2px; border-radius:5px;
-}
-
-/* List: 2px border, rounded, scrollable */
+/* List panel */
 .picker__list{
-  position:static !important; display:block !important; max-height:none !important;
-  flex:1; overflow:auto; -webkit-overflow-scrolling:touch;
-  background:var(--orange); border:2px solid var(--black); border-radius:5px;
-  animation:pop .12s ease-out;
+  list-style:none; margin:0; padding:6px;
+  border:2px solid var(--black);
+  border-radius:10px;
+  overflow-y:auto;
+  max-height:calc(82vh - 80px);
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
+  background:var(--orange);
 }
-
-/* List items: requested padding, no separators; hover only when not active */
 .picker__list li{
-  padding:5px 8px; cursor:pointer; min-height:44px; display:flex; align-items:center;
-  transition:background .12s ease, transform .06s ease;
+  padding:10px 12px;
+  cursor:pointer;
+  color:var(--white);
+  border-radius:10px;
 }
-.picker__list li:not(.active-option):hover{ background:rgba(0,0,0,.08); }
-.picker__list li:active{ transform:scale(.995); }
+.picker__list li:hover{ background:var(--gray-3); }
 
-/* Entrance animation */
-@keyframes pop{
-  from{ transform:translateY(4px); opacity:.0; }
-  to{ transform:none; opacity:1; }
+/* add this near your picker styles */
+#pickerSearch::placeholder{
+  color:#555;     /* readable on white input */
+  opacity:1;
 }
 
-/* ===== Scrollbar (optional) ===== */
-::-webkit-scrollbar{ width:8px; height:8px; }
-::-webkit-scrollbar-track{ background:#2c2c2c; }
-::-webkit-scrollbar-thumb{ background:var(--orange); border-radius:4px; }
-::-webkit-scrollbar-thumb:hover{ background:#e67e22; }
+
+/* Motion */
+@keyframes picker-fade-in{ from{opacity:0} to{opacity:1} }
+@keyframes panel-pop{ from{opacity:0; transform:translate(-50%,-44%) scale(.98)} to{opacity:1; transform:translate(-50%,-50%) scale(1)} }
+@media (prefers-reduced-motion: reduce){
+  .picker-overlay, .picker{ animation:none !important; }
+}
 
 /* ===== Mobile (≤600px) ===== */
 @media (max-width:600px){
   body{ font-size:.95rem; }
 
+  /* Stack: Category row, then Exercise group row */
   .control-container{
-    flex-direction:column;
-    align-items:stretch;
-    gap:20px;
-    margin:40px auto;
-  }
-
-  .exercise-group{
-    width:100%;
     display:grid;
-    grid-template-columns:40px minmax(0,1fr) 40px;
-    gap:20px;
-    align-items:center;
+    grid-template-columns:1fr;
+    row-gap:20px;
+    justify-items:stretch;
   }
-  .btn-square{ width:40px; height:40px; } /* match +/- and picker close on phones */
 
-  .exercise-container{ min-width:0; }
+  /* Exercise row = Prev | Exercise | Next */
+  .exercise-group{
+    grid-template-columns:40px 1fr 40px;
+    gap:20px;
+  }
+
+  /* Force all four to 40px tall and full width in their cells */
+  #categorySearch.selector,
   #exerciseSearch.selector,
-  #categorySearch.selector{ width:100% !important; min-width:0; }
+  #prevExerciseBtn,
+  #nextExerciseBtn{
+    height:var(--control-h);
+    width:100%;
+  }
 
-  .selector{ width:100%; height:40px; }
-  .btn{ width:100%; height:40px; }
+  .btn-square{ width:40px; height:var(--control-h); }
 
   .tempo-control{ width:100%; max-width:600px; margin:40px auto; }
   .progress-container{ width:100%; margin:40px auto; }
-
-  .menu{ top:calc(100% - 10px); width:100%; left:0; transform:none; }
 }
 
 /* --- Typography guard (keep at end) --- */
